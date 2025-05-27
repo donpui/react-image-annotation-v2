@@ -8,10 +8,10 @@ import withRelativeMousePosHOC, { RelativeMousePosInjectedProps as IRMInjectedPr
 import initialDefaultProps from './defaultProps';
 import Overlay from './Overlay';
 
-import Content from './Content';
-import Editor from './Editor';
-import FancyRectangle from './FancyRectangle';
-import RectangleSelector from '../hocs/RectangleSelector';
+// import Content from './Content';
+// import Editor from './Editor';
+// import FancyRectangle from './FancyRectangle';
+// import RectangleSelector from '../hocs/RectangleSelector';
 // import PointSelector from '../selectors/PointSelector';
 // import OvalSelector from '../selectors/OvalSelector';
 
@@ -226,18 +226,21 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     return selectors.find(s => s.TYPE === typeToFind);
   }, [selectors]);
 
+  const effectiveType = type || (selectors && selectors[0] && selectors[0].TYPE);
+  const selector = getSelectorByType(effectiveType);
+
   const callSelectorMethod = useCallback((methodName: keyof Selector['methods'], e: SelectorEvent | globalThis.TouchEvent) => {
     if (disableAnnotation) {
       return;
     }
-    const selector = getSelectorByType(type);
+    const selector = getSelectorByType(effectiveType);
     if (selector && selector.methods[methodName]) {
       const method = selector.methods[methodName] as (av: AnnotationValue, ev: any) => AnnotationValue | undefined;
       const resultValue = method(value || {}, e);
       if (typeof resultValue === 'undefined') {
         if (process.env.NODE_ENV !== 'production') {
           console.error(
-            `Selector method ${String(methodName)} of type ${type} returned undefined.
+            `Selector method ${String(methodName)} of type ${effectiveType} returned undefined.
              Make sure to explicitly return the previous state or new state.`
           );
         }
@@ -247,7 +250,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
         }
       }
     }
-  }, [disableAnnotation, getSelectorByType, type, value, onChange]);
+  }, [disableAnnotation, getSelectorByType, effectiveType, value, onChange]);
 
   const onTouchStartHandler = useCallback((e: globalThis.TouchEvent) => {
     if (navigator.userAgent.toLowerCase().includes('safari') && !navigator.userAgent.toLowerCase().includes('chrome') && allowTouch){
@@ -443,7 +446,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
       />
       {!disableOverlay && renderOverlay &&
         renderOverlay({
-          type: type,
+          type: effectiveType,
           annotation: value
         })
       }

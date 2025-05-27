@@ -30,11 +30,17 @@ const styles = css<StyledProps>`
   `}
 `
 
-export default styled.button<StyledProps>`
+const button = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'active'
+})<StyledProps>`
   ${styles}
 `
 
-export const ButtonLink = styled(Link)<StyledProps>`
+export default button
+
+export const ButtonLink = styled(Link).withConfig({
+  shouldForwardProp: (prop) => prop !== 'active'
+})<StyledProps>`
   text-decoration: none;
   ${styles}
 ` 

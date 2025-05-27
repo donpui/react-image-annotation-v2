@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'react-image-annotation-v2': path.resolve(__dirname, 'src/index.ts'),
+      'react-image-annotation-v2': path.resolve(__dirname, 'src'),
     },
   },
   build: {

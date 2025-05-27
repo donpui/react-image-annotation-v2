@@ -1,23 +1,26 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import styled from 'styled-components';
 import Highlight from '../Highlight/index.tsx'; // Ensure .tsx
 
 // Import Sample Components (now .tsx)
-import Simple from '../Samples/Simple/index.tsx';
-import Multi from '../Samples/Multiple/index.tsx';
-import Linked from '../Samples/Linked/index.tsx';
-import Custom from '../Samples/Custom/index.tsx';
-import Threaded from '../Samples/Threaded/index.tsx';
-import Touch from '../Samples/Touch/index.tsx';
+import Simple from '../Samples/Simple';
+import Multi from '../Samples/Multiple';
+import Linked from '../Samples/Linked';
+import Custom from '../Samples/Custom';
+import Threaded from '../Samples/Threaded';
+import Touch from '../Samples/Touch';
+import { ButtonLink } from '../Button';
+
 
 // Import Code Snippets (.txt files - ensure global.d.ts covers .txt)
 // Assuming these .txt files exist or will be created in the respective Sample directories
-import simpleCode from '../Samples/Simple/index.txt';
-import multiCode from '../Samples/Multiple/index.txt';
-import linkedCode from '../Samples/Linked/index.txt';
-import customCode from '../Samples/Custom/index.txt'; // You might need to create this if it doesn't exist
-import threadedCode from '../Samples/Threaded/index.txt'; // You might need to create this
-import touchCode from '../Samples/Touch/index.txt';
+import simpleCode from '../Samples/Simple/index.tsx?raw';
+import multiCode from '../Samples/Multiple/index.tsx?raw';
+import linkedCode from '../Samples/Linked/index.tsx?raw';
+import customCode from '../Samples/Custom/index.tsx?raw'; // You might need to create this if it doesn't exist
+import threadedCode from '../Samples/Threaded/index.tsx?raw'; // You might need to create this
+import touchCode from '../Samples/Touch/index.tsx?raw';
+
 
 const Container = styled.main`
   margin: 0 auto;
@@ -26,12 +29,18 @@ const Container = styled.main`
   max-width: 700px;
 `;
 
-const SourceLink = styled.a`
+
+const Actions = styled.div`
   display: block;
-  margin-top: 8px;
-  font-size: 18px;
+  margin-bottom: 24px;
   text-align: center;
-  text-decoration: none;
+`;
+
+const ActionButton = styled(ButtonLink)`
+  margin: 0 auto;
+  text-align: center;
+  font-size: 14px;
+  width: 150px;
 `;
 
 // Props for Docs component (if any, currently none)
@@ -44,6 +53,10 @@ export default class Docs extends Component<DocsProps, DocsState> {
   render() {
     return (
       <Container>
+        <Actions>
+          <ActionButton to="/">Home</ActionButton>
+          <ActionButton to="/docs">View Docs</ActionButton>
+        </Actions>
         <h1>Simple Annotation</h1>
         <Simple />
         <Highlight>

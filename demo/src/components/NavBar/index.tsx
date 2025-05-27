@@ -1,7 +1,4 @@
-import React from 'react'
 import styled from 'styled-components'
-
-import GithubStarLink from '../GithubStarLink'
 
 export const Header = styled.header`
   background-color: #20232a;
@@ -32,7 +29,6 @@ const NavBar = (props: { title: string }) => (
     <h1>
       {props.title}
     </h1>
-    <GithubStarLink />
   </Header>
 )
 

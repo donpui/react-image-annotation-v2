@@ -1,55 +1,43 @@
-import React, { Component } from 'react'
-import { Annotation, AnnotationType } from '../../../../../src'
-
-import Root from '../../Root'
+import React, { useState } from 'react'
+import Annotation from 'react-image-annotation-v2'
+import { AnnotationType, AnnotationValue, RectangleSelector } from 'react-image-annotation-v2'
 import img from '../../../img.jpeg'
+// import defaultProps from '../../../../../src/components/defaultProps'
 
-interface SimpleState {
-  annotations: AnnotationType[]
-  annotation: Partial<AnnotationType>
-}
+const Simple: React.FC = () => {
+  const [annotations, setAnnotations] = useState<AnnotationType[]>([])
+  const [annotation, setAnnotation] = useState<AnnotationValue>({})
+  // const [type, setType] = useState('RECTANGLE') // Uncomment if you want to use type
 
-export default class Simple extends Component<{}, SimpleState> {
-  state: SimpleState = {
-    annotations: [],
-    annotation: {}
+  const onChange = (annotation: AnnotationValue) => {
+    setAnnotation(annotation)
   }
 
-  onChange = (annotation: Partial<AnnotationType>) => {
-    this.setState({ annotation })
-  }
-
-  onSubmit = (annotation: Partial<AnnotationType>) => {
+  const onSubmit = (annotation: AnnotationValue) => {
     const { geometry, data } = annotation
+    if (!geometry || !geometry.type) return
 
-    this.setState({
-      annotation: {},
-      annotations: this.state.annotations.concat({
-        geometry: geometry!,
-        data: {
-          ...data,
-          id: Math.random()
-        }
-      } as AnnotationType)
-    })
+    setAnnotations(prev => prev.concat({
+      geometry: geometry as any,
+      data: {
+        ...data,
+        id: Math.random()
+      }
+    } as AnnotationType))
+    setAnnotation({})
   }
 
-  render () {
-    return (
-      <Root>
-        <Annotation
-          src={img}
-          alt='Two pebbles anthropomorphized holding hands'
-
-          annotations={this.state.annotations}
-
-          type={this.state.type}
-          value={this.state.annotation}
-          onChange={this.onChange}
-          onSubmit={this.onSubmit}
-          allowTouch
-        />
-      </Root>
-    )
-  }
+  return (
+      <Annotation
+        src={img}
+        alt='Two pebbles anthropomorphized holding hands'
+        annotations={annotations}
+        type={RectangleSelector.TYPE}
+        value={annotation}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      />
+  )
 }
+
+export default Simple

@@ -1,46 +1,49 @@
 import React from 'react'
-import Lowlight from 'react-lowlight'
-import shallowCompare from 'react-addons-shallow-compare'
-
-import javascript from 'highlight.js/lib/languages/javascript'
-import xml from 'highlight.js/lib/languages/xml'
-import css from 'highlight.js/lib/languages/css'
-import markdown from 'highlight.js/lib/languages/markdown'
-
-Lowlight.registerLanguage('js', javascript)
-Lowlight.registerLanguage('xml', xml)
-Lowlight.registerLanguage('css', css)
-Lowlight.registerLanguage('md', markdown)
+import { Highlight, Language, PrismTheme, RenderProps } from 'prism-react-renderer'
+import { themes } from 'prism-react-renderer'
 
 interface HighlightProps {
-  language?: string;
+  language?: Language;
   value?: string;
   className?: string;
   inline?: boolean;
   children?: React.ReactNode;
 }
 
-export default class Highlight extends React.Component<HighlightProps> {
-  static displayName = 'Highlight'
-
-  static defaultProps = {
-    inline: false,
-    language: 'md'
-  }
-
-  shouldComponentUpdate (nextProps: HighlightProps, nextState: any) {
-    return shallowCompare(this, nextProps, nextState)
-  }
-
-  render () {
-    const { children, ...props } = this.props;
-    const value = children ? children.toString() : (props.value || '');
-
+const HighlightComponent: React.FC<HighlightProps> = ({
+  language = 'tsx',
+  value,
+  className = '',
+  inline = false,
+  children
+}) => {
+  const code = children ? children.toString() : (value || '')
+  if (inline) {
     return (
-      <Lowlight
-        {...props}
-        value={value}
-      />
+      <code className={`prism-code language-${language} ${className}`.trim()}>{code}</code>
     )
   }
-} 
+  return (
+    <Highlight code={code} language={language} theme={themes.github as PrismTheme}>
+      {({ className: generatedClassName, style, tokens, getLineProps, getTokenProps }: RenderProps) => (
+        <pre className={`${generatedClassName} ${className}`.trim()} style={style}>
+          {tokens.map((line, i) => {
+            const lineProps = getLineProps({ line });
+            return (
+              <div key={i} {...lineProps}>
+                {line.map((token, key) => {
+                  const tokenProps = getTokenProps({ token });
+                  return <span key={key} {...tokenProps} />;
+                })}
+              </div>
+            );
+          })}
+        </pre>
+      )}
+    </Highlight>
+  )
+}
+
+HighlightComponent.displayName = 'Highlight'
+
+export default HighlightComponent 

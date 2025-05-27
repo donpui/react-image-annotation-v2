@@ -4,6 +4,7 @@ import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../s
 import Root from '../../Root/index.tsx';
 import img from '../../../img.jpeg';
 import defaultProps from '../../../../../src/components/defaultProps.tsx';
+import { RectangleSelector } from '../../../../../src/selectors.ts';
 
 // Styled Components (same as before)
 const Comments = styled.div`
@@ -44,7 +45,7 @@ export default class Linked extends Component<{}, LinkedState> {
       }
     ] as AnnotationType[], // Cast initial annotations
     annotation: {},
-    // type: RectangleSelector.TYPE // Assuming a default if new annotations can be drawn
+    type: RectangleSelector.TYPE // Enable drawing by default
   };
 
   onChange = (annotation: Partial<AnnotationType>) => {
@@ -96,23 +97,21 @@ export default class Linked extends Component<{}, LinkedState> {
 
   render() {
     const annotationProps: AnnotationOwnProps = {
-      ...defaultProps, // Spreading default props
+      ...defaultProps,
       src: img,
       alt: 'Two pebbles anthropomorphized holding hands',
-      activeAnnotationComparator: this.activeAnnotationComparator as any, // Cast for now
+      activeAnnotationComparator: this.activeAnnotationComparator as any,
       activeAnnotations: this.state.activeAnnotations,
       annotations: this.state.annotations,
-      type: this.state.type, // This will be undefined if not drawing new annotations
-      value: this.state.annotation as any, // Cast for AnnotationValue workaround
-      onChange: this.onChange as any,     // Cast
-      onSubmit: this.onSubmit as any,     // Cast
+      type: this.state.type || RectangleSelector.TYPE,
+      value: this.state.annotation as any,
+      onChange: this.onChange as any,
+      onSubmit: this.onSubmit as any,
     };
 
     return (
       <Root>
-        <Annotation
-          {...annotationProps}
-        />
+        <Annotation {...annotationProps} />
         <h4>Annotations</h4>
         <Comments>
           {this.state.annotations.map(annotation => (
