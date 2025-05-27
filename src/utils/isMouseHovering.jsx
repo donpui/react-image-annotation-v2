@@ -1,6 +1,9 @@
 import React, { PureComponent as Component } from 'react'
 
 const isMouseOverElement = ({ elem, e }) => {
+  if (!elem || typeof elem.getBoundingClientRect !== 'function') {
+    return false;
+  }
   const { pageY, pageX } = e
   const { left, right, bottom, top } = elem.getBoundingClientRect()
 

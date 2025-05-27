@@ -5,6 +5,9 @@ const getMouseRelativeCoordinates = e => {
     // or it could be that nativeEvent offsets are based on target rather than
     // currentTarget.
     // To keep consistent behavior of the selector use the bounding client rect.
+    if (!e.currentTarget || typeof e.currentTarget.getBoundingClientRect !== 'function') {
+      return { x: 0, y: 0 }; // Return a default or handle error appropriately
+    }
     const rect = e.currentTarget.getBoundingClientRect();
     const offsetX = e.clientX - rect.x;
     const offsetY = e.clientY - rect.y;
@@ -17,6 +20,9 @@ const getMouseRelativeCoordinates = e => {
 
 const clamp = (a, b, i) => Math.max(a, Math.min(b, i))
 const getTouchRelativeCoordinates = e => {
+  if (!e.currentTarget || typeof e.currentTarget.getBoundingClientRect !== 'function') {
+    return { x: 0, y: 0 }; // Return a default or handle error appropriately
+  }
   const touch = e.targetTouches[0]
 
   const boundingRect = e.currentTarget.getBoundingClientRect()

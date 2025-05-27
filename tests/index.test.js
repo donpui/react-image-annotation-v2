@@ -15,8 +15,6 @@ if (typeof TextEncoder === 'undefined') {
 }
 
 // Import test files
-var context = require.context('./', true, /\.spec\.js$/);
-context.keys().forEach(context);
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -24,7 +22,7 @@ import userEvent from '@testing-library/user-event';
 import Annotation from '../src/components/Annotation';
 
 describe('Annotation Component', () => {
-  const defaultProps = {
+  const initialDefaultProps = {
     src: 'test-image.jpg',
     alt: 'Test image',
     annotations: [],
@@ -34,11 +32,12 @@ describe('Annotation Component', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    initialDefaultProps.onChange.mockClear();
+    initialDefaultProps.onSubmit.mockClear();
   });
 
   it('renders without crashing', () => {
-    render(<Annotation {...defaultProps} />);
+    render(<Annotation {...initialDefaultProps} />);
     expect(screen.getByAltText('Test image')).toBeInTheDocument();
   });
 
@@ -54,36 +53,62 @@ describe('Annotation Component', () => {
         },
         data: {
           text: 'Test annotation',
+          id: 'test-anno-1'
         },
       },
     ];
 
-    render(<Annotation {...defaultProps} annotations={annotations} />);
-    // Verify the annotation is rendered
+    render(<Annotation {...initialDefaultProps} annotations={annotations} activeAnnotations={annotations} />);
     expect(screen.getByText('Test annotation')).toBeInTheDocument();
   });
 
   it('handles mouse interactions correctly', async () => {
     const user = userEvent.setup();
-    render(<Annotation {...defaultProps} />);
+    let currentAnnotationValue = {};
+
+    const handleChange = jest.fn((newValue) => {
+      currentAnnotationValue = newValue;
+      rerender(<Annotation {...initialDefaultProps} value={currentAnnotationValue} onChange={handleChange} />);
+    });
+
+    const { rerender } = render(
+      <Annotation {...initialDefaultProps} value={currentAnnotationValue} onChange={handleChange} />
+    );
     
-    const image = screen.getByAltText('Test image');
+    const annotationTarget = screen.getByTestId('annotation-target');
+    await user.click(annotationTarget);
     
-    // Simulate mouse interactions
-    await user.click(image);
-    expect(defaultProps.onChange).toHaveBeenCalled();
+    expect(handleChange).toHaveBeenCalled();
   });
 
   it('handles annotation submission', async () => {
     const user = userEvent.setup();
-    render(<Annotation {...defaultProps} />);
+    let currentAnnotationValue = {};
+
+    const handleChange = jest.fn((newValue) => {
+      currentAnnotationValue = newValue;
+      rerender(<Annotation {...initialDefaultProps} onSubmit={initialDefaultProps.onSubmit} value={currentAnnotationValue} onChange={handleChange} />);
+    });
     
-    const image = screen.getByAltText('Test image');
+    const { rerender } = render(
+      <Annotation {...initialDefaultProps} onSubmit={initialDefaultProps.onSubmit} value={currentAnnotationValue} onChange={handleChange} />
+    );
     
-    // Create and submit an annotation
-    await user.click(image);
-    await user.keyboard('{Enter}');
+    const annotationTarget = screen.getByTestId('annotation-target');
     
-    expect(defaultProps.onSubmit).toHaveBeenCalled();
+    // Simulate a drag to create a rectangle and trigger editor
+    await user.pointer([
+      { keys: '[MouseLeft>]', target: annotationTarget, coords: { x: 10, y: 10 } },
+      { coords: { x: 30, y: 30 } }, // Move while pressed
+      { keys: '[/MouseLeft]' }      // Release
+    ]);
+
+    const textarea = await screen.findByPlaceholderText('Write description');
+    await user.type(textarea, 'Test comment');
+
+    const submitButton = screen.getByText('Submit');
+    await user.click(submitButton);
+    
+    expect(initialDefaultProps.onSubmit).toHaveBeenCalled();
   });
 });

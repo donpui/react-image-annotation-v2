@@ -27,12 +27,13 @@ describe('Annotation', () => {
       data: { id: 1, text: 'Test annotation' }
     }];
 
-    render(<Annotation {...requiredProps} annotations={annotations} />);
+    render(<Annotation {...requiredProps} annotations={annotations} activeAnnotations={annotations} />);
     
     // The exact assertion will depend on your component's structure
     // This is a basic example - adjust based on your actual markup
-    const annotationElements = screen.getAllByRole('button');
-    expect(annotationElements.length).toBeGreaterThan(0);
+    // const annotationElements = screen.getAllByRole('button');
+    // expect(annotationElements.length).toBeGreaterThan(0);
+    expect(screen.getByText('Test annotation')).toBeInTheDocument();
   });
 
   // Add more tests as needed for your specific use cases

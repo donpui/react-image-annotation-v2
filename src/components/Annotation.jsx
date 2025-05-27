@@ -198,12 +198,14 @@ export default compose(
       this.props[methodName](e)
     } else {
       const selector = this.getSelectorByType(this.props.type)
+
       if (selector && selector.methods[methodName]) {
         const value = selector.methods[methodName](this.props.value, e)
 
         if (typeof value === 'undefined') {
           if (process.env.NODE_ENV !== 'production') {
-            console.error(`
+            console.error(
+            `
               ${methodName} of selector type ${this.props.type} returned undefined.
               Make sure to explicitly return the previous state
             `)
@@ -282,6 +284,7 @@ export default compose(
           }
         </Items>
         <Target
+          data-testid="annotation-target"
           ref={this.targetRef}
           onClick={this.onClick}
           onMouseUp={this.onMouseUp}

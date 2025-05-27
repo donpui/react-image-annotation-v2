@@ -20,7 +20,7 @@ export function intersects({ x, y }, geometry) {
 
 export function area(geometry) {
   if (!geometry) return 0
-  if (!geometry.width || !geometry.height) return 0
+  if (geometry.width <= 0 || geometry.height <= 0) return 0
   
   const width = Math.abs(geometry.width)
   const height = Math.abs(geometry.height)

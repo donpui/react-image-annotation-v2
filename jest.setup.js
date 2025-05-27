@@ -16,3 +16,17 @@ if (typeof TextEncoder === 'undefined') {
 }
 
 // Setup any global test environment configurations here 
+
+if (typeof HTMLElement !== 'undefined' && !HTMLElement.prototype.getBoundingClientRect) {
+  HTMLElement.prototype.getBoundingClientRect = () => ({
+    width: 100,
+    height: 100,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  });
+} 

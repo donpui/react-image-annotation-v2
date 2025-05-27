@@ -32,10 +32,10 @@ describe('OvalSelector', () => {
       const geometry = createOval();
       
       // Test points on the oval's axes
-      expect(OvalSelector.intersects({ x: 20, y: 15 }, geometry)).toBe(true); // Center-right
-      expect(OvalSelector.intersects({ x: 15, y: 10 }, geometry)).toBe(true); // Top-center
-      expect(OvalSelector.intersects({ x: 15, y: 20 }, geometry)).toBe(true); // Bottom-center
-      expect(OvalSelector.intersects({ x: 10, y: 15 }, geometry)).toBe(true); // Center-left
+      expect(OvalSelector.intersects({ x: 30, y: 15 }, geometry)).toBe(true); // Center-right (geometry.x + width, center.y)
+      expect(OvalSelector.intersects({ x: 20, y: 10 }, geometry)).toBe(true); // Top-center (center.x, geometry.y)
+      expect(OvalSelector.intersects({ x: 20, y: 20 }, geometry)).toBe(true); // Bottom-center (center.x, geometry.y + height)
+      expect(OvalSelector.intersects({ x: 10, y: 15 }, geometry)).toBe(true); // Center-left (geometry.x, center.y)
     });
   });
 
