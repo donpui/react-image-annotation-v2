@@ -1,6 +1,7 @@
-import React, { ComponentType, PureComponent } from 'react';
+import { ComponentType, PureComponent } from 'react';
 // import { getOffsetCoordPercentage, OffsetCoordinates } from './offsetCoordinates'; // OffsetCoordinates not exported
 import { getOffsetCoordPercentage } from './offsetCoordinates'; // This is actually getMouseRelativeCoordinates
+import React from 'react';
 
 export interface RelativeMousePosInjectedProps {
   innerRef: (el: HTMLElement | null) => void;
@@ -99,7 +100,10 @@ const withRelativeMousePos = <P extends object, K extends string = 'relativeMous
 
       // The DecoratedComponent is expected to attach these handlers (e.g. onMouseMove) to its own DOM elements,
       // and call innerRef with its root DOM element.
-      return <DecoratedComponent {...this.props as P} {...hocProps} />;
+      return React.createElement(DecoratedComponent, {
+        ...this.props as P,
+        ...hocProps
+      });
     }
   }
 

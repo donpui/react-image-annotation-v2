@@ -1,4 +1,4 @@
-import React, { ComponentType, PureComponent } from 'react';
+import React, { ComponentType, useState, useEffect, useRef } from 'react';
 
 interface MousePosition {
   pageY: number;
@@ -30,56 +30,41 @@ const isMouseHovering = <P extends object>(
 ) => (
   DecoratedComponent: ComponentType<P & { [key: string]: IsMouseHoveringInjectedProps }>
 ): ComponentType<P> => {
-  type HocState = {
-    isHoveringOver: boolean;
-  };
+  const FunctionalIsMouseHovering: React.FC<P> = (props) => {
+    const [isHoveringOver, setIsHoveringOver] = useState<boolean>(false);
+    const elRef = useRef<HTMLElement | null>(null);
 
-  class IsMouseHovering extends PureComponent<P, HocState> {
-    static displayName: string;
-    private el: HTMLElement | null = null;
-
-    constructor(props: P) {
-      super(props);
-      this.state = {
-        isHoveringOver: false,
+    useEffect(() => {
+      const handleMouseMove = (event: globalThis.MouseEvent) => {
+        const elem = elRef.current;
+        const mousePos = { pageX: event.pageX, pageY: event.pageY };
+        setIsHoveringOver(isMouseOverElement({ elem, e: mousePos }));
       };
-    }
 
-    componentDidMount() {
-      document.addEventListener('mousemove', this.onMouseMove);
-    }
+      document.addEventListener('mousemove', handleMouseMove);
 
-    componentWillUnmount() {
-      document.removeEventListener('mousemove', this.onMouseMove);
-    }
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+      };
+    }, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 
-    onMouseMove = (event: globalThis.MouseEvent) => {
-      const elem = this.el;
-      const mousePos = { pageX: event.pageX, pageY: event.pageY };
-      this.setState({
-        isHoveringOver: isMouseOverElement({ elem, e: mousePos }),
-      });
+    const injectedProps = {
+      [keyAsProp]: {
+        innerRef: (el: HTMLElement | null) => (elRef.current = el),
+        isHoveringOver: isHoveringOver,
+      },
     };
 
-    render() {
-      const injectedProps = {
-        [keyAsProp]: {
-          innerRef: (el: HTMLElement | null) => (this.el = el),
-          isHoveringOver: this.state.isHoveringOver,
-        },
-      };
-      
-      return React.createElement(DecoratedComponent, {
-        ...this.props,
-        ...injectedProps,
-      });
-    }
-  }
+    return React.createElement(DecoratedComponent, {
+      ...props,
+      ...injectedProps,
+    });
+  };
 
   const componentName = DecoratedComponent.displayName || DecoratedComponent.name || 'Component';
-  IsMouseHovering.displayName = `IsMouseHovering(${componentName})`;
+  FunctionalIsMouseHovering.displayName = `IsMouseHovering(${componentName})`;
 
-  return IsMouseHovering;
+  return FunctionalIsMouseHovering;
 };
 
 export default isMouseHovering; 

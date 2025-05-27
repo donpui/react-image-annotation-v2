@@ -1,17 +1,16 @@
 import * as React from 'react';
+import { useRef, useEffect, useCallback, FC } from 'react';
 import styled from 'styled-components';
 import compose from '../utils/compose';
-import isMouseHoveringHOC, { IsMouseHoveringInjectedProps as IHInjectedProps } from '../utils/isMouseHovering.tsx'; // New import, aliased for clarity
-import withRelativeMousePosHOC, { RelativeMousePosInjectedProps as IRMInjectedProps } from '../utils/withRelativeMousePos.tsx'; // New import
+import isMouseHoveringHOC, { IsMouseHoveringInjectedProps as IHInjectedProps } from '../utils/isMouseHovering.tsx';
+import withRelativeMousePosHOC, { RelativeMousePosInjectedProps as IRMInjectedProps } from '../utils/withRelativeMousePos.tsx';
 
-import initialDefaultProps from './defaultProps'; // Renamed to avoid conflict with static defaultProps
-import Overlay from './Overlay'; // Assuming Overlay is or will be typed
+import initialDefaultProps from './defaultProps';
+import Overlay from './Overlay';
 
-// Import components used in default renderers (ensure these have .tsx or .d.ts for best typing)
 import Content from './Content';
 import Editor from './Editor';
 import FancyRectangle from './FancyRectangle';
-// Selectors are likely still JS, TS will treat their exports as `any` unless typed
 import RectangleSelector from '../hocs/RectangleSelector';
 // import PointSelector from '../selectors/PointSelector';
 // import OvalSelector from '../selectors/OvalSelector';
@@ -40,7 +39,7 @@ interface AnnotationData {
 }
 
 interface Selection {
-  showEditor?: boolean; // Made optional as it might not always be present
+  showEditor?: boolean;
   mode?: string;
 }
 
@@ -137,14 +136,14 @@ type AnnotationComponentProps = AnnotationOwnProps & {
 };
 
 // Styled Components
-const Container = styled.div<{ allowTouch?: boolean }>`
+const Container = styled.div<{ $allowTouch?: boolean }>`
   clear: both;
   position: relative;
   width: 100%;
   &:hover ${Overlay} {
     opacity: 1;
   }
-  touch-action: ${(props) => (props.allowTouch ? "pinch-zoom" : "auto")};
+  touch-action: ${(props) => (props.$allowTouch ? "pinch-zoom" : "auto")};
 `;
 
 const Img = styled.img`
@@ -171,358 +170,321 @@ const Target = styled.div`
   /* Target for mouse/touch events for drawing */
 `;
 
-
-class AnnotationClass extends React.Component<AnnotationComponentProps> {
-  static displayName = 'AnnotationClass';
-  static defaultProps: Partial<AnnotationOwnProps> = {
+const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
+  const { selectors: incomingSelectors, ...restIncomingProps } = incomingProps;
+  const props = {
     ...initialDefaultProps,
-    // Ensure all render functions and complex objects from defaultProps are correctly referenced
-    // For example, if defaultProps.js exports functions, they are used directly.
-    // If it exports instantiated selectors, ensure types match.
-    // Type for selectors in defaultProps might need to be `any[]` or cast if they are plain JS objects.
-    selectors: initialDefaultProps.selectors as Selector[], // Cast if imported JS selectors
+    ...restIncomingProps, // Spread the rest of incomingProps
+    // Explicitly handle selectors: use incoming if provided, else use default
+    selectors: incomingSelectors !== undefined ? incomingSelectors : initialDefaultProps.selectors as Selector[],
   };
 
-  private container: HTMLImageElement | null = null;
-  private targetRef = React.createRef<HTMLDivElement>();
+  const {
+    // OwnProps (destructured with defaults applied via spread above)
+    src,
+    alt,
+    style,
+    className,
+    containerRef: parentContainerRefProp, // Renamed
+    children,
+    annotations,
+    type,
+    selectors,
+    value,
+    onChange,
+    onSubmit: onSubmitProp, // Renamed
+    activeAnnotationComparator,
+    activeAnnotations,
+    disableAnnotation,
+    disableSelector,
+    renderSelector,
+    disableEditor,
+    renderEditor,
+    renderHighlight,
+    renderContent,
+    disableOverlay,
+    renderOverlay,
+    allowTouch,
+    onImageMouseUp,
+    onImageMouseDown,
+    onImageMouseMove,
+    onImageClick,
 
-  componentDidMount() {
-    if (this.props.allowTouch) {
-      this.addTargetTouchEventListeners();
-    }
-    if (this.props.containerRef && typeof this.props.containerRef === 'function') {
-      // If containerRef is a callback ref, call it with the main container (not the image)
-      // This part is tricky as setInnerRef is on the Img tag.
-      // The original innerRef was likely for the top most div (Container).
-      // We might need a separate ref for the main Container if parent needs it.
-      // For now, this.props.containerRef refers to the main div (Container styled-component).
-      // Let's adjust setInnerRef or add another ref for the main div.
-    }
-  }
+    // HOC-injected props
+    relativeMousePos,
+    isMouseHovering,
+  } = props;
 
-  componentDidUpdate(prevProps: AnnotationComponentProps) {
-    if (this.props.allowTouch !== prevProps.allowTouch) {
-      if (this.props.allowTouch) {
-        this.addTargetTouchEventListeners();
-      } else {
-        this.removeTargetTouchEventListeners();
-      }
-    }
-  }
-  
-  componentWillUnmount() {
-    if (this.props.allowTouch && this.targetRef.current) {
-      this.removeTargetTouchEventListeners();
-    }
-  }
+  const imageRef = useRef<HTMLImageElement | null>(null); // Replaces this.container
+  const targetRef = useRef<HTMLDivElement | null>(null);
 
-  addTargetTouchEventListeners = () => {
-    const target = this.targetRef.current;
-    if (target) {
-      target.ontouchstart = this.onTouchStart;
-      target.ontouchend = this.onTouchEnd;
-      target.ontouchmove = this.onTargetTouchMove; // Use target touch move for HOC
-      target.ontouchcancel = this.onTargetTouchLeave; // Use target touch leave for HOC
-    }
-  }
+  const { isHoveringOver } = isMouseHovering;
+  const { x: mouseX, y: mouseY } = relativeMousePos;
 
-  removeTargetTouchEventListeners = () => {
-    const target = this.targetRef.current;
-    if (target) {
-      target.ontouchstart = null;
-      target.ontouchend = null;
-      target.ontouchmove = null;
-      target.ontouchcancel = null;
-    }
-  }
+  const getSelectorByType = useCallback((typeToFind?: string): Selector | undefined => {
+    if (!typeToFind) return undefined;
+    return selectors.find(s => s.TYPE === typeToFind);
+  }, [selectors]);
 
-  // Called by Img ref
-  setImageRef = (el: HTMLImageElement | null) => {
-    this.container = el; // For internal geometry calculations
-    // Pass ref to withRelativeMousePos HOC (default key 'relativeMousePos')
-    if (this.props.relativeMousePos && typeof this.props.relativeMousePos.innerRef === 'function') {
-      this.props.relativeMousePos.innerRef(el);
-    }
-  }
-
-  // Called by Container ref
-  setContainerRef = (el: HTMLDivElement | null) => {
-    // Pass ref to isMouseHovering HOC (default key 'isMouseHovering')
-    if (this.props.isMouseHovering && typeof this.props.isMouseHovering.innerRef === 'function') {
-      this.props.isMouseHovering.innerRef(el);
-    }
-    
-    // Handle parent containerRef prop
-    if (this.props.containerRef) {
-      if (typeof this.props.containerRef === 'function') {
-        this.props.containerRef(el);
-      } else {
-        // @ts-ignore
-        (this.props.containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-      }
-    }
-  }
-
-
-  getSelectorByType = (type?: string): Selector | undefined => {
-    if (!type) return undefined;
-    return this.props.selectors.find(s => s.TYPE === type);
-  }
-
-  getTopAnnotationAt = (x: number | null, y: number | null): Annotation | undefined => {
-    const { annotations } = this.props;
-    const { container, getSelectorByType } = this;
-
-    if (!container || x === null || y === null) return undefined;
-
-    const intersections = annotations
-      .map(annotation => {
-        const { geometry } = annotation;
-        if (!geometry) return false; // Should not happen for stored annotations
-        const selector = getSelectorByType(geometry.type);
-        
-        return selector && selector.intersects({ x, y }, geometry, container)
-          ? annotation
-          : false;
-      })
-      .filter((a): a is Annotation => !!a) // Type guard
-      .sort((a, b) => {
-        const aSelector = getSelectorByType(a.geometry.type);
-        const bSelector = getSelectorByType(b.geometry.type);
-
-        if (!aSelector || !bSelector || !this.container) return 0;
-        return aSelector.area(a.geometry, this.container) - bSelector.area(b.geometry, this.container);
-      });
-
-    return intersections[0];
-  }
-
-  // These are attached to the <Container> element to call HOC-provided handlers
-  onTargetMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Call handler from withRelativeMousePos HOC
-    if (this.props.relativeMousePos && typeof this.props.relativeMousePos.onMouseMove === 'function') {
-      this.props.relativeMousePos.onMouseMove(e as unknown as globalThis.MouseEvent);
-    }
-    // Call own prop handler and selector method
-    const syntheticEvent = e as unknown as React.MouseEvent<HTMLElement>; 
-    if (this.props.onImageMouseMove) this.props.onImageMouseMove(syntheticEvent);
-    this.callSelectorMethod('onMouseMove', syntheticEvent);
-  }
-
-  onTargetTouchMove = (e: globalThis.TouchEvent) => { // This is bound to targetRef.current.ontouchmove
-    // Call handler from withRelativeMousePos HOC
-    if (this.props.relativeMousePos && typeof this.props.relativeMousePos.onTouchMove === 'function') {
-      this.props.relativeMousePos.onTouchMove(e);
-    }
-    // Safari specific behavior & selector method
-    if (navigator.userAgent.toLowerCase().includes('safari') && !navigator.userAgent.toLowerCase().includes('chrome') && this.props.allowTouch){
-        e.preventDefault();
-    }
-    this.callSelectorMethod('onTouchMove', e);
-  }
-
-  onTargetMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Call handler from withRelativeMousePos HOC
-    if (this.props.relativeMousePos && typeof this.props.relativeMousePos.onMouseLeave === 'function') {
-      this.props.relativeMousePos.onMouseLeave(e as unknown as globalThis.MouseEvent);
-    }
-  }
-  
-  onTargetTouchLeave = (e: globalThis.TouchEvent) => { // This is bound to targetRef.current.ontouchcancel
-    // Call handler from withRelativeMousePos HOC
-    if (this.props.relativeMousePos && typeof this.props.relativeMousePos.onTouchLeave === 'function') {
-      this.props.relativeMousePos.onTouchLeave(e);
-    }
-  }
-  
-
-  // These are attached to the <Target> element
-  onMouseUp = (e: React.MouseEvent<HTMLElement>) => {
-    if (this.props.onImageMouseUp) this.props.onImageMouseUp(e);
-    this.callSelectorMethod('onMouseUp', e);
-  }
-  onMouseDown = (e: React.MouseEvent<HTMLElement>) => {
-    if (this.props.onImageMouseDown) this.props.onImageMouseDown(e);
-    this.callSelectorMethod('onMouseDown', e);
-  }
-  onClick = (e: React.MouseEvent<HTMLElement>) => {
-    if (this.props.onImageClick) this.props.onImageClick(e);
-    this.callSelectorMethod('onClick', e);
-  }
-
-  // These are bound to targetRef.current.ontouchstart/ontouchend
-  onTouchStart = (e: globalThis.TouchEvent) => {
-    if (navigator.userAgent.toLowerCase().includes('safari') && !navigator.userAgent.toLowerCase().includes('chrome') && this.props.allowTouch){
-        e.preventDefault();
-    }
-    this.callSelectorMethod("onTouchStart", e);
-  }
-  onTouchEnd = (e: globalThis.TouchEvent) => this.callSelectorMethod("onTouchEnd", e);
-
-
-  onSubmit = () => {
-    if (this.props.onSubmit && this.props.value) {
-      this.props.onSubmit(this.props.value);
-    }
-  }
-
-  callSelectorMethod = (methodName: keyof Selector['methods'], e: SelectorEvent | globalThis.TouchEvent) => {
-    if (this.props.disableAnnotation) {
+  const callSelectorMethod = useCallback((methodName: keyof Selector['methods'], e: SelectorEvent | globalThis.TouchEvent) => {
+    if (disableAnnotation) {
       return;
     }
-    const selector = this.getSelectorByType(this.props.type);
+    const selector = getSelectorByType(type);
     if (selector && selector.methods[methodName]) {
       const method = selector.methods[methodName] as (av: AnnotationValue, ev: any) => AnnotationValue | undefined;
-      const value = method(this.props.value || {}, e);
-      if (typeof value === 'undefined') {
+      const resultValue = method(value || {}, e);
+      if (typeof resultValue === 'undefined') {
         if (process.env.NODE_ENV !== 'production') {
           console.error(
-            `Selector method ${String(methodName)} of type ${this.props.type} returned undefined.
+            `Selector method ${String(methodName)} of type ${type} returned undefined.
              Make sure to explicitly return the previous state or new state.`
           );
         }
       } else {
-        if (this.props.onChange) {
-          this.props.onChange(value);
+        if (onChange) {
+          onChange(resultValue);
         }
       }
     }
-  }
+  }, [disableAnnotation, getSelectorByType, type, value, onChange]);
 
-  shouldAnnotationBeActive = (annotation: Annotation, top: Annotation | undefined): boolean => {
-    if (this.props.activeAnnotations) {
-      const isActive = !!this.props.activeAnnotations.find(active => 
-        this.props.activeAnnotationComparator
-          ? this.props.activeAnnotationComparator(annotation, active)
+  const onTouchStartHandler = useCallback((e: globalThis.TouchEvent) => {
+    if (navigator.userAgent.toLowerCase().includes('safari') && !navigator.userAgent.toLowerCase().includes('chrome') && allowTouch){
+        e.preventDefault();
+    }
+    callSelectorMethod("onTouchStart", e);
+  }, [allowTouch, callSelectorMethod]);
+
+  const onTouchEndHandler = useCallback((e: globalThis.TouchEvent) => {
+    callSelectorMethod("onTouchEnd", e);
+  }, [callSelectorMethod]);
+  
+  const onTargetTouchMoveHandler = useCallback((e: globalThis.TouchEvent) => {
+    if (relativeMousePos && typeof relativeMousePos.onTouchMove === 'function') {
+      relativeMousePos.onTouchMove(e);
+    }
+    if (navigator.userAgent.toLowerCase().includes('safari') && !navigator.userAgent.toLowerCase().includes('chrome') && allowTouch){
+        e.preventDefault();
+    }
+    callSelectorMethod('onTouchMove', e);
+  }, [relativeMousePos, allowTouch, callSelectorMethod]);
+
+  const onTargetTouchLeaveHandler = useCallback((e: globalThis.TouchEvent) => {
+    if (relativeMousePos && typeof relativeMousePos.onTouchLeave === 'function') {
+      relativeMousePos.onTouchLeave(e);
+    }
+  }, [relativeMousePos]);
+
+  useEffect(() => {
+    const targetElement = targetRef.current;
+    if (allowTouch && targetElement) {
+      targetElement.ontouchstart = onTouchStartHandler;
+      targetElement.ontouchend = onTouchEndHandler;
+      targetElement.ontouchmove = onTargetTouchMoveHandler;
+      targetElement.ontouchcancel = onTargetTouchLeaveHandler;
+
+      return () => {
+        if (targetElement) {
+          targetElement.ontouchstart = null;
+          targetElement.ontouchend = null;
+          targetElement.ontouchmove = null;
+          targetElement.ontouchcancel = null;
+        }
+      };
+    } else if (targetElement) { // Cleanup if allowTouch becomes false
+        targetElement.ontouchstart = null;
+        targetElement.ontouchend = null;
+        targetElement.ontouchmove = null;
+        targetElement.ontouchcancel = null;
+    }
+  }, [allowTouch, onTouchStartHandler, onTouchEndHandler, onTargetTouchMoveHandler, onTargetTouchLeaveHandler]);
+
+  const setImageRef = useCallback((el: HTMLImageElement | null) => {
+    imageRef.current = el;
+    if (relativeMousePos && typeof relativeMousePos.innerRef === 'function') {
+      relativeMousePos.innerRef(el);
+    }
+  }, [relativeMousePos]);
+
+  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
+    if (isMouseHovering && typeof isMouseHovering.innerRef === 'function') {
+      isMouseHovering.innerRef(el);
+    }
+    if (parentContainerRefProp) {
+      if (typeof parentContainerRefProp === 'function') {
+        parentContainerRefProp(el);
+      } else {
+        (parentContainerRefProp as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      }
+    }
+  }, [isMouseHovering, parentContainerRefProp]);
+
+  const getTopAnnotationAt = useCallback((xPos: number | null, yPos: number | null): Annotation | undefined => {
+    const currentImage = imageRef.current;
+    if (!currentImage || xPos === null || yPos === null) return undefined;
+
+    const intersections = annotations
+      .map(annotation => {
+        const { geometry } = annotation;
+        if (!geometry) return false;
+        const selector = getSelectorByType(geometry.type);
+        
+        return selector && selector.intersects({ x: xPos, y: yPos }, geometry, currentImage)
+          ? annotation
+          : false;
+      })
+      .filter((a): a is Annotation => !!a)
+      .sort((a, b) => {
+        const aSelector = getSelectorByType(a.geometry.type);
+        const bSelector = getSelectorByType(b.geometry.type);
+
+        if (!aSelector || !bSelector || !currentImage) return 0;
+        return aSelector.area(a.geometry, currentImage) - bSelector.area(b.geometry, currentImage);
+      });
+
+    return intersections[0];
+  }, [annotations, getSelectorByType, imageRef]);
+
+  const onTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (relativeMousePos && typeof relativeMousePos.onMouseMove === 'function') {
+      relativeMousePos.onMouseMove(e as unknown as globalThis.MouseEvent);
+    }
+    const syntheticEvent = e as unknown as React.MouseEvent<HTMLElement>; 
+    if (onImageMouseMove) onImageMouseMove(syntheticEvent);
+    callSelectorMethod('onMouseMove', syntheticEvent);
+  }, [relativeMousePos, onImageMouseMove, callSelectorMethod]);
+
+  const onTargetMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (relativeMousePos && typeof relativeMousePos.onMouseLeave === 'function') {
+      relativeMousePos.onMouseLeave(e as unknown as globalThis.MouseEvent);
+    }
+  }, [relativeMousePos]);
+  
+  const onMouseUpHandler = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (onImageMouseUp) onImageMouseUp(e);
+    callSelectorMethod('onMouseUp', e);
+  }, [onImageMouseUp, callSelectorMethod]);
+
+  const onMouseDownHandler = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (onImageMouseDown) onImageMouseDown(e);
+    callSelectorMethod('onMouseDown', e);
+  }, [onImageMouseDown, callSelectorMethod]);
+
+  const onClickHandler = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (onImageClick) onImageClick(e);
+    callSelectorMethod('onClick', e);
+  }, [onImageClick, callSelectorMethod]);
+
+  const onSubmitHandler = useCallback(() => {
+    if (onSubmitProp && value) {
+      onSubmitProp(value);
+    }
+  }, [onSubmitProp, value]);
+
+  const shouldAnnotationBeActive = useCallback((annotation: Annotation, top: Annotation | undefined): boolean => {
+    if (activeAnnotations) {
+      const isActive = !!activeAnnotations.find(active => 
+        activeAnnotationComparator
+          ? activeAnnotationComparator(annotation, active)
           : annotation.data.id === active
       );
       return isActive || top === annotation;
     } else {
       return top === annotation;
     }
-  }
+  }, [activeAnnotations, activeAnnotationComparator]);
 
-  render() {
-    const { props } = this;
-    // Destructure HOC provided props from props.isMouseHovering and props.relativeMousePos
-    const { isHoveringOver } = props.isMouseHovering; // Assuming default key for isMouseHoveringHOC
-    const { x: mouseX, y: mouseY } = props.relativeMousePos; // Assuming default key for withRelativeMousePosHOC
+  const topAnnotationAtMouse = getTopAnnotationAt(mouseX, mouseY);
 
-    // Destructure OwnProps
-    const {
-      renderHighlight,
-      renderContent,
-      renderSelector,
-      renderEditor,
-      renderOverlay,
-      allowTouch,
-      src,
-      alt,
-      style,
-      className,
-      annotations,
-      value,
-      disableSelector,
-      disableEditor,
-      disableOverlay,
-      type,
-      children
-    } = props;
-
-    const topAnnotationAtMouse = this.getTopAnnotationAt(
-      mouseX, // Use destructured mouseX from HOC
-      mouseY  // Use destructured mouseY from HOC
-    );
-
-    return (
-      <Container
-        style={style}
-        ref={this.setContainerRef} // This will call this.props.isMouseHovering.innerRef
-        onMouseLeave={this.onTargetMouseLeave} // This calls this.props.relativeMousePos.onMouseLeave
-        onTouchCancel={this.onTargetTouchLeave as unknown as React.TouchEventHandler<HTMLDivElement>} // This calls this.props.relativeMousePos.onTouchLeave
-        onMouseMove={this.onTargetMouseMove} // This calls this.props.relativeMousePos.onMouseMove
-        allowTouch={allowTouch}
-        className={className}
-      >
-        <Img
-          alt={alt || 'Annotation Image'}
-          src={src}
-          draggable={false}
-          ref={this.setImageRef} // This will call this.props.relativeMousePos.innerRef
-        />
-        <Items>
-          {annotations.map(annotation => {
-            if (!annotation.data || typeof annotation.data.id === 'undefined') {
-              console.warn('Annotation is missing data.id, cannot render highlight:', annotation);
-              return null;
-            }
-            return renderHighlight({
-              key: annotation.data.id,
-              annotation,
-              active: this.shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
-            });
-          })}
-          {!disableSelector &&
-            value &&
-            value.geometry &&
-            renderSelector &&
-            renderSelector({
-              annotation: value
-            })
+  return (
+    <Container
+      style={style}
+      ref={setContainerRef}
+      onMouseLeave={onTargetMouseLeave}
+      onTouchCancel={onTargetTouchLeaveHandler as unknown as React.TouchEventHandler<HTMLDivElement>}
+      onMouseMove={onTargetMouseMove}
+      $allowTouch={allowTouch}
+      className={className}
+    >
+      <Img
+        alt={alt || 'Annotation Image'}
+        src={src}
+        draggable={false}
+        ref={setImageRef}
+      />
+      <Items>
+        {annotations.map(annotation => {
+          if (!annotation.data || typeof annotation.data.id === 'undefined') {
+            console.warn('Annotation is missing data.id, cannot render highlight:', annotation);
+            return null;
           }
-        </Items>
-        <Target
-          data-testid="annotation-target"
-          ref={this.targetRef} // For native touch events and selector interactions
-          onClick={this.onClick}
-          onMouseUp={this.onMouseUp}
-          onMouseDown={this.onMouseDown}
-          // onMouseMove is handled by Container via onTargetMouseMove for HOC
-          // Touch events are natively bound in addTargetTouchEventListeners, which call HOC handlers like onTargetTouchMove
-        />
-        {!disableOverlay && renderOverlay &&
-          renderOverlay({
-            type: type,
+          return renderHighlight({
+            key: annotation.data.id,
+            annotation,
+            active: shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
+          });
+        })}
+        {!disableSelector &&
+          value &&
+          value.geometry &&
+          renderSelector &&
+          renderSelector({
             annotation: value
           })
         }
-        {annotations.map(annotation => {
-          if (!annotation.data || typeof annotation.data.id === 'undefined') {
-             console.warn('Annotation is missing data.id, cannot render content:', annotation);
-            return null;
-          }
-          return this.shouldAnnotationBeActive(annotation, topAnnotationAtMouse) &&
-            renderContent &&
-            renderContent({
-              key: annotation.data.id,
-              annotation: annotation
-            });
-        })}
-        {!disableEditor &&
-          value &&
-          value.selection &&
-          value.selection.showEditor &&
-          renderEditor &&
-          props.onChange &&
-          props.onSubmit &&
-          renderEditor({
-            annotation: value,
-            onChange: props.onChange,
-            onSubmit: this.onSubmit
-          })
+      </Items>
+      <Target
+        data-testid="annotation-target"
+        ref={targetRef}
+        onClick={onClickHandler}
+        onMouseUp={onMouseUpHandler}
+        onMouseDown={onMouseDownHandler}
+      />
+      {!disableOverlay && renderOverlay &&
+        renderOverlay({
+          type: type,
+          annotation: value
+        })
+      }
+      {annotations.map(annotation => {
+        if (!annotation.data || typeof annotation.data.id === 'undefined') {
+           console.warn('Annotation is missing data.id, cannot render content:', annotation);
+          return null;
         }
-        <div>{children}</div>
-      </Container>
-    );
-  }
-}
+        return shouldAnnotationBeActive(annotation, topAnnotationAtMouse) &&
+          renderContent &&
+          renderContent({
+            key: annotation.data.id,
+            annotation: annotation
+          });
+      })}
+      {!disableEditor &&
+        value &&
+        value.selection &&
+        value.selection.showEditor &&
+        renderEditor &&
+        onChange &&
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        onSubmitProp && // This check is to ensure the onSubmitProp function is provided
+        renderEditor({
+          annotation: value,
+          onChange: onChange,
+          onSubmit: onSubmitHandler
+        })
+      }
+      <div>{children}</div>
+    </Container>
+  );
+};
+
+// AnnotationFunc.displayName = 'AnnotationFunc'; // Optional: for clearer debugging
 
 const ComposedAnnotation = compose(
   isMouseHoveringHOC('isMouseHovering'),
   withRelativeMousePosHOC('relativeMousePos')
-)(AnnotationClass as any) as any as React.ComponentType<AnnotationOwnProps>;
+)(AnnotationFunc as any) as any as React.ComponentType<AnnotationOwnProps>;
 
-// Add runtime check for development
 if (process.env.NODE_ENV !== 'production') {
   ComposedAnnotation.displayName = 'ComposedAnnotation';
 }

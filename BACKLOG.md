@@ -1,6 +1,6 @@
 # Technical
 
-- [ ] Support to React 19
+- [x] Support to React 19
 - [ ] Update react-route v7
 - [ ] Convert to Typescript
 - [ ] Update packages, remove unnecessary or old
@@ -16,3 +16,4 @@
 # Ideas
 
 - [ ] Support video frame annotation
+- [ ] Polygon map
