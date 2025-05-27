@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import NavBar from './components/NavBar'
@@ -24,17 +24,16 @@ const App = () => {
           title='react-image-annotation'
         />
         <Main>
-          <Switch>
+          <Routes>
             <Route
-              exact
               path="/"
-              component={Home}
+              element={<Home />}
             />
             <Route
               path="/docs"
-              component={Docs}
+              element={<Docs />}
             />
-          </Switch>
+          </Routes>
         </Main>
         <Footer />
       </Root>

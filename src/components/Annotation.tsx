@@ -520,7 +520,7 @@ class AnnotationClass extends React.Component<AnnotationComponentProps> {
 const ComposedAnnotation = compose(
   isMouseHoveringHOC('isMouseHovering'),
   withRelativeMousePosHOC('relativeMousePos')
-)(AnnotationClass) as React.ComponentType<AnnotationOwnProps>;
+)(AnnotationClass as any) as any as React.ComponentType<AnnotationOwnProps>;
 
 // Add runtime check for development
 if (process.env.NODE_ENV !== 'production') {

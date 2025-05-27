@@ -9,7 +9,21 @@ const Container = styled.div`
   transition: box-shadow 0.21s ease-in-out;
 `
 
-function Oval (props) {
+interface OvalProps {
+  annotation: {
+    geometry?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+  className?: string;
+  style?: React.CSSProperties;
+  active?: boolean;
+}
+
+function Oval (props: OvalProps) {
   const { geometry } = props.annotation
   if (!geometry) return null
 
@@ -22,7 +36,7 @@ function Oval (props) {
         top: `${geometry.y}%`,
         height: `${geometry.height}%`,
         width: `${geometry.width}%`,
-        boxShadow: props.active && '0 0 1px 1px yellow inset',
+        boxShadow: props.active ? '0 0 1px 1px yellow inset' : undefined,
         ...props.style
       }}
     />
@@ -34,4 +48,4 @@ Oval.defaultProps = {
   style: {}
 }
 
-export default Oval
+export default Oval 

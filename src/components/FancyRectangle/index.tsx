@@ -14,7 +14,20 @@ const Container = styled.div`
   right: 0;
 `
 
-function FancyRectangle (props) {
+interface FancyRectangleProps {
+  annotation: {
+    geometry?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+function FancyRectangle (props: FancyRectangleProps) {
   const { geometry } = props.annotation
 
   if (!geometry) return null
@@ -61,4 +74,4 @@ FancyRectangle.defaultProps = {
   style: {}
 }
 
-export default FancyRectangle
+export default FancyRectangle 

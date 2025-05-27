@@ -939,7 +939,7 @@ function rt(r) {
         top: `${t.y}%`,
         height: `${t.height}%`,
         width: `${t.width}%`,
-        boxShadow: r.active && "0 0 1px 1px yellow inset",
+        boxShadow: r.active ? "0 0 1px 1px yellow inset" : void 0,
         ...r.style
       }
     }
@@ -968,7 +968,7 @@ function ve(r) {
         top: `${t.y}%`,
         height: `${t.height}%`,
         width: `${t.width}%`,
-        boxShadow: r.active && "0 0 1px 1px yellow inset",
+        boxShadow: r.active ? "0 0 1px 1px yellow inset" : void 0,
         ...r.style
       }
     }
@@ -991,7 +991,7 @@ const or = C.div`
 `;
 function ot(r) {
   const { geometry: t } = r.annotation;
-  return t ? /* @__PURE__ */ v.jsx(
+  return !t || typeof t.x > "u" || typeof t.y > "u" || typeof t.width > "u" || typeof t.height > "u" ? null : /* @__PURE__ */ v.jsx(
     or,
     {
       style: {
@@ -1001,10 +1001,9 @@ function ot(r) {
         ...r.style
       },
       className: r.className,
-      geometry: t,
       children: r.annotation.data && r.annotation.data.text
     }
-  ) : null;
+  );
 }
 ot.defaultProps = {
   style: {},

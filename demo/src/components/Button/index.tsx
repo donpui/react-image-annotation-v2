@@ -1,7 +1,11 @@
 import styled, { css } from 'styled-components'
 import { Link } from 'react-router-dom'
 
-const styles = css`
+interface StyledProps {
+  active?: boolean;
+}
+
+const styles = css<StyledProps>`
   background: #24B3C8;
   border: 0;
   color: white;
@@ -26,11 +30,11 @@ const styles = css`
   `}
 `
 
-export default styled.button`
-  ${props => styles}
+export default styled.button<StyledProps>`
+  ${styles}
 `
 
-export const ButtonLink = styled(Link)`
+export const ButtonLink = styled(Link)<StyledProps>`
   text-decoration: none;
-  ${props => styles}
-`
+  ${styles}
+` 

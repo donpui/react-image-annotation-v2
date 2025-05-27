@@ -15,4 +15,4 @@ export default styled.div`
   right: 4px;
   transition: opacity 0.21s ease-in-out;
   user-select: none;
-`
+` 

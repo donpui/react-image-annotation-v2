@@ -28,8 +28,8 @@ export default {
   disableSelector: false,
   disableEditor: false,
   disableOverlay: false,
-  activeAnnotationComparator: (a, b) => a === b,
-  renderSelector: ({ annotation }) => {
+  activeAnnotationComparator: (a: any, b: any) => a === b,
+  renderSelector: ({ annotation }: any) => {
     switch (annotation.geometry.type) {
       case RectangleSelector.TYPE:
         return (
@@ -53,14 +53,14 @@ export default {
         return null
     }
   },
-  renderEditor: ({ annotation, onChange, onSubmit }) => (
+  renderEditor: ({ annotation, onChange, onSubmit }: any) => (
     <Editor
       annotation={annotation}
       onChange={onChange}
       onSubmit={onSubmit}
     />
   ),
-  renderHighlight: ({ key, annotation, active }) => {
+  renderHighlight: ({ key, annotation, active }: any) => {
     switch (annotation.geometry.type) {
       case RectangleSelector.TYPE:
         return (
@@ -90,13 +90,13 @@ export default {
         return null
     }
   },
-  renderContent: ({ key, annotation }) => (
+  renderContent: ({ key, annotation }: any) => (
     <Content
       key={key}
       annotation={annotation}
     />
   ),
-  renderOverlay: ({ type, annotation } = {}) => {
+  renderOverlay: ({ type, annotation }: any = {}) => {
     switch (type) {
       case PointSelector.TYPE:
         return (
@@ -112,4 +112,4 @@ export default {
         )
     }
   }
-}
+} 

@@ -8,7 +8,21 @@ const Container = styled.div`
   transition: box-shadow 0.21s ease-in-out;
 `
 
-function Rectangle (props) {
+interface RectangleProps {
+  annotation: {
+    geometry?: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+  className?: string;
+  style?: React.CSSProperties;
+  active?: boolean;
+}
+
+function Rectangle (props: RectangleProps) {
   const { geometry } = props.annotation
   if (!geometry) return null
 
@@ -21,7 +35,7 @@ function Rectangle (props) {
         top: `${geometry.y}%`,
         height: `${geometry.height}%`,
         width: `${geometry.width}%`,
-        boxShadow: props.active && '0 0 1px 1px yellow inset',
+        boxShadow: props.active ? '0 0 1px 1px yellow inset' : undefined,
         ...props.style
       }}
     />
@@ -33,4 +47,4 @@ Rectangle.defaultProps = {
   style: {}
 }
 
-export default Rectangle
+export default Rectangle 

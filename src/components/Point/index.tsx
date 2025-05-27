@@ -15,7 +15,16 @@ const Container = styled.div`
   width: 16px;
 ` 
 
-function Point (props) {
+interface PointProps {
+  annotation: {
+    geometry?: {
+      x: number;
+      y: number;
+    };
+  };
+}
+
+function Point (props: PointProps) {
   const { geometry } = props.annotation
   if (!geometry) return null
 
@@ -29,5 +38,4 @@ function Point (props) {
   )
 }
 
-
-export default Point
+export default Point 
