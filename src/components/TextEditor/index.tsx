@@ -34,23 +34,34 @@ const Button = styled.div`
   }
 `
 
-function TextEditor (props) {
+interface TextEditorProps {
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onSubmit: () => void;
+  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  value?: string;
+}
+
+const TextEditor: React.FC<TextEditorProps> = ({
+  onChange,
+  onSubmit,
+  onFocus,
+  onBlur,
+  value
+}) => {
   return (
     <React.Fragment>
       <Inner>
         <textarea
           placeholder='Write description'
-          onFocus={props.onFocus}
-          onBlur={props.onBlur}
-          onChange={props.onChange}
-          value={props.value}
-        >
-        </textarea>
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onChange={onChange}
+          value={value}
+        />
       </Inner>
-      {props.value && (
-        <Button
-          onClick={props.onSubmit}
-        >
+      {value && (
+        <Button onClick={onSubmit}>
           Submit
         </Button>
       )}

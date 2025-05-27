@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import TextEditor from '../TextEditor'
+import { AnnotationValue } from '../Annotation'
 
 const fadeInScale = keyframes`
   from {
@@ -28,38 +29,47 @@ const Container = styled.div`
   overflow: hidden;
 `
 
-function Editor (props) {
-  const { geometry } = props.annotation
-  if (!geometry) return null
+interface EditorProps {
+  annotation: AnnotationValue;
+  onChange: (annotation: AnnotationValue) => void;
+  onSubmit: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+const Editor: React.FC<EditorProps> = ({
+  annotation,
+  onChange,
+  onSubmit,
+  className = '',
+  style = {}
+}) => {
+  const { geometry } = annotation;
+  if (!geometry) return null;
 
   return (
     <Container
-      className={props.className}
+      className={className}
       style={{
         position: 'absolute',
         left: `${geometry.x}%`,
         top: `${geometry.y + geometry.height}%`,
-        ...props.style
+        ...style
       }}
     >
       <TextEditor
-        onChange={e => props.onChange({
-          ...props.annotation,
+        onChange={e => onChange({
+          ...annotation,
           data: {
-            ...props.annotation.data,
+            ...annotation.data,
             text: e.target.value
           }
         })}
-        onSubmit={props.onSubmit}
-        value={props.annotation.data && props.annotation.data.text}
+        onSubmit={onSubmit}
+        value={annotation.data?.text}
       />
     </Container>
-  )
-}
+  );
+};
 
-Editor.defaultProps = {
-  className: '',
-  style: {}
-}
-
-export default Editor
+export default Editor;

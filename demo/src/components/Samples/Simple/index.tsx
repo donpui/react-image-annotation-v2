@@ -1,31 +1,36 @@
 import React, { Component } from 'react'
-import Annotation from '../../../../../src'
+import { Annotation, AnnotationType } from '../../../../../src'
 
 import Root from '../../Root'
 import img from '../../../img.jpeg'
 
-export default class Simple extends Component {
-  state = {
+interface SimpleState {
+  annotations: AnnotationType[]
+  annotation: Partial<AnnotationType>
+}
+
+export default class Simple extends Component<{}, SimpleState> {
+  state: SimpleState = {
     annotations: [],
     annotation: {}
   }
 
-  onChange = (annotation) => {
+  onChange = (annotation: Partial<AnnotationType>) => {
     this.setState({ annotation })
   }
 
-  onSubmit = (annotation) => {
+  onSubmit = (annotation: Partial<AnnotationType>) => {
     const { geometry, data } = annotation
 
     this.setState({
       annotation: {},
       annotations: this.state.annotations.concat({
-        geometry,
+        geometry: geometry!,
         data: {
           ...data,
           id: Math.random()
         }
-      })
+      } as AnnotationType)
     })
   }
 

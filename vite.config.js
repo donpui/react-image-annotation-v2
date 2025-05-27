@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.js'),
+      entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ReactImageAnnotation',
       fileName: (format) => `react-image-annotation.${format}.js`,
     },
@@ -18,6 +18,7 @@ export default defineConfig({
           'react-dom': 'ReactDOM',
           'styled-components': 'styled',
         },
+        exports: 'named',
       },
     },
   },

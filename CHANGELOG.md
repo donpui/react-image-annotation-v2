@@ -1,3 +1,8 @@
+## 1.0.0
+
+- Updated packages. Support React 18, 19
+- Partly migration to typescript
+
 ## 0.9.8
 
 ### Improvements

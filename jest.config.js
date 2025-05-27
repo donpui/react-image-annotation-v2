@@ -7,10 +7,14 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
   },
-  testMatch: ['<rootDir>/tests/**/*.spec.js', '<rootDir>/tests/**/*.test.js'],
-  collectCoverageFrom: ['src/**/*.{js,jsx}'],
+  testMatch: [
+    '<rootDir>/tests/**/*.spec.[jt]s?(x)',
+    '<rootDir>/tests/**/*.test.[jt]s?(x)'
+  ],
+  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'],
   coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   verbose: true
 }; 

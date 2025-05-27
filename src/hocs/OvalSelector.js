@@ -58,6 +58,7 @@ export const methods = {
         }
       }
     }
+    return annotation;
   },
   onMouseUp(annotation, e) {
     if (annotation.selection && annotation.selection.mode === 'SELECTING') {
@@ -88,6 +89,7 @@ export const methods = {
         }
       }
     }
+    return annotation;
   }
 }
 

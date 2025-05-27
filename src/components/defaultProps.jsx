@@ -96,7 +96,7 @@ export default {
       annotation={annotation}
     />
   ),
-  renderOverlay: ({ type, annotation }) => {
+  renderOverlay: ({ type, annotation } = {}) => {
     switch (type) {
       case PointSelector.TYPE:
         return (

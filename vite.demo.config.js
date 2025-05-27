@@ -10,6 +10,11 @@ export default defineConfig({
   root: path.resolve(__dirname, 'demo/src'),
   publicDir: path.resolve(__dirname, 'demo/public'),
   plugins: [react()],
+  resolve: {
+    alias: {
+      'react-image-annotation-v2': path.resolve(__dirname, 'src/index.ts'),
+    },
+  },
   build: {
     outDir: path.resolve(__dirname, 'demo/dist'),
     emptyOutDir: true,
