@@ -3,16 +3,28 @@ import { getCoordPercentage } from '../utils/offsetCoordinates';
 export const TYPE = 'RECTANGLE'
 
 export function intersects({ x, y }, geometry) {
-  if (x < geometry.x) return false
-  if (y < geometry.y) return false
-  if (x > geometry.x + geometry.width) return false
-  if (y > geometry.y + geometry.height) return false
+  if (!geometry) return false
+  
+  const x1 = Math.min(geometry.x, geometry.x + geometry.width)
+  const x2 = Math.max(geometry.x, geometry.x + geometry.width)
+  const y1 = Math.min(geometry.y, geometry.y + geometry.height)
+  const y2 = Math.max(geometry.y, geometry.y + geometry.height)
+
+  if (x < x1) return false
+  if (y < y1) return false
+  if (x > x2) return false
+  if (y > y2) return false
 
   return true
 }
 
 export function area(geometry) {
-  return geometry.height * geometry.width
+  if (!geometry) return 0
+  if (!geometry.width || !geometry.height) return 0
+  
+  const width = Math.abs(geometry.width)
+  const height = Math.abs(geometry.height)
+  return width * height
 }
 
 export const methods = {

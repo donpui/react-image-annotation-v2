@@ -1,7 +1,7 @@
 import { getCoordPercentage } from '../utils/offsetCoordinates';
 const MARGIN = 6
 
-const marginToPercentage = (container) => ({
+const marginToPercentage = (container = { width: 100, height: 100 }) => ({
   marginX: MARGIN / container.width * 100,
   marginY: MARGIN / container.height * 100
 })
@@ -9,20 +9,19 @@ const marginToPercentage = (container) => ({
 export const TYPE = 'POINT'
 
 export function intersects ({ x, y }, geometry, container) {
+  if (!geometry) return false
+
   const { marginX, marginY } = marginToPercentage(container)
+  const margin = Math.min(marginX, marginY) / 2
 
-  if (x < geometry.x - marginX) return false
-  if (y < geometry.y - marginY) return false
-  if (x > geometry.x + marginX) return false
-  if (y > geometry.y + marginY) return false
+  const dx = Math.abs(x - geometry.x)
+  const dy = Math.abs(y - geometry.y)
 
-  return true
+  return dx <= margin && dy <= margin
 }
 
 export function area (geometry, container) {
-  const { marginX, marginY } = marginToPercentage(container)
-
-  return marginX * marginY
+  return 0
 }
 
 export const methods = {
@@ -43,7 +42,7 @@ export const methods = {
           type: TYPE,
         }
       }
-    } else{
+    } else {
       return {}
     }
   }

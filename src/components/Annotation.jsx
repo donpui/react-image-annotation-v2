@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import T from 'prop-types'
 import styled from 'styled-components'
 import compose from '../utils/compose'
-import isMouseHovering from '../utils/isMouseHovering'
-import withRelativeMousePos from '../utils/withRelativeMousePos'
+import isMouseHovering from '../utils/isMouseHovering.jsx'
+import withRelativeMousePos from '../utils/withRelativeMousePos.jsx'
 
 import defaultProps from './defaultProps'
 import Overlay from './Overlay'
@@ -282,7 +282,7 @@ export default compose(
           }
         </Items>
         <Target
-          innerRef={this.targetRef}
+          ref={this.targetRef}
           onClick={this.onClick}
           onMouseUp={this.onMouseUp}
           onMouseDown={this.onMouseDown}

@@ -1,6 +1,8 @@
 React Image Annotation
 =========================
 
+> **Prerequisites:** Node.js >=18, npm >=8
+
 An infinitely customizable image annotation library built on React
 
 ![Annotation demo](demo.gif)

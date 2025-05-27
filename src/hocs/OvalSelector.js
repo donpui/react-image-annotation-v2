@@ -5,21 +5,33 @@ const square = n => Math.pow(n, 2)
 export const TYPE = 'OVAL'
 
 export function intersects({ x, y }, geometry) {
-  const rx = geometry.width / 2
-  const ry = geometry.height / 2
-  const h = geometry.x + rx
-  const k = geometry.y + ry
+  if (!geometry) return false;
+  if (!geometry.width || !geometry.height) return false;
 
-  const value = square(x - h) / square(rx) + square(y - k) / square(ry)
+  const width = Math.abs(geometry.width)
+  const height = Math.abs(geometry.height)
+  const center = {
+    x: geometry.x + width / 2,
+    y: geometry.y + height / 2
+  }
 
-  return value <= 1
+  const rx = width / 2
+  const ry = height / 2
+
+  if (rx === 0 || ry === 0) return false
+
+  const relX = x - center.x
+  const relY = y - center.y
+
+  return (square(relX) / square(rx)) + (square(relY) / square(ry)) <= 1
 }
 
 export function area(geometry) {
-  const rx = geometry.width / 2
-  const ry = geometry.height / 2
+  if (!geometry) return 0;
+  if (!geometry.width || !geometry.height) return 0;
+  if (geometry.width <= 0 || geometry.height <= 0) return 0;
 
-  return Math.PI * rx * ry
+  return Math.PI * Math.abs(geometry.width) * Math.abs(geometry.height) / 4
 }
 
 export const methods = {
@@ -33,13 +45,49 @@ export const methods = {
     return pointerMove(annotation, e)
   },
   onMouseDown(annotation, e) {
-    return pointerDown(annotation, e)
+    if (!annotation.geometry) {
+      const { x: anchorX, y: anchorY } = getCoordPercentage(e)
+
+      return {
+        ...annotation,
+        selection: {
+          ...annotation.selection,
+          mode: 'SELECTING',
+          anchorX,
+          anchorY
+        }
+      }
+    }
   },
   onMouseUp(annotation, e) {
-    return pointerUp(annotation, e)
+    if (annotation.selection && annotation.selection.mode === 'SELECTING') {
+      return {
+        ...annotation,
+        selection: {
+          ...annotation.selection,
+          showEditor: true,
+          mode: 'EDITING'
+        }
+      }
+    }
   },
   onMouseMove(annotation, e) {
-    return pointerMove(annotation, e)
+    if (annotation.selection && annotation.selection.mode === 'SELECTING') {
+      const { anchorX, anchorY } = annotation.selection
+      const { x, y } = getCoordPercentage(e)
+      
+      return {
+        ...annotation,
+        geometry: {
+          ...annotation.geometry,
+          type: TYPE,
+          x: Math.min(anchorX, x),
+          y: Math.min(anchorY, y),
+          width: Math.abs(x - anchorX),
+          height: Math.abs(y - anchorY)
+        }
+      }
+    }
   }
 }
 

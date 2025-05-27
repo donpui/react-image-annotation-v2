@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import styled from 'styled-components'
 
 import NavBar from './components/NavBar'
@@ -14,21 +14,22 @@ const Main = styled.main`
 `
 
 export default () => (
-  <Router basename='/react-image-annotation'>
+  <Router basename={import.meta.env.DEV ? '' : '/react-image-annotation'}>
     <Root>
       <NavBar
         title='react-image-annotation'
       />
       <Main>
-        <Route
-          exact
-          path='/'
-          component={Home}
-        />
-        <Route
-          path='/docs'
-          component={Docs}
-        />
+        <Routes>
+          <Route
+            path="/"
+            element={<Home />}
+          />
+          <Route
+            path="/docs"
+            element={<Docs />}
+          />
+        </Routes>
       </Main>
       <Footer />
     </Root>
