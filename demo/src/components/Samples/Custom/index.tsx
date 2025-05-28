@@ -1,12 +1,8 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../src';
-import {
-  // PointSelector, // Not used directly in this example's state/logic
-  // RectangleSelector,
-  // OvalSelector
-} from '../../../../../src/selectors.ts';
+// import { PointSelector, RectangleSelector, OvalSelector } from '../../../../../src/selectors.ts';
 // import Button from '../../Button/index.tsx'; // Button not used for type selection here
-const mocks: any = { annotations: [] }; // Temporary untyped mock with default
+import mocks from '../../../mocks.js';
 import img from '../../../img.jpeg';
 import defaultProps from '../../../../../src/components/defaultProps.tsx';
 
@@ -162,64 +158,52 @@ function renderOverlay() {
   );
 }
 
-interface CustomState {
-  annotations: AnnotationType[];
-  annotation: Partial<AnnotationType>; // For new annotation creation
-  type?: string; // Optional: if you want to change selector type
-}
+const annotationsData = (mocks as any).annotations;
 
-export default class Custom extends Component<{}, CustomState> {
-  state: CustomState = {
-    annotations: (mocks.annotations[0] ? [mocks.annotations[0]] : []) as AnnotationType[], // Ensure mocks.annotations[0] exists
-    annotation: {},
-    // type: RectangleSelector.TYPE // Default type if allowing new annotations
+const Custom: React.FC = () => {
+  const [annotations, setAnnotations] = useState<AnnotationType[]>(annotationsData[0] ? [annotationsData[0]] : []);
+  const [annotation, setAnnotation] = useState<Partial<AnnotationType>>({});
+  // const [type, setType] = useState<string | undefined>(undefined); // Uncomment if you want to use type
+
+  const onChange = useCallback((annotation: Partial<AnnotationType>) => {
+    setAnnotation(annotation);
+  }, []);
+
+  const onSubmit = useCallback((annotation: Partial<AnnotationType>) => {
+    const { geometry, data } = annotation;
+    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') {
+      setAnnotations(prevAnnotations => prevAnnotations.concat({
+        geometry: geometry as AnnotationType['geometry'],
+        data: {
+          ...(data as Partial<AnnotationType['data']>),
+          id: data.id || Math.random()
+        }
+      } as AnnotationType));
+      setAnnotation({});
+    }
+  }, []);
+
+  const annotationProps: AnnotationOwnProps = {
+    ...defaultProps,
+    src: img,
+    alt: 'Two pebbles anthropomorphized holding hands',
+    annotations,
+    // type, // Uncomment if you want to use type
+    value: annotation as any,
+    onChange: onChange as any,
+    onSubmit: onSubmit as any,
+    renderSelector: renderSelector as any,
+    renderEditor: renderEditor as any,
+    renderHighlight: renderHighlight as any,
+    renderContent: renderContent as any,
+    renderOverlay: renderOverlay,
   };
 
-  onChange = (annotation: Partial<AnnotationType>) => {
-    this.setState({ annotation });
-  }
+  return (
+    <div>
+      <Annotation {...annotationProps} />
+    </div>
+  );
+};
 
-  onSubmit = (annotation: Partial<AnnotationType>) => {
-    const { geometry, data } = annotation;
-    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') { // Basic checks
-      this.setState(prevState => ({
-        annotation: {},
-        annotations: prevState.annotations.concat({
-          geometry: geometry as AnnotationType['geometry'],
-          data: {
-            ...(data as Partial<AnnotationType['data']>),
-            id: data.id || Math.random()
-          }
-        } as AnnotationType)
-      }));
-    }
-  }
-
-  // onChangeType is not used as there are no buttons to change type in this example
-
-  render() {
-    const annotationProps: AnnotationOwnProps = {
-      ...defaultProps, // Removed Partial cast
-      src: img,
-      alt: 'Two pebbles anthropomorphized holding hands',
-      annotations: this.state.annotations,
-      type: this.state.type, // Can be set if you add type selection
-      value: this.state.annotation as any, // Workaround for AnnotationValue
-      onChange: this.onChange as any,      // Workaround
-      onSubmit: this.onSubmit as any,      // Workaround
-      renderSelector: renderSelector as any, // Cast because internal AnnotationValue vs our types
-      renderEditor: renderEditor as any,
-      renderHighlight: renderHighlight as any,
-      renderContent: renderContent as any,
-      renderOverlay: renderOverlay,
-    };
-
-    return (
-      <div>
-        <Annotation
-          {...annotationProps}
-        />
-      </div>
-    );
-  }
-} 
+export default Custom; 

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useCallback } from 'react'
 import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../src'
 import {
   PointSelector,
@@ -9,106 +9,97 @@ import {
 import Button from '../../Button/index.tsx'
 import defaultProps from '../../../../../src/components/defaultProps.tsx'
 
-import mocks from '../../../mocks'
+import mocks from '../../../mocks.js'
 import img from '../../../img.jpeg'
 
-interface TouchState {
-  type: string;
-  annotations: AnnotationType[];
-  annotation: Partial<AnnotationType>;
-  allowTouch: boolean;
-}
+const annotationsData = (mocks as any).annotations;
 
-export default class Touch extends Component<{}, TouchState> {
-  state: TouchState = {
-    type: RectangleSelector.TYPE,
-    annotations: mocks.annotations as AnnotationType[],
-    annotation: {},
-    allowTouch: true
-  }
+const Touch: React.FC = () => {
+  const [type, setType] = useState<string>(RectangleSelector.TYPE);
+  const [annotations, setAnnotations] = useState<AnnotationType[]>(annotationsData as AnnotationType[]);
+  const [annotation, setAnnotation] = useState<Partial<AnnotationType>>({});
+  const [allowTouch, setAllowTouch] = useState<boolean>(true);
 
-  onChange = (annotation: Partial<AnnotationType>) => {
-    this.setState({ annotation })
-  }
+  const onChange = useCallback((annotation: Partial<AnnotationType>) => {
+    setAnnotation(annotation);
+  }, []);
 
-  onSubmit = (annotation: Partial<AnnotationType>) => {
-    const { geometry, data } = annotation
-
-    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number' && typeof geometry.width === 'number' && typeof geometry.height === 'number') {
-      this.setState({
-        annotation: {},
-        annotations: this.state.annotations.concat({
-          geometry: geometry as AnnotationType['geometry'],
-          data: {
-            ...(data as Partial<AnnotationType['data']>),
-            id: Math.random()
-          }
-        } as AnnotationType)
-      })
+  const onSubmit = useCallback((annotation: Partial<AnnotationType>) => {
+    const { geometry, data } = annotation;
+    if (
+      geometry &&
+      data &&
+      geometry.type &&
+      typeof geometry.x === 'number' &&
+      typeof geometry.y === 'number' &&
+      typeof geometry.width === 'number' &&
+      typeof geometry.height === 'number'
+    ) {
+      setAnnotations(prevAnnotations => prevAnnotations.concat({
+        geometry: geometry as AnnotationType['geometry'],
+        data: {
+          ...(data as Partial<AnnotationType['data']>),
+          id: Math.random()
+        }
+      } as AnnotationType));
+      setAnnotation({});
     } else {
-      this.setState({ annotation })
-      console.warn("Attempted to submit an incomplete annotation", annotation)
+      setAnnotation(annotation);
+      console.warn('Attempted to submit an incomplete annotation', annotation);
     }
-  }
+  }, []);
 
-  onChangeType = (e: React.MouseEvent<HTMLButtonElement>) => {
-    this.setState({
-      annotation: {},
-      type: e.currentTarget.innerHTML
-    })
-  }
+  const onChangeType = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    setAnnotation({});
+    setType(e.currentTarget.innerHTML);
+  }, []);
 
-  toggleAllowTouch = () => {
-    this.setState(prevState => ({ allowTouch: !prevState.allowTouch }))
-  }
+  const toggleAllowTouch = useCallback(() => {
+    setAllowTouch(prev => !prev);
+  }, []);
 
-  render() {
-    const annotationProps: AnnotationOwnProps = {
-      ...defaultProps,
-      src: img,
-      alt: "Two pebbles anthropomorphized holding hands",
-      annotations: this.state.annotations,
-      allowTouch: this.state.allowTouch,
-      type: this.state.type,
-      value: this.state.annotation as any,
-      onChange: this.onChange as any,
-      onSubmit: this.onSubmit as any,
-    };
+  const annotationProps: AnnotationOwnProps = {
+    ...defaultProps,
+    src: img,
+    alt: 'Two pebbles anthropomorphized holding hands',
+    annotations,
+    allowTouch,
+    type,
+    value: annotation as any,
+    onChange: onChange as any,
+    onSubmit: onSubmit as any,
+  };
 
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <Button onClick={this.toggleAllowTouch}>
-            {this.state.allowTouch
-              ? 'Stop allowing touch'
-              : 'Start allowing touch'}
-          </Button>
-        </div>
-        <div>
-          <Button
-            onClick={this.onChangeType}
-            active={RectangleSelector.TYPE === this.state.type}
-          >
-            {RectangleSelector.TYPE}
-          </Button>
-          <Button
-            onClick={this.onChangeType}
-            active={PointSelector.TYPE === this.state.type}
-          >
-            {PointSelector.TYPE}
-          </Button>
-
-          <Button
-            onClick={this.onChangeType}
-            active={OvalSelector.TYPE === this.state.type}
-          >
-            {OvalSelector.TYPE}
-          </Button>
-        </div>
-        <Annotation
-          {...annotationProps}
-        />
+        <Button onClick={toggleAllowTouch}>
+          {allowTouch ? 'Stop allowing touch' : 'Start allowing touch'}
+        </Button>
       </div>
-    )
-  }
-} 
+      <div>
+        <Button
+          onClick={onChangeType}
+          active={RectangleSelector.TYPE === type}
+        >
+          {RectangleSelector.TYPE}
+        </Button>
+        <Button
+          onClick={onChangeType}
+          active={PointSelector.TYPE === type}
+        >
+          {PointSelector.TYPE}
+        </Button>
+        <Button
+          onClick={onChangeType}
+          active={OvalSelector.TYPE === type}
+        >
+          {OvalSelector.TYPE}
+        </Button>
+      </div>
+      <Annotation {...annotationProps} />
+    </div>
+  );
+};
+
+export default Touch; 

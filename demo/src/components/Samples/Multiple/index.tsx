@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Annotation from 'react-image-annotation-v2'
-import { AnnotationType, RectangleSelector, PointSelector, OvalSelector } from 'react-image-annotation-v2'
+import Annotation, { AnnotationType } from '../../../../../src';
+import { RectangleSelector, PointSelector, OvalSelector } from '../../../../../src';
+import defaultProps from '../../../../../src/components/defaultProps.tsx';
 
 import Button from '../../Button/index.tsx';
 import img from '../../../img.jpeg';
@@ -63,6 +64,7 @@ const Multiple: React.FC = () => {
       </Button>
 
       <Annotation
+        {...defaultProps}
         src={img}
         alt="Two pebbles anthropomorphized holding hands"
         annotations={annotations}

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../src';
 import Root from '../../Root/index.tsx';
@@ -24,107 +24,90 @@ const Comment = styled.div`
   }
 `;
 
-interface LinkedState {
-  activeAnnotations: Array<string | number>; // IDs can be string or number
-  annotations: AnnotationType[];
-  annotation: Partial<AnnotationType>; // For new annotation
-  type?: string; // For the selector type, if used for new annotations
-}
+const initialAnnotations: AnnotationType[] = [
+  {
+    data: { text: 'Hello!', id: 0.5986265691759928 },
+    geometry: { type: 'RECTANGLE', x: 25.571428571428573, y: 33, width: 21.142857142857142, height: 34 }
+  },
+  {
+    data: { text: 'Hi!', id: 0.5986265691759929 },
+    geometry: { type: 'RECTANGLE', x: 50.571428571428573, y: 33, width: 21.142857142857142, height: 34 }
+  }
+];
 
-export default class Linked extends Component<{}, LinkedState> {
-  state: LinkedState = {
-    activeAnnotations: [],
-    annotations: [
-      {
-        data: { text: 'Hello!', id: 0.5986265691759928 },
-        geometry: { type: 'RECTANGLE', x: 25.571428571428573, y: 33, width: 21.142857142857142, height: 34 }
-      },
-      {
-        data: { text: 'Hi!', id: 0.5986265691759929 },
-        geometry: { type: 'RECTANGLE', x: 50.571428571428573, y: 33, width: 21.142857142857142, height: 34 }
-      }
-    ] as AnnotationType[], // Cast initial annotations
-    annotation: {},
-    type: RectangleSelector.TYPE // Enable drawing by default
+const Linked: React.FC = () => {
+  const [activeAnnotations, setActiveAnnotations] = useState<Array<string | number>>([]);
+  const [annotations, setAnnotations] = useState<AnnotationType[]>(initialAnnotations);
+  const [annotation, setAnnotation] = useState<Partial<AnnotationType>>({});
+  const [type] = useState<string>(RectangleSelector.TYPE);
+
+  const onChange = useCallback((annotation: Partial<AnnotationType>) => {
+    setAnnotation(annotation);
+  }, []);
+
+  const onSubmit = useCallback((annotation: Partial<AnnotationType>) => {
+    const { geometry, data } = annotation;
+    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') {
+      setAnnotations(prevAnnotations => prevAnnotations.concat({
+        geometry: geometry as AnnotationType['geometry'],
+        data: {
+          ...(data as Partial<AnnotationType['data']>),
+          id: data.id || Math.random()
+        }
+      } as AnnotationType));
+      setAnnotation({});
+    }
+  }, []);
+
+  const onMouseOver = useCallback((id: string | number) => (e: React.MouseEvent) => {
+    setActiveAnnotations(prev => [...prev, id]);
+  }, []);
+
+  const onMouseOut = useCallback((id: string | number) => (e: React.MouseEvent) => {
+    setActiveAnnotations(prev => {
+      const index = prev.indexOf(id);
+      if (index === -1) return prev;
+      return [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1)
+      ];
+    });
+  }, []);
+
+  const activeAnnotationComparator = useCallback((annotation: AnnotationType, activeId: string | number): boolean => {
+    return annotation.data.id === activeId;
+  }, []);
+
+  const annotationProps: AnnotationOwnProps = {
+    ...defaultProps,
+    src: img,
+    alt: 'Two pebbles anthropomorphized holding hands',
+    activeAnnotationComparator: activeAnnotationComparator as any,
+    activeAnnotations,
+    annotations,
+    type: type || RectangleSelector.TYPE,
+    value: annotation as any,
+    onChange: onChange as any,
+    onSubmit: onSubmit as any,
   };
 
-  onChange = (annotation: Partial<AnnotationType>) => {
-    this.setState({ annotation });
-  }
+  return (
+    <Root>
+      <Annotation {...annotationProps} />
+      <h4>Annotations</h4>
+      <Comments>
+        {annotations.map(annotation => (
+          <Comment
+            onMouseOver={onMouseOver(annotation.data.id)}
+            onMouseOut={onMouseOut(annotation.data.id)}
+            key={annotation.data.id}
+          >
+            {annotation.data.text}
+          </Comment>
+        ))}
+      </Comments>
+    </Root>
+  );
+};
 
-  onSubmit = (annotation: Partial<AnnotationType>) => {
-    const { geometry, data } = annotation;
-    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') { // Basic checks
-      this.setState(prevState => ({
-        annotation: {},
-        annotations: prevState.annotations.concat({
-          geometry: geometry as AnnotationType['geometry'],
-          data: {
-            ...(data as Partial<AnnotationType['data']>),
-            id: data.id || Math.random()
-          }
-        } as AnnotationType)
-      }));
-    }
-  }
-
-  onMouseOver = (id: string | number) => (e: React.MouseEvent) => {
-    this.setState(prevState => ({
-      activeAnnotations: [
-        ...prevState.activeAnnotations,
-        id
-      ]
-    }));
-  }
-
-  onMouseOut = (id: string | number) => (e: React.MouseEvent) => {
-    this.setState(prevState => {
-      const index = prevState.activeAnnotations.indexOf(id);
-      if (index === -1) return prevState; 
-      return {
-        ...prevState, // Spread previous state
-        activeAnnotations: [
-          ...prevState.activeAnnotations.slice(0, index),
-          ...prevState.activeAnnotations.slice(index + 1)
-        ]
-      };
-    });
-  }
-
-  activeAnnotationComparator = (annotation: AnnotationType, activeId: string | number): boolean => {
-    return annotation.data.id === activeId;
-  }
-
-  render() {
-    const annotationProps: AnnotationOwnProps = {
-      ...defaultProps,
-      src: img,
-      alt: 'Two pebbles anthropomorphized holding hands',
-      activeAnnotationComparator: this.activeAnnotationComparator as any,
-      activeAnnotations: this.state.activeAnnotations,
-      annotations: this.state.annotations,
-      type: this.state.type || RectangleSelector.TYPE,
-      value: this.state.annotation as any,
-      onChange: this.onChange as any,
-      onSubmit: this.onSubmit as any,
-    };
-
-    return (
-      <Root>
-        <Annotation {...annotationProps} />
-        <h4>Annotations</h4>
-        <Comments>
-          {this.state.annotations.map(annotation => (
-            <Comment
-              onMouseOver={this.onMouseOver(annotation.data.id)}
-              onMouseOut={this.onMouseOut(annotation.data.id)}
-              key={annotation.data.id}
-            >
-              {annotation.data.text}
-            </Comment>
-          ))}
-        </Comments>
-      </Root>
-    );
-  }
-} 
+export default Linked; 

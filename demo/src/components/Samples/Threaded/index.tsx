@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
-import Annotation, { Annotation as AnnotationType, AnnotationOwnProps } from '../../../../../src';
+import React, { useState, useCallback } from 'react';
+import Annotation from '../../../../../src';
+import type { AnnotationType, AnnotationOwnProps } from '../../../../../src';
 import styled, { keyframes } from 'styled-components';
-import {
-  RectangleSelector
-} from '../../../../../src/selectors.ts';
+import { RectangleSelector } from '../../../../../src/selectors.ts';
 import TextEditor from '../../../../../src/components/TextEditor';
 import Root from '../../Root/index.tsx';
 import img from '../../../img.jpeg';
@@ -19,36 +18,29 @@ interface CommentData {
 type BaseAnnotationData = AnnotationType['data'];
 
 interface AnnotationDataWithComments extends BaseAnnotationData {
+  id: string | number;
   comments: CommentData[];
 }
 
-interface AnnotationWithComments extends AnnotationType {
+interface AnnotationWithComments extends Omit<AnnotationType, 'data'> {
   data: AnnotationDataWithComments;
 }
 
 interface ThreadedEditorProps {
-  annotation: AnnotationWithComments; 
+  annotation: AnnotationWithComments;
   onChange: (annotation: AnnotationWithComments) => void;
   onSubmit: () => void;
   className?: string;
   style?: React.CSSProperties;
 }
 
-interface ThreadedEditorState {
-  text: string;
-}
-
 interface ThreadedContentProps {
   annotation: AnnotationWithComments;
   annotations: AnnotationWithComments[];
-  onFocus: (id: any) => (e: any) => void; 
-  onBlur: (id: any) => (e: any) => void;  
+  onFocus: (id: any) => (e: any) => void;
+  onBlur: (id: any) => (e: any) => void;
   setAnnotations: (annotations: AnnotationWithComments[]) => void;
   key?: any;
-}
-
-interface ThreadedContentState {
-  editorText: string;
 }
 
 interface ThreadedState {
@@ -133,20 +125,19 @@ const UserPill = styled.span`
   font-size: 13.5px;
 `;
 
-class ThreadedEditor extends Component<ThreadedEditorProps, ThreadedEditorState> {
-  state: ThreadedEditorState = { text: '' };
+const ThreadedEditor: React.FC<ThreadedEditorProps> = ({ annotation, onChange, onSubmit, className, style }) => {
+  const geometry = annotation.geometry;
+  if (!geometry) return null;
+  const currentCommentText = annotation.data?.comments?.[0]?.text || '';
 
-  onUpdateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const { annotation, onChange } = this.props;
-    // Ensure annotation and annotation.data are defined before spreading
+  const onUpdateText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (!annotation || !annotation.data) return;
-
     onChange({
       ...annotation,
       data: {
         ...annotation.data,
         comments: [
-          annotation.data.comments?.[0] // Access after ensuring annotation.data exists
+          annotation.data.comments?.[0]
             ? {
                 ...annotation.data.comments[0],
                 text: e.target.value
@@ -158,209 +149,180 @@ class ThreadedEditor extends Component<ThreadedEditorProps, ThreadedEditorState>
         ]
       }
     });
-  }
+  };
 
-  render() {
-    const { annotation, onSubmit, className, style } = this.props;
-    const { geometry } = annotation; 
-    if (!geometry) return null;
-    // Ensure annotation.data.comments is at least an empty array for safe access
-    const currentCommentText = annotation.data?.comments?.[0]?.text || ''
+  return (
+    <EditorContainer
+      className={className}
+      style={{
+        position: 'absolute',
+        left: `${geometry.x}%`,
+        top: `${(geometry.y ?? 0) + (geometry.height ?? 0)}%`,
+        ...style
+      }}
+    >
+      <TextEditor
+        onChange={onUpdateText}
+        onSubmit={onSubmit}
+        value={currentCommentText}
+      />
+    </EditorContainer>
+  );
+};
 
-    return (
-      <EditorContainer
-        className={className}
+const ThreadedContent: React.FC<ThreadedContentProps> = ({ annotation, annotations, onFocus, onBlur, setAnnotations, key }) => {
+  const [editorText, setEditorText] = useState('');
+  const geometry = annotation.geometry;
+  const data = annotation.data;
+  const comments = data?.comments;
+  if (!geometry || !data) return null;
+
+  const onUpdateEditorText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditorText(e.target.value);
+  };
+
+  return (
+    <React.Fragment>
+      <Content
+        key={data.id}
         style={{
           position: 'absolute',
           left: `${geometry.x}%`,
-          top: `${geometry.y + geometry.height}%`,
-          ...style
+          top: `${(geometry.y ?? 0) + (geometry.height ?? 0)}%`
         }}
       >
+        <ContentClearanceTop />
+        <ContentClearanceLeft />
+        <ContentClearanceRight />
+        {comments && comments.map((c: CommentData) => (
+          <CommentDisplay key={c.id}>
+            {c.text}
+            <CommentDescription>
+              <UserPill>User</UserPill>
+            </CommentDescription>
+          </CommentDisplay>
+        ))}
         <TextEditor
-          onChange={this.onUpdateText}
-          onSubmit={onSubmit}
-          value={currentCommentText}
-        />
-      </EditorContainer>
-    );
-  }
-}
-
-class ThreadedContent extends Component<ThreadedContentProps, ThreadedContentState> {
-  state: ThreadedContentState = { editorText: '' };
-
-  onUpdateEditorText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    this.setState({ editorText: e.target.value });
-  }
-
-  renderComment(comment: CommentData) {
-    return (
-      <CommentDisplay key={comment.id}>
-        {comment.text}
-        <CommentDescription>
-          <UserPill>User</UserPill>
-        </CommentDescription>
-      </CommentDisplay>
-    );
-  }
-
-  render() {
-    const { annotation, annotations, onFocus, onBlur, setAnnotations } = this.props;
-    const { geometry, data } = annotation; 
-    const comments = data?.comments;
-
-    if (!geometry || !data) return null; // Added check for data
-
-    return (
-      <React.Fragment>
-        <Content
-          key={data.id} 
-          style={{
-            position: 'absolute',
-            left: `${geometry.x}%`,
-            top: `${geometry.y + geometry.height}%`
-          }}
-        >
-          <ContentClearanceTop />
-          <ContentClearanceLeft />
-          <ContentClearanceRight />
-          {comments && comments.map(c => this.renderComment(c))} {/* Ensured map argument type */}
-          <TextEditor
-            value={this.state.editorText}
-            onChange={this.onUpdateEditorText}
-            onBlur={onBlur(data.id)}
-            onFocus={onFocus(data.id)}
-            onSubmit={() => { 
-              const updatedAnnotations = annotations.map(ann =>
-                ann.data.id === data.id
-                  ? {
-                      ...ann,
-                      data: {
-                        ...ann.data,
-                        comments: [
-                          ...(ann.data.comments || []),
-                          { id: Math.random(), text: this.state.editorText }
-                        ]
-                      }
+          value={editorText}
+          onChange={onUpdateEditorText}
+          onBlur={onBlur(data.id)}
+          onFocus={onFocus(data.id)}
+          onSubmit={() => {
+            const updatedAnnotations = annotations.map(ann =>
+              ann.data.id === data.id
+                ? {
+                    ...ann,
+                    data: {
+                      ...ann.data,
+                      comments: [
+                        ...(ann.data.comments || []),
+                        { id: Math.random(), text: editorText }
+                      ]
                     }
-                  : ann
-              );
-              this.setState({ editorText: '' });
-              setAnnotations(updatedAnnotations);
-            }}
-          />
-        </Content>
-      </React.Fragment>
-    );
-  }
-}
+                  }
+                : ann
+            );
+            setEditorText('');
+            setAnnotations(updatedAnnotations);
+          }}
+        />
+      </Content>
+    </React.Fragment>
+  );
+};
 
-export default class Threaded extends Component<{}, ThreadedState> {
-  state: ThreadedState = {
-    activeAnnotations: [],
-    annotations: [],
-    annotation: {}
-  };
+const Threaded: React.FC = () => {
+  const [activeAnnotations, setActiveAnnotations] = useState<Array<string | number>>([]);
+  const [annotations, setAnnotations] = useState<AnnotationWithComments[]>([]);
+  const [annotation, setAnnotation] = useState<Partial<AnnotationType>>({});
 
-  onChange = (annotation: Partial<AnnotationType>) => { 
-    this.setState({ annotation });
-  }
+  const onChange = useCallback((annotation: Partial<AnnotationType>) => {
+    setAnnotation(annotation);
+  }, []);
 
-  onSubmit = (newAnnotation: Partial<AnnotationType>) => { 
+  const onSubmit = useCallback((newAnnotation: Partial<AnnotationType>) => {
     const { geometry, data } = newAnnotation;
-    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') { 
-      this.setState(prevState => ({
-        annotation: {},
-        annotations: [
-          ...prevState.annotations,
-          {
-            geometry: geometry as AnnotationType['geometry'],
-            data: {
-              ...(data as Partial<BaseAnnotationData>),
-              id: data.id || Math.random(), 
-              comments: [] 
-            } as AnnotationDataWithComments
-          } as AnnotationWithComments
-        ]
-      }));
+    if (geometry && data && geometry.type && typeof geometry.x === 'number' && typeof geometry.y === 'number') {
+      setAnnotations(prevAnnotations => [
+        ...prevAnnotations,
+        {
+          geometry: geometry as AnnotationType['geometry'],
+          data: {
+            ...(data as Partial<BaseAnnotationData>),
+            id: data.id || Math.random(),
+            comments: []
+          } as AnnotationDataWithComments
+        } as AnnotationWithComments
+      ]);
+      setAnnotation({});
     }
-  }
+  }, []);
 
-  renderEditor = (props: { annotation: Partial<AnnotationType>, onChange: any, onSubmit: any }) => { 
+  const renderEditor = useCallback((props: { annotation: Partial<AnnotationType>, onChange: any, onSubmit: any }) => {
     const { annotation, onChange, onSubmit } = props;
-    const { geometry } = annotation;
+    const geometry = annotation.geometry;
     if (!geometry) return null;
-
     return (
       <ThreadedEditor
-        annotation={annotation as any} // Using any for now due to complexity
+        annotation={annotation as any}
         onChange={onChange}
         onSubmit={onSubmit}
       />
     );
-  }
+  }, []);
 
-  renderContent = ({ key, annotation }: { key: any, annotation: AnnotationWithComments }) => {
+  const renderContent = useCallback(({ key, annotation }: { key: any, annotation: AnnotationWithComments }) => {
     return (
       <ThreadedContent
         key={key}
         annotation={annotation}
-        annotations={this.state.annotations}
-        onFocus={this.onFocus}
-        onBlur={this.onBlur}
-        setAnnotations={(annotations) => this.setState({ annotations })}
+        annotations={annotations}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        setAnnotations={setAnnotations}
       />
     );
-  }
+  }, [annotations]);
 
-  onFocus = (id: string) => () => { 
-    this.setState(prevState => ({
-      activeAnnotations: [
-        ...prevState.activeAnnotations,
-        id
-      ]
-    }));
-  }
+  const onFocus = useCallback((id: string) => () => {
+    setActiveAnnotations(prev => [...prev, id]);
+  }, []);
 
-  onBlur = (id: string) => () => { 
-    this.setState(prevState => {
-      const index = prevState.activeAnnotations.indexOf(id);
-      return {
-        activeAnnotations: [
-          ...prevState.activeAnnotations.slice(0, index),
-          ...prevState.activeAnnotations.slice(index + 1)
-        ]
-      };
+  const onBlur = useCallback((id: string) => () => {
+    setActiveAnnotations(prev => {
+      const index = prev.indexOf(id);
+      if (index === -1) return prev;
+      return [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1)
+      ];
     });
-  }
+  }, []);
 
-  activeAnnotationComparator = (annotation: AnnotationWithComments, id: string) => {
+  const activeAnnotationComparator = useCallback((annotation: AnnotationWithComments, id: string) => {
     return annotation.data.id === id;
-  }
+  }, []);
 
-  render() {
-    const annotationOwnProps: AnnotationOwnProps = {
-      ...(defaultProps as Partial<AnnotationOwnProps>),
-      src: img,
-      alt: "Two pebbles anthropomorphized holding hands",
-      annotations: this.state.annotations as any[], // Using any[] due to AnnotationWithComments vs AnnotationType
-      type: RectangleSelector.TYPE, 
-      value: this.state.annotation as any, 
-      renderEditor: this.renderEditor as any, 
-      renderContent: this.renderContent as any, 
-      activeAnnotations: this.state.activeAnnotations,
-      activeAnnotationComparator: this.activeAnnotationComparator as any, 
-      onChange: this.onChange as any, 
-      onSubmit: this.onSubmit as any, 
-    };
+  const annotationOwnProps: AnnotationOwnProps = {
+    ...defaultProps,
+    src: img,
+    alt: 'Two pebbles anthropomorphized holding hands',
+    annotations: annotations as any[],
+    type: RectangleSelector.TYPE,
+    value: annotation as any,
+    renderEditor: renderEditor as any,
+    renderContent: renderContent as any,
+    activeAnnotations,
+    activeAnnotationComparator: activeAnnotationComparator as any,
+    onChange: onChange as any,
+    onSubmit: onSubmit as any,
+  };
 
-    return (
-      <Root>
-        <Annotation
-          {...annotationOwnProps}
-        />
-      </Root>
-    );
-  }
-} 
+  return (
+    <Root>
+      <Annotation {...annotationOwnProps} />
+    </Root>
+  );
+};
+
+export default Threaded; 

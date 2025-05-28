@@ -19,7 +19,6 @@ const Title = styled.h1`
   margin: 48px 0 24px 0;
 `;
 
-
 const Actions = styled.div`
   display: block;
   margin-bottom: 24px;
@@ -33,7 +32,7 @@ const ActionButton = styled(ButtonLink)`
   width: 150px;
 `;
 
-export default (props: any) => (
+export const Home = (props: any) => (
   <Container>
     <Title>Demo</Title>
     <Actions>
@@ -43,3 +42,5 @@ export default (props: any) => (
     <Linked />
   </Container>
 );
+
+export default Home;
