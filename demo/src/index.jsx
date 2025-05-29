@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
@@ -6,5 +6,9 @@ import registerServiceWorker from './registerServiceWorker'
 
 
 const root = createRoot(document.getElementById('demo'))
-root.render(<App />)
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+)
 registerServiceWorker()

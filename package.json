@@ -3,13 +3,10 @@
   "version": "1.0.0",
   "description": "react-image-annotation React component",
   "author": "Updated by Donatas, Original by Arian Allenson Valdez <arianallensonv@gmail.com> (http://arianv.com/)",
-  "main": "lib/index.js",
-  "module": "es/index.js",
+  "main": "dist/react-image-annotation-v2.umd.js",
+  "module": "dist/react-image-annotation-v2.es.js",
   "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
+    "dist"
   ],
   "engines": {
     "node": ">=20.0.0",

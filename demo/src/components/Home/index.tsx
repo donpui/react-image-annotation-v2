@@ -13,12 +13,6 @@ const Container = styled.div`
   }
 `;
 
-const Title = styled.h1`
-  font-size: 28px;
-  font-weight: 600;
-  margin: 48px 0 24px 0;
-`;
-
 const Actions = styled.div`
   display: block;
   margin-bottom: 24px;
@@ -34,7 +28,6 @@ const ActionButton = styled(ButtonLink)`
 
 export const Home = (props: any) => (
   <Container>
-    <Title>Demo</Title>
     <Actions>
       <ActionButton to="/">Home</ActionButton>
       <ActionButton to="/docs">View Docs</ActionButton>

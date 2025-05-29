@@ -1,4 +1,4 @@
-React Image Annotation
+React19 Image Annotation
 =========================
 
 > **Prerequisites:** Node.js >=18, npm >=8
@@ -10,9 +10,9 @@ An infinitely customizable image annotation library built on React
 ## Installation
 
 ```
-npm install --save react-image-annotation
+npm install --save react19-image-annotation
 # or
-yarn add react-image-annotation
+yarn add react19-image-annotation
 ```
 
 ## Usage
