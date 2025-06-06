@@ -1,6 +1,11 @@
-import React from 'react'
-import { Highlight, Language, PrismTheme, RenderProps } from 'prism-react-renderer'
-import { themes } from 'prism-react-renderer'
+import React from 'react';
+import {
+  Highlight,
+  Language,
+  PrismTheme,
+  RenderProps,
+} from 'prism-react-renderer';
+import { themes } from 'prism-react-renderer';
 
 interface HighlightProps {
   language?: Language;
@@ -15,35 +20,45 @@ const HighlightComponent: React.FC<HighlightProps> = ({
   value,
   className = '',
   inline = false,
-  children
+  children,
 }) => {
-  const code = children ? children.toString() : (value || '')
+  const code = children ? children.toString() : value || '';
   if (inline) {
     return (
-      <code className={`prism-code language-${language} ${className}`.trim()}>{code}</code>
-    )
+      <code className={`prism-code language-${language} ${className}`.trim()}>
+        {code}
+      </code>
+    );
   }
   return (
-    <Highlight code={code} language={language} theme={themes.github as PrismTheme}>
-      {({ className: generatedClassName, style, tokens, getLineProps, getTokenProps }: RenderProps) => (
-        <pre className={`${generatedClassName} ${className}`.trim()} style={style}>
-          {tokens.map((line, i) => {
-            const lineProps = getLineProps({ line });
-            return (
-              <div key={i} {...lineProps}>
-                {line.map((token, key) => {
-                  const tokenProps = getTokenProps({ token });
-                  return <span key={key} {...tokenProps} />;
-                })}
+    <div style={{ overflow: 'auto', minWidth: '50%' }}>
+      <Highlight
+        code={code}
+        language={language}
+        theme={themes.github as PrismTheme}
+      >
+        {({
+          className,
+          style,
+          tokens,
+          getLineProps,
+          getTokenProps,
+        }: RenderProps) => (
+          <pre style={style}>
+            {tokens.map((line, i) => (
+              <div key={i} {...getLineProps({ line })}>
+                {line.map((token, key) => (
+                  <span key={key} {...getTokenProps({ token })} />
+                ))}
               </div>
-            );
-          })}
-        </pre>
-      )}
-    </Highlight>
-  )
-}
+            ))}
+          </pre>
+        )}
+      </Highlight>
+    </div>
+  );
+};
 
-HighlightComponent.displayName = 'Highlight'
+HighlightComponent.displayName = 'Highlight';
 
-export default HighlightComponent 
+export default HighlightComponent;

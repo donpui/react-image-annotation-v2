@@ -1,5 +1,3 @@
-import React from 'react'
-
 import Point from './Point'
 import Editor from './Editor'
 import FancyRectangle from './FancyRectangle'

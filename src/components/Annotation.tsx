@@ -218,7 +218,6 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
   const imageRef = useRef<HTMLImageElement | null>(null); // Replaces this.container
   const targetRef = useRef<HTMLDivElement | null>(null);
 
-  const { isHoveringOver } = isMouseHovering;
   const { x: mouseX, y: mouseY } = relativeMousePos;
 
   const getSelectorByType = useCallback((typeToFind?: string): Selector | undefined => {
@@ -227,7 +226,6 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
   }, [selectors]);
 
   const effectiveType = type || (selectors && selectors[0] && selectors[0].TYPE);
-  const selector = getSelectorByType(effectiveType);
 
   const callSelectorMethod = useCallback((methodName: keyof Selector['methods'], e: SelectorEvent | globalThis.TouchEvent) => {
     if (disableAnnotation) {
@@ -385,6 +383,27 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     }
   }, [onSubmitProp, value]);
 
+  // Handle escape key to close editor or clear geometry
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape' && onChange) {
+      // If editor is open or selector is active, reset everything
+      if (value?.selection?.showEditor || value?.geometry) {
+        onChange({
+          selection: undefined,
+          geometry: undefined,
+          data: undefined
+        });
+      }
+    }
+  }, [value, onChange]);
+
+  useEffect(() => {
+    if (value?.selection?.showEditor) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [value?.selection?.showEditor, handleKeyDown]);
+
   const shouldAnnotationBeActive = useCallback((annotation: Annotation, top: Annotation | undefined): boolean => {
     if (activeAnnotations) {
       const isActive = !!activeAnnotations.find(active => 
@@ -468,8 +487,6 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
         value.selection.showEditor &&
         renderEditor &&
         onChange &&
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        onSubmitProp && // This check is to ensure the onSubmitProp function is provided
         renderEditor({
           annotation: value,
           onChange: onChange,

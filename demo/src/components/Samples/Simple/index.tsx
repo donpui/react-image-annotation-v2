@@ -2,12 +2,10 @@ import React, { useState } from 'react'
 import Annotation from 'react-image-annotation-v2'
 import { AnnotationType, AnnotationValue, RectangleSelector } from 'react-image-annotation-v2'
 import img from '../../../img.jpeg'
-// import defaultProps from '../../../../../src/components/defaultProps'
 
 const Simple: React.FC = () => {
   const [annotations, setAnnotations] = useState<AnnotationType[]>([])
   const [annotation, setAnnotation] = useState<AnnotationValue>({})
-  // const [type, setType] = useState('RECTANGLE') // Uncomment if you want to use type
 
   const onChange = (annotation: AnnotationValue) => {
     setAnnotation(annotation)
@@ -27,7 +25,7 @@ const Simple: React.FC = () => {
     setAnnotation({})
   }
 
-  return (
+  return ( 
       <Annotation
         src={img}
         alt='Two pebbles anthropomorphized holding hands'

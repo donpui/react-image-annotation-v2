@@ -1,4 +1,4 @@
-declare module "react-image-annotation" {
+declare module "react-image-annotation-v2" {
   export interface IGeometry {
     type: string;
     x?: number;
