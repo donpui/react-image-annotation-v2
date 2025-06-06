@@ -81,8 +81,54 @@ declare module "react-image-annotation-v2" {
     disableOverlay?: boolean;
     renderOverlay?: () => any;
     allowTouch: boolean;
+
+    // Editing functionality props
+    enableEditing?: boolean;
+    onAnnotationsChange?: (annotations: IAnnotation[]) => void;
+    renderDraggableHighlight?: (props: {
+      key: string | number;
+      annotation: IAnnotation;
+      active: boolean;
+      isDragging: boolean;
+      isHovered: boolean;
+      onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+      onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+      onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+      onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
+      onDragEnd: () => void;
+    }) => any;
   }
 
   class Annotation extends React.Component<IAnnotationProps, {}> {}
   export default Annotation;
+
+  // Dragging components
+  export interface IDraggableBoxProps {
+    annotation: IAnnotation;
+    onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
+    onDragEnd: () => void;
+    isDragging?: boolean;
+  }
+
+  export interface IDraggableDotProps {
+    position: 'top' | 'right' | 'bottom' | 'left';
+    onDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+    onDragEnd?: () => void;
+    annotationId: string;
+  }
+
+  export interface IMoveButtonProps {
+    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
+    onMoveEnd?: () => void;
+    annotationId: string;
+  }
+
+  export const DraggableBox: React.FC<IDraggableBoxProps>;
+  export const DraggableDot: React.FC<IDraggableDotProps>;
+  export const MoveButton: React.FC<IMoveButtonProps>;
 }

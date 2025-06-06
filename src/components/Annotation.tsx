@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { useRef, useEffect, useCallback, FC } from 'react';
+import { useRef, useEffect, useCallback, FC, useState } from 'react';
 import styled from 'styled-components';
 import compose from '../utils/compose';
 import isMouseHoveringHOC, { IsMouseHoveringInjectedProps as IHInjectedProps } from '../utils/isMouseHovering.tsx';
 import withRelativeMousePosHOC, { RelativeMousePosInjectedProps as IRMInjectedProps } from '../utils/withRelativeMousePos.tsx';
+import { useDragging } from '../utils/useDragging';
 
 import initialDefaultProps from './defaultProps';
 import Overlay from './Overlay';
@@ -127,6 +128,22 @@ export interface AnnotationOwnProps {
   onImageMouseDown?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageMouseMove?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageClick?: (e: React.MouseEvent<HTMLElement>) => void;
+
+  // Editing functionality props
+  enableEditing?: boolean;
+  onAnnotationsChange?: (annotations: Annotation[]) => void;
+  renderDraggableHighlight?: (props: {
+    key: string | number;
+    annotation: Annotation;
+    active: boolean;
+    isDragging: boolean;
+    isHovered: boolean;
+    onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
+    onDragEnd: () => void;
+  }) => React.ReactNode;
 }
 
 // Combined props for the class component (OwnProps + HOC-injected props)
@@ -210,6 +227,11 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     onImageMouseMove,
     onImageClick,
 
+    // Editing functionality props
+    enableEditing,
+    onAnnotationsChange,
+    renderDraggableHighlight,
+
     // HOC-injected props
     relativeMousePos,
     isMouseHovering,
@@ -219,6 +241,18 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
   const targetRef = useRef<HTMLDivElement | null>(null);
 
   const { x: mouseX, y: mouseY } = relativeMousePos;
+
+  // Editing functionality - use parent's state directly when editing enabled
+  const handleAnnotationsUpdate = useCallback((updatedAnnotations: Annotation[]) => {
+    if (enableEditing && onAnnotationsChange) {
+      onAnnotationsChange(updatedAnnotations);
+    }
+  }, [enableEditing, onAnnotationsChange]);
+  
+  const draggingHook = enableEditing ? useDragging(annotations, handleAnnotationsUpdate) : null;
+
+  // Use annotations prop directly (parent manages state)
+  const currentAnnotations = annotations;
 
   const getSelectorByType = useCallback((typeToFind?: string): Selector | undefined => {
     if (!typeToFind) return undefined;
@@ -325,7 +359,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     const currentImage = imageRef.current;
     if (!currentImage || xPos === null || yPos === null) return undefined;
 
-    const intersections = annotations
+    const intersections = currentAnnotations
       .map(annotation => {
         const { geometry } = annotation;
         if (!geometry) return false;
@@ -345,7 +379,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
       });
 
     return intersections[0];
-  }, [annotations, getSelectorByType, imageRef]);
+  }, [currentAnnotations, getSelectorByType, imageRef]);
 
   const onTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (relativeMousePos && typeof relativeMousePos.onMouseMove === 'function') {
@@ -436,15 +470,46 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
         ref={setImageRef}
       />
       <Items>
-        {annotations.map(annotation => {
+        {currentAnnotations.map(annotation => {
           if (!annotation.data || typeof annotation.data.id === 'undefined') {
             console.warn('Annotation is missing data.id, cannot render highlight:', annotation);
             return null;
           }
+          
+          const isActive = shouldAnnotationBeActive(annotation, topAnnotationAtMouse);
+          
+          // Set draggingId on hover when editing is enabled
+          if (enableEditing && draggingHook && !draggingHook.isDragging) {
+            if (isActive && draggingHook.draggingId !== annotation.data.id) {
+              draggingHook.setDraggingId(annotation.data.id as string);
+            } else if (!isActive && draggingHook.draggingId === annotation.data.id) {
+              draggingHook.setDraggingId(null);
+            }
+          }
+          
+          // Use draggable highlight for editing mode, regular highlight otherwise
+          if (enableEditing && renderDraggableHighlight && draggingHook) {
+            const isHovered = draggingHook.draggingId === annotation.data.id;
+            const isBeingDragged = draggingHook.isDragging && draggingHook.draggingId === annotation.data.id;
+            
+            return renderDraggableHighlight({
+              key: annotation.data.id,
+              annotation,
+              active: isActive,
+              isDragging: isBeingDragged,
+              isHovered: isHovered,
+              onDotDragStart: draggingHook.handleDotDragStart,
+              onDotDrag: draggingHook.handleDotDrag,
+              onMoveStart: draggingHook.handleMoveStart,
+              onMove: draggingHook.handleMove,
+              onDragEnd: draggingHook.handleMouseUp,
+            });
+          }
+          
           return renderHighlight({
             key: annotation.data.id,
             annotation,
-            active: shouldAnnotationBeActive(annotation, topAnnotationAtMouse)
+            active: isActive
           });
         })}
         {!disableSelector &&
@@ -469,7 +534,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
           annotation: value
         })
       }
-      {annotations.map(annotation => {
+      {currentAnnotations.map(annotation => {
         if (!annotation.data || typeof annotation.data.id === 'undefined') {
            console.warn('Annotation is missing data.id, cannot render content:', annotation);
           return null;

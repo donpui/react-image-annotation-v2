@@ -1,7 +1,7 @@
 import Annotation, { AnnotationOwnProps, Annotation as AnnotationType } from './components/Annotation';
-import RectangleSelector from './hocs/RectangleSelector';
-import PointSelector from './hocs/PointSelector';
-import OvalSelector from './hocs/OvalSelector';
+import { RectangleSelector, PointSelector, OvalSelector } from './selectors';
+import { DraggableBox } from './components/DraggableBox';
+import { DraggableDot, MoveButton } from './components/DraggableComponents';
 
 export type { AnnotationOwnProps, AnnotationType };
 
@@ -9,7 +9,10 @@ export {
   Annotation,
   RectangleSelector,
   PointSelector, 
-  OvalSelector 
+  OvalSelector,
+  DraggableBox,
+  DraggableDot,
+  MoveButton
 };
 
 export default Annotation; 
