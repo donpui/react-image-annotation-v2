@@ -19,7 +19,6 @@ const Drag: React.FC = () => {
     }
   ])
   const [annotation, setAnnotation] = useState<AnnotationValue>({})
-  const [useCustomRenderer, setUseCustomRenderer] = useState(false)
 
   const onChange = (annotation: AnnotationValue) => {
     setAnnotation(annotation)
@@ -127,16 +126,6 @@ const Drag: React.FC = () => {
 
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          <input
-            type="checkbox"
-            checked={useCustomRenderer}
-            onChange={(e) => setUseCustomRenderer(e.target.checked)}
-          />
-          Use custom renderDraggableHighlight (vs default)
-        </label>
-      </div>
       <div className="annotation-container" style={{ position: 'relative'}}>
         <Annotation
           src={img}

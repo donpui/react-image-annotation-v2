@@ -20,6 +20,18 @@ const DeleteContainer = styled.div`
   pointer-events: auto;
   transition: all 0.2s ease;
 
+  /* Add larger hover area using pseudo-element */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: -5px;
+    left: -5px;
+    z-index: -1;
+    pointer-events: auto;
+  }
+
   &:hover {
     background-color: #f5f5f5;
     transform: scale(1.1);

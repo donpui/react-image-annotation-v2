@@ -260,6 +260,10 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
   }, [enableEditing, onAnnotationsChange]);
   
   const draggingHook = enableEditing ? useDragging(annotations, handleAnnotationsUpdate) : null;
+  
+  // Add hover state management for better UX with control elements
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [stableHoveredId, setStableHoveredId] = useState<string | null>(null);
 
   // Use annotations prop directly (parent manages state)
   const currentAnnotations = annotations;
@@ -375,7 +379,26 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
         if (!geometry) return false;
         const selector = getSelectorByType(geometry.type);
         
-        return selector && selector.intersects({ x: xPos, y: yPos }, geometry, currentImage)
+        if (!selector) return false;
+
+        // For editing mode, expand the hit area to include control elements
+        if (enableEditing && geometry.type === 'RECTANGLE' && 
+            typeof geometry.x === 'number' && typeof geometry.y === 'number' &&
+            typeof geometry.width === 'number' && typeof geometry.height === 'number') {
+          const expandedGeometry = {
+            ...geometry,
+            x: Math.max(0, geometry.x - 2), // Add 2% buffer on each side
+            y: Math.max(0, geometry.y - 2),
+            width: Math.min(100 - geometry.x + 2, geometry.width + 4),
+            height: Math.min(100 - geometry.y + 2, geometry.height + 4)
+          };
+          
+          return selector.intersects({ x: xPos, y: yPos }, expandedGeometry, currentImage)
+            ? annotation
+            : false;
+        }
+        
+        return selector.intersects({ x: xPos, y: yPos }, geometry, currentImage)
           ? annotation
           : false;
       })
@@ -389,7 +412,7 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
       });
 
     return intersections[0];
-  }, [currentAnnotations, getSelectorByType, imageRef]);
+  }, [currentAnnotations, getSelectorByType, imageRef, enableEditing]);
 
   const onTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (relativeMousePos && typeof relativeMousePos.onMouseMove === 'function') {
@@ -448,6 +471,15 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     }
   }, [value?.selection?.showEditor, handleKeyDown]);
 
+  // Cleanup hover timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const shouldAnnotationBeActive = useCallback((annotation: Annotation, top: Annotation | undefined): boolean => {
     if (activeAnnotations) {
       const isActive = !!activeAnnotations.find(active => 
@@ -488,12 +520,27 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
           
           const isActive = shouldAnnotationBeActive(annotation, topAnnotationAtMouse);
           
-          // Set draggingId on hover when editing is enabled
+          // Set draggingId on hover when editing is enabled with stable hover management
           if (enableEditing && draggingHook && !draggingHook.isDragging) {
-            if (isActive && draggingHook.draggingId !== annotation.data.id) {
+            if (isActive && stableHoveredId !== annotation.data.id) {
+              // Clear any pending timeout
+              if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current);
+                hoverTimeoutRef.current = null;
+              }
+              // Immediately set the new hovered annotation
+              setStableHoveredId(annotation.data.id as string);
               draggingHook.setDraggingId(annotation.data.id as string);
-            } else if (!isActive && draggingHook.draggingId === annotation.data.id) {
-              draggingHook.setDraggingId(null);
+            } else if (!isActive && stableHoveredId === annotation.data.id) {
+              // Add a small delay before removing hover state to prevent flickering
+              if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current);
+              }
+              hoverTimeoutRef.current = setTimeout(() => {
+                setStableHoveredId(null);
+                draggingHook.setDraggingId(null);
+                hoverTimeoutRef.current = null;
+              }, 100); // 100ms delay
             }
           }
           

@@ -136,6 +136,7 @@ The `DraggableBox` component provides dragging and resizing functionality:
 5. **Live Updates**: Annotations update in real-time during dragging
 6. **Boundary Constraints**: Annotations are constrained within the image boundaries
 7. **Enhanced Visual Feedback**: Improved styling on hover and during drag operations
+8. **Improved Hover Areas**: Larger interactive zones around control elements to prevent accidental loss of hover state
 
 ## Integration
 

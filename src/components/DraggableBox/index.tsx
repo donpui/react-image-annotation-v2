@@ -27,6 +27,18 @@ const BoxContainer = styled.div<BoxContainerProps>`
   z-index: 10;
   cursor: move;
   
+  /* Add padding to create a larger hover area */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
   &:hover {
     border: ${props => props.$isDragging ? '1px dashed #FFFFFF' : '2px solid #1e90ff'};
     background: rgba(36, 179, 200, 0.2);

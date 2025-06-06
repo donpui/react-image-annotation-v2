@@ -28,6 +28,18 @@ const Dot = styled.div<{ position: string }>`
   pointer-events: auto;
   transition: all 0.2s ease;
 
+  /* Add larger hover area using pseudo-element */
+  &::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: -5px;
+    left: -5px;
+    z-index: -1;
+    pointer-events: auto;
+  }
+
   &:hover {
     width: 12px;
     height: 12px;
