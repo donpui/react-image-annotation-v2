@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DraggableDot, MoveButton } from '../DraggableComponents';
+import { DraggableDot, MoveButton, DeleteButton } from '../DraggableComponents';
 import { Annotation } from '../Annotation';
 
 interface DraggableBoxProps {
@@ -11,6 +11,8 @@ interface DraggableBoxProps {
   onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
   onDragEnd: () => void;
   isDragging?: boolean;
+  allowDelete?: boolean;
+  onRemoveAnnotation?: (annotationId: string | number) => void;
 }
 
 interface BoxContainerProps {
@@ -40,6 +42,8 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
   onMove,
   onDragEnd,
   isDragging,
+  allowDelete,
+  onRemoveAnnotation,
 }) => {
   const { geometry } = annotation;
   if (!geometry || !geometry.type || typeof geometry.x !== 'number' || typeof geometry.y !== 'number') {
@@ -102,6 +106,9 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       <DraggableDot position="bottom" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
       <DraggableDot position="left" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
       <MoveButton onMoveStart={onMoveStart} onMove={onMove} onMoveEnd={onDragEnd} annotationId={annotation.data?.id as string} />
+      {allowDelete && onRemoveAnnotation && (
+        <DeleteButton annotationId={annotation.data?.id as string} onRemove={onRemoveAnnotation} />
+      )}
     </BoxContainer>
   );
 }; 

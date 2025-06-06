@@ -96,7 +96,13 @@ declare module "react-image-annotation-v2" {
       onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
       onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
       onDragEnd: () => void;
+      allowDelete?: boolean;
+      onRemoveAnnotation?: (annotationId: string | number) => void;
     }) => any;
+
+    // Delete functionality props
+    allowDelete?: boolean;
+    onRemoveAnnotation?: (annotationId: string | number) => void;
   }
 
   class Annotation extends React.Component<IAnnotationProps, {}> {}
@@ -111,6 +117,8 @@ declare module "react-image-annotation-v2" {
     onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
     onDragEnd: () => void;
     isDragging?: boolean;
+    allowDelete?: boolean;
+    onRemoveAnnotation?: (annotationId: string | number) => void;
   }
 
   export interface IDraggableDotProps {
@@ -128,7 +136,13 @@ declare module "react-image-annotation-v2" {
     annotationId: string;
   }
 
+  export interface IDeleteButtonProps {
+    annotationId: string | number;
+    onRemove: (annotationId: string | number) => void;
+  }
+
   export const DraggableBox: React.FC<IDraggableBoxProps>;
   export const DraggableDot: React.FC<IDraggableDotProps>;
   export const MoveButton: React.FC<IMoveButtonProps>;
+  export const DeleteButton: React.FC<IDeleteButtonProps>;
 }

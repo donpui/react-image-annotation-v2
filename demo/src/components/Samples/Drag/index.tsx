@@ -43,6 +43,10 @@ const Drag: React.FC = () => {
     setAnnotations(newAnnotations)
   }, [])
 
+  const handleRemoveAnnotation = useCallback((annotationId: string | number) => {
+    setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId))
+  }, [])
+
   const renderEditor = useCallback(({ annotation, onChange, onSubmit }: { 
     annotation: AnnotationValue; 
     onChange: (annotation: AnnotationValue) => void;
@@ -73,7 +77,9 @@ const Drag: React.FC = () => {
     onDotDrag,
     onMoveStart,
     onMove,
-    onDragEnd
+    onDragEnd,
+    allowDelete,
+    onRemoveAnnotation
   }: {
     annotation: AnnotationType;
     active: boolean;
@@ -84,6 +90,8 @@ const Drag: React.FC = () => {
     onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
     onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
     onDragEnd: () => void;
+    allowDelete?: boolean;
+    onRemoveAnnotation?: (annotationId: string | number) => void;
   }) => {
     // Show draggable box for existing annotations that are hovered
     if (!annotation.data?.id || !isHovered) {
@@ -103,6 +111,8 @@ const Drag: React.FC = () => {
         onMove={onMove}
         onDragEnd={onDragEnd}
         isDragging={isDragging}
+        allowDelete={allowDelete}
+        onRemoveAnnotation={onRemoveAnnotation}
       />
     )
    }, [])
@@ -144,6 +154,8 @@ const Drag: React.FC = () => {
           renderOverlay={renderOverlay}
           enableEditing={true}
           onAnnotationsChange={handleAnnotationsChange}
+          allowDelete={true}
+          onRemoveAnnotation={handleRemoveAnnotation}
         />
       </div>
     </div>

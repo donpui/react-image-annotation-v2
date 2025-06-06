@@ -187,4 +187,6 @@ export const MoveButton: React.FC<MoveButtonProps> = ({ onMoveStart, onMove, onM
       ↕
     </MoveButtonContainer>
   );
-}; 
+};
+
+export { DeleteButton } from './DeleteButton'; 

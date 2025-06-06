@@ -47,6 +47,10 @@ const HoverTest: React.FC = () => {
     setAnnotations(newAnnotations)
   }, [])
 
+  const handleRemoveAnnotation = useCallback((annotationId: string | number) => {
+    setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId))
+  }, [])
+
   const renderEditor = useCallback(({ annotation, onChange, onSubmit }: { 
     annotation: AnnotationValue; 
     onChange: (annotation: AnnotationValue) => void;
@@ -89,7 +93,9 @@ const HoverTest: React.FC = () => {
     onDotDrag,
     onMoveStart,
     onMove,
-    onDragEnd
+    onDragEnd,
+    allowDelete,
+    onRemoveAnnotation
   }: {
     annotation: AnnotationType;
     active: boolean;
@@ -100,6 +106,8 @@ const HoverTest: React.FC = () => {
     onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
     onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
     onDragEnd: () => void;
+    allowDelete?: boolean;
+    onRemoveAnnotation?: (annotationId: string | number) => void;
   }) => {
     // Track which annotation is active
     if (active && activeAnnotationId !== annotation.data?.id) {
@@ -121,17 +129,19 @@ const HoverTest: React.FC = () => {
       />
     }
     
-    return (
-      <DraggableBox
-        annotation={annotation as any}
-        onDotDragStart={onDotDragStart}
-        onDotDrag={onDotDrag}
-        onMoveStart={onMoveStart}
-        onMove={onMove}
-        onDragEnd={onDragEnd}
-        isDragging={isDragging}
-      />
-    )
+         return (
+       <DraggableBox
+         annotation={annotation as any}
+         onDotDragStart={onDotDragStart}
+         onDotDrag={onDotDrag}
+         onMoveStart={onMoveStart}
+         onMove={onMove}
+         onDragEnd={onDragEnd}
+         isDragging={isDragging}
+         allowDelete={allowDelete}
+         onRemoveAnnotation={onRemoveAnnotation}
+       />
+     )
    }, [activeAnnotationId])
 
    const renderContent = useCallback(({ annotation }: { key: string | number; annotation: AnnotationType }) => {
@@ -149,6 +159,7 @@ const HoverTest: React.FC = () => {
           Red dashed border = inactive annotation<br/>
           Lime border with glow = active annotation<br/>
           DraggableBox with controls = hovered annotation (editing ready)<br/>
+          X button = delete annotation button (click to remove)<br/>
           Move your mouse over the rectangles to see them become draggable immediately
         </p>
       <div className="annotation-container" style={{ position: 'relative'}}>
@@ -169,6 +180,8 @@ const HoverTest: React.FC = () => {
           enableEditing={true}
           onAnnotationsChange={handleAnnotationsChange}
           renderDraggableHighlight={renderDraggableHighlight}
+          allowDelete={true}
+          onRemoveAnnotation={handleRemoveAnnotation}
         />
       </div>
     </div>

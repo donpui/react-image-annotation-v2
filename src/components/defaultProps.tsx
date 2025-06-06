@@ -117,7 +117,7 @@ export default {
     // Default empty implementation - users should provide their own for editing to work
     console.warn('onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.');
   },
-    renderDraggableHighlight: ({ key, annotation, active, isDragging, isHovered, onDotDragStart, onDotDrag, onMoveStart, onMove, onDragEnd }: any) => {
+    renderDraggableHighlight: ({ key, annotation, active, isDragging, isHovered, onDotDragStart, onDotDrag, onMoveStart, onMove, onDragEnd, allowDelete, onRemoveAnnotation }: any) => {
     // Show draggable box for existing annotations that are hovered
     if (!annotation.data?.id || !isHovered) {
       // For inactive or new annotations, use regular highlight
@@ -161,6 +161,8 @@ export default {
           onMove={onMove}
           onDragEnd={onDragEnd}
           isDragging={isDragging}
+          allowDelete={allowDelete}
+          onRemoveAnnotation={onRemoveAnnotation}
         />
       )
     }

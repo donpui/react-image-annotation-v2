@@ -143,7 +143,13 @@ export interface AnnotationOwnProps {
     onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
     onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
     onDragEnd: () => void;
+    allowDelete?: boolean;
+    onRemoveAnnotation?: (annotationId: string | number) => void;
   }) => React.ReactNode;
+
+  // Delete functionality props
+  allowDelete?: boolean;
+  onRemoveAnnotation?: (annotationId: string | number) => void;
 }
 
 // Combined props for the class component (OwnProps + HOC-injected props)
@@ -231,6 +237,10 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     enableEditing,
     onAnnotationsChange,
     renderDraggableHighlight,
+
+    // Delete functionality props
+    allowDelete,
+    onRemoveAnnotation,
 
     // HOC-injected props
     relativeMousePos,
@@ -503,6 +513,8 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
               onMoveStart: draggingHook.handleMoveStart,
               onMove: draggingHook.handleMove,
               onDragEnd: draggingHook.handleMouseUp,
+              allowDelete: allowDelete,
+              onRemoveAnnotation: onRemoveAnnotation,
             });
           }
           

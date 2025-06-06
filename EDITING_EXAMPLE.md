@@ -17,6 +17,10 @@ const EditableAnnotationComponent = () => {
     setAnnotations(newAnnotations);
   }, []);
 
+  const handleRemoveAnnotation = useCallback((annotationId: string | number) => {
+    setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId));
+  }, []);
+
   return (
     <Annotation
       src={imageUrl}
@@ -24,6 +28,8 @@ const EditableAnnotationComponent = () => {
       // ... other required props
       enableEditing={true}
       onAnnotationsChange={handleAnnotationsChange}
+      allowDelete={true}
+      onRemoveAnnotation={handleRemoveAnnotation}
       // renderDraggableHighlight will use the default implementation
     />
   );
@@ -108,6 +114,11 @@ const EditableAnnotationComponent = () => {
 - `onAnnotationsChange?: (annotations: AnnotationType[]) => void` - Callback when annotations are modified through dragging (default: warning message)
 - `renderDraggableHighlight?: (props) => React.ReactNode` - Custom renderer for draggable annotations (default: DraggableBox for rectangles, regular highlight for others)
 
+### New Props for Delete Functionality
+
+- `allowDelete?: boolean` - Enables the delete functionality (default: `false`)
+- `onRemoveAnnotation?: (annotationId: string | number) => void` - Callback when an annotation is deleted
+
 ### DraggableBox Component
 
 The `DraggableBox` component provides dragging and resizing functionality:
@@ -121,9 +132,10 @@ The `DraggableBox` component provides dragging and resizing functionality:
 1. **Hover to Edit**: Annotations become draggable immediately when you hover over them
 2. **Drag to Move**: Click and drag annotations to reposition them
 3. **Resize**: Use corner and edge handles to resize annotations
-4. **Live Updates**: Annotations update in real-time during dragging
-5. **Boundary Constraints**: Annotations are constrained within the image boundaries
-6. **Enhanced Visual Feedback**: Improved styling on hover and during drag operations
+4. **Delete**: Optional delete button appears on hovered annotations (when enabled)
+5. **Live Updates**: Annotations update in real-time during dragging
+6. **Boundary Constraints**: Annotations are constrained within the image boundaries
+7. **Enhanced Visual Feedback**: Improved styling on hover and during drag operations
 
 ## Integration
 
