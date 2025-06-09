@@ -46,6 +46,16 @@ const Drag: React.FC = () => {
     setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId))
   }, [])
 
+  const handleConfirm = useCallback((annotationId: string | number) => {
+    // Changes are automatically applied by the dragging hook
+    // This works silently, just like normal annotation changes
+  }, [])
+
+  const handleReset = useCallback((annotationId: string | number) => {
+    // Changes are automatically reverted by the dragging hook
+    // This works silently, just like canceling normal annotation changes
+  }, [])
+
   const renderEditor = useCallback(({ annotation, onChange, onSubmit }: { 
     annotation: AnnotationValue; 
     onChange: (annotation: AnnotationValue) => void;
@@ -67,54 +77,64 @@ const Drag: React.FC = () => {
     />
   }, [])
 
-  const renderDraggableHighlight = useCallback(({
-    annotation,
-    active,
-    isDragging,
-    isHovered,
-    onDotDragStart,
-    onDotDrag,
-    onMoveStart,
-    onMove,
-    onDragEnd,
-    allowDelete,
-    onRemoveAnnotation
-  }: {
-    annotation: AnnotationType;
-    active: boolean;
-    isDragging: boolean;
-    isHovered: boolean;
-    onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
-    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
-    onDragEnd: () => void;
-    allowDelete?: boolean;
-    onRemoveAnnotation?: (annotationId: string | number) => void;
-  }) => {
-    // Show draggable box for existing annotations that are hovered
-    if (!annotation.data?.id || !isHovered) {
-      return <Rectangle
-        key={annotation.data?.id || 'new-annotation'}
-        annotation={annotation as any}
-        active={active}
-      />
-    }
+  // const renderDraggableHighlight = useCallback(({
+  //   annotation,
+  //   active,
+  //   isDragging,
+  //   isHovered,
+  //   onDotDragStart,
+  //   onDotDrag,
+  //   onMoveStart,
+  //   onMove,
+  //   onDragEnd,
+  //   allowDelete,
+  //   onRemoveAnnotation,
+  //   onConfirm,
+  //   onReset
+  // }: {
+  //   annotation: AnnotationType;
+  //   active: boolean;
+  //   isDragging: boolean;
+  //   isHovered: boolean;
+  //   onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+  //   onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+  //   onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
+  //   onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
+  //   onDragEnd: () => void;
+  //   allowDelete?: boolean;
+  //   onRemoveAnnotation?: (annotationId: string | number) => void;
+  //   onConfirm?: (annotationId: string | number) => void;
+  //   onReset?: (annotationId: string | number) => void;
+  // }) => {
+  //   // In confirm mode (when onConfirm and onReset are provided), always show draggable box
+  //   // In normal mode, only show when hovered
+  //   const hasConfirmMode = !!(onConfirm && onReset);
+  //   const shouldShowDraggable = hasConfirmMode || isHovered;
     
-    return (
-      <DraggableBox
-        annotation={annotation as any}
-        onDotDragStart={onDotDragStart}
-        onDotDrag={onDotDrag}
-        onMoveStart={onMoveStart}
-        onMove={onMove}
-        onDragEnd={onDragEnd}
-        isDragging={isDragging}
-        allowDelete={allowDelete}
-        onRemoveAnnotation={onRemoveAnnotation}
-      />
-    )
-   }, [])
+  //   if (!annotation.data?.id || !shouldShowDraggable) {
+  //     return <Rectangle
+  //       key={annotation.data?.id || 'new-annotation'}
+  //       annotation={annotation as any}
+  //       active={active}
+  //     />
+  //   }
+    
+  //   return (
+  //     <DraggableBox
+  //       annotation={annotation as any}
+  //       onDotDragStart={onDotDragStart}
+  //       onDotDrag={onDotDrag}
+  //       onMoveStart={onMoveStart}
+  //       onMove={onMove}
+  //       onDragEnd={onDragEnd}
+  //       isDragging={isDragging}
+  //       allowDelete={allowDelete}
+  //       onRemoveAnnotation={onRemoveAnnotation}
+  //       onConfirm={onConfirm}
+  //       onReset={onReset}
+  //     />
+  //   )
+  //  }, [])
 
    const renderContent = useCallback(({ annotation }: { key: string | number; annotation: AnnotationType }) => {
      return <Content key={annotation.data?.id} annotation={annotation} />
@@ -145,6 +165,8 @@ const Drag: React.FC = () => {
           onAnnotationsChange={handleAnnotationsChange}
           allowDelete={true}
           onRemoveAnnotation={handleRemoveAnnotation}
+          onConfirm={handleConfirm}
+          onReset={handleReset}
         />
       </div>
     </div>

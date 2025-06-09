@@ -201,4 +201,5 @@ export const MoveButton: React.FC<MoveButtonProps> = ({ onMoveStart, onMove, onM
   );
 };
 
-export { DeleteButton } from './DeleteButton'; 
+export { DeleteButton } from './DeleteButton';
+export { ConfirmResetButtons } from './ConfirmResetButtons'; 

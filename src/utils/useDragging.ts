@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { Annotation } from '../components/Annotation';
 
 interface DraggingState {
@@ -10,34 +10,61 @@ interface DraggingState {
 
 export const useDragging = (
   annotations: Annotation[],
-  onAnnotationsUpdate: (annotations: Annotation[]) => void
+  onAnnotationsUpdate: (annotations: Annotation[]) => void,
+  hasConfirmMode?: boolean
 ) => {
   const [isDragging, setIsDragging] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [activeAnnotationId, setActiveAnnotationId] = useState<string | null>(null);
+  const [editingAnnotationId, setEditingAnnotationId] = useState<string | null>(null); // Global editing state for confirm mode
   const initialGeometry = useRef<any | null>(null);
   const currentAnnotations = useRef<Annotation[]>(annotations);
   
+  // For confirm mode - store original and preview states
+  const originalAnnotations = useRef<Annotation[]>(annotations);
+  const [previewAnnotations, setPreviewAnnotations] = useState<Annotation[]>(annotations);
+  
   // Keep ref in sync with prop
-  currentAnnotations.current = annotations;
+  currentAnnotations.current = hasConfirmMode ? previewAnnotations : annotations;
+  
+  // Update original and preview when annotations change externally (using useEffect to prevent infinite renders)
+  useEffect(() => {
+    if (!hasConfirmMode || !isDragging) {
+      originalAnnotations.current = annotations;
+      if (hasConfirmMode) {
+        setPreviewAnnotations(annotations);
+      }
+    }
+  }, [annotations, hasConfirmMode, isDragging]);
 
   const handleDrag = useCallback((id: string, isDragging: boolean) => {
     const updatedAnnotations = currentAnnotations.current.map(ann => 
       ann.data.id === id ? { ...ann, isDragging } : ann
     );
     currentAnnotations.current = updatedAnnotations;
-    onAnnotationsUpdate(updatedAnnotations);
+    
+    if (hasConfirmMode) {
+      // In confirm mode, only update preview
+      setPreviewAnnotations(updatedAnnotations);
+    } else {
+      // In normal mode, immediately update parent
+      onAnnotationsUpdate(updatedAnnotations);
+    }
+    
     setIsDragging(isDragging);
     setDraggingId(isDragging ? id : null);
-  }, [onAnnotationsUpdate]);
+  }, [onAnnotationsUpdate, hasConfirmMode]);
 
   const handleDotDragStart = useCallback((annotationId: string, initialCursorPosition: { x: number; y: number }) => {
+    if (hasConfirmMode) {
+      setEditingAnnotationId(annotationId); // Set global editing state for confirm mode
+    }
     handleDrag(annotationId, true);
     const annotation = currentAnnotations.current.find(a => a.data.id === annotationId);
     if (annotation) {
       initialGeometry.current = { ...annotation.geometry, initialCursorPosition };
     }
-  }, [handleDrag]);
+  }, [handleDrag, hasConfirmMode]);
 
   const handleDotDrag = useCallback((event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => {
     if (!draggingId || !initialGeometry.current) return;
@@ -94,16 +121,26 @@ export const useDragging = (
         : a
     );
     currentAnnotations.current = updatedAnnotations;
-    onAnnotationsUpdate(updatedAnnotations);
-  }, [draggingId, onAnnotationsUpdate]);
+    
+    if (hasConfirmMode) {
+      // In confirm mode, only update preview
+      setPreviewAnnotations(updatedAnnotations);
+    } else {
+      // In normal mode, immediately update parent
+      onAnnotationsUpdate(updatedAnnotations);
+    }
+  }, [draggingId, onAnnotationsUpdate, hasConfirmMode]);
 
   const handleMoveStart = useCallback((annotationId: string, initialCursorPosition: { x: number; y: number }) => {
+    if (hasConfirmMode) {
+      setEditingAnnotationId(annotationId); // Set global editing state for confirm mode
+    }
     handleDrag(annotationId, true);
     const annotation = currentAnnotations.current.find(a => a.data.id === annotationId);
     if (annotation) {
       initialGeometry.current = { ...annotation.geometry, initialCursorPosition };
     }
-  }, [handleDrag]);
+  }, [handleDrag, hasConfirmMode]);
 
   const handleMove = useCallback((event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => {
     if (!draggingId || !initialGeometry.current) return;
@@ -140,8 +177,15 @@ export const useDragging = (
         : a
     );
     currentAnnotations.current = updatedAnnotations;
-    onAnnotationsUpdate(updatedAnnotations);
-  }, [draggingId, onAnnotationsUpdate]);
+    
+    if (hasConfirmMode) {
+      // In confirm mode, only update preview
+      setPreviewAnnotations(updatedAnnotations);
+    } else {
+      // In normal mode, immediately update parent
+      onAnnotationsUpdate(updatedAnnotations);
+    }
+  }, [draggingId, onAnnotationsUpdate, hasConfirmMode]);
 
   const handleMouseUp = useCallback(() => {
     if (draggingId) {
@@ -153,10 +197,29 @@ export const useDragging = (
     initialGeometry.current = null;
   }, [draggingId]);
 
+  const handleConfirm = useCallback((annotationId: string | number) => {
+    console.log('handleConfirm hasConfirmMode', hasConfirmMode);
+    
+      onAnnotationsUpdate(previewAnnotations);
+      originalAnnotations.current = previewAnnotations;
+      setEditingAnnotationId(null); // Clear editing state
+      setDraggingId(null); // Clear hover state to exit edit mode
+      setIsDragging(false); // Clear dragging state
+  }, [onAnnotationsUpdate, previewAnnotations]);
+
+  const handleReset = useCallback((annotationId: string | number) => {
+    setPreviewAnnotations(originalAnnotations.current);
+    currentAnnotations.current = originalAnnotations.current;
+    setEditingAnnotationId(null); // Clear editing state
+    setDraggingId(null); // Clear hover state to exit edit mode
+    setIsDragging(false); // Clear dragging state
+  }, []);
+
   return {
     isDragging,
     draggingId,
     activeAnnotationId,
+    editingAnnotationId,
     setActiveAnnotationId,
     setDraggingId,
     handleDotDragStart,
@@ -164,5 +227,9 @@ export const useDragging = (
     handleMoveStart,
     handleMove,
     handleMouseUp,
+    handleConfirm,
+    handleReset,
+    // Return the appropriate annotations for display
+    displayAnnotations: hasConfirmMode ? previewAnnotations : annotations,
   };
 }; 

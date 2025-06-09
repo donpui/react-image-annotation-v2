@@ -145,11 +145,17 @@ export interface AnnotationOwnProps {
     onDragEnd: () => void;
     allowDelete?: boolean;
     onRemoveAnnotation?: (annotationId: string | number) => void;
+    onConfirm?: (annotationId: string | number) => void;
+    onReset?: (annotationId: string | number) => void;
   }) => React.ReactNode;
 
   // Delete functionality props
   allowDelete?: boolean;
   onRemoveAnnotation?: (annotationId: string | number) => void;
+
+  // Confirm/Reset functionality props
+  onConfirm?: (annotationId: string | number) => void;
+  onReset?: (annotationId: string | number) => void;
 }
 
 // Combined props for the class component (OwnProps + HOC-injected props)
@@ -242,6 +248,10 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     allowDelete,
     onRemoveAnnotation,
 
+    // Confirm/Reset functionality props
+    onConfirm,
+    onReset,
+
     // HOC-injected props
     relativeMousePos,
     isMouseHovering,
@@ -259,14 +269,37 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
     }
   }, [enableEditing, onAnnotationsChange]);
   
-  const draggingHook = enableEditing ? useDragging(annotations, handleAnnotationsUpdate) : null;
+  const hasConfirmMode = !!(onConfirm && onReset);
+  const draggingHook = enableEditing ? useDragging(annotations, handleAnnotationsUpdate, hasConfirmMode) : null;
   
   // Add hover state management for better UX with control elements
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [stableHoveredId, setStableHoveredId] = useState<string | null>(null);
+  const suppressHoverUntilRef = useRef<number>(0); // Timestamp to suppress hover after confirm/reset
 
-  // Use annotations prop directly (parent manages state)
-  const currentAnnotations = annotations;
+  // Use annotations from dragging hook (which handles preview mode) or fallback to prop
+  const currentAnnotations = draggingHook?.displayAnnotations || annotations;
+
+  // Wrapped confirm/reset handlers that suppress hover temporarily
+  const wrappedHandleConfirm = useCallback((annotationId: string | number) => {
+    suppressHoverUntilRef.current = Date.now() + 50; // Suppress hover for 50ms
+    setStableHoveredId(null); // Clear stable hover state
+    if (draggingHook) {
+      draggingHook.handleConfirm(annotationId);
+    } else if (onConfirm) {
+      onConfirm(annotationId);
+    }
+  }, [draggingHook, onConfirm]);
+
+  const wrappedHandleReset = useCallback((annotationId: string | number) => {
+    suppressHoverUntilRef.current = Date.now() + 50; // Suppress hover for 50ms
+    setStableHoveredId(null); // Clear stable hover state
+    if (draggingHook) {
+      draggingHook.handleReset(annotationId);
+    } else if (onReset) {
+      onReset(annotationId);
+    }
+  }, [draggingHook, onReset]);
 
   const getSelectorByType = useCallback((typeToFind?: string): Selector | undefined => {
     if (!typeToFind) return undefined;
@@ -519,10 +552,15 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
           }
           
           const isActive = shouldAnnotationBeActive(annotation, topAnnotationAtMouse);
-          
+          console.log('isActive', isActive, 'enableEditing', enableEditing, 'draggingHook', draggingHook?.draggingId, 'isDragging', draggingHook?.isDragging);
+
+
           // Set draggingId on hover when editing is enabled with stable hover management
           if (enableEditing && draggingHook && !draggingHook.isDragging) {
-            if (isActive && stableHoveredId !== annotation.data.id) {
+            const now = Date.now();
+            const isHoverSuppressed = now < suppressHoverUntilRef.current;
+            
+            if (isActive && stableHoveredId !== annotation.data.id && !isHoverSuppressed) {
               // Clear any pending timeout
               if (hoverTimeoutRef.current) {
                 clearTimeout(hoverTimeoutRef.current);
@@ -548,21 +586,30 @@ const AnnotationFunc: FC<AnnotationComponentProps> = (incomingProps) => {
           if (enableEditing && renderDraggableHighlight && draggingHook) {
             const isHovered = draggingHook.draggingId === annotation.data.id;
             const isBeingDragged = draggingHook.isDragging && draggingHook.draggingId === annotation.data.id;
+            const isInEditingState = hasConfirmMode && draggingHook.editingAnnotationId === annotation.data.id;
             
-            return renderDraggableHighlight({
-              key: annotation.data.id,
-              annotation,
-              active: isActive,
-              isDragging: isBeingDragged,
-              isHovered: isHovered,
-              onDotDragStart: draggingHook.handleDotDragStart,
-              onDotDrag: draggingHook.handleDotDrag,
-              onMoveStart: draggingHook.handleMoveStart,
-              onMove: draggingHook.handleMove,
-              onDragEnd: draggingHook.handleMouseUp,
-              allowDelete: allowDelete,
-              onRemoveAnnotation: onRemoveAnnotation,
-            });
+            // In confirm mode, show draggable highlight if annotation is being edited OR hovered
+            // In normal mode, only show draggable highlight when hovered
+            const shouldShowDraggable = hasConfirmMode ? (isInEditingState || isHovered) : isHovered;
+            
+            if (shouldShowDraggable) {
+              return renderDraggableHighlight({
+                key: annotation.data.id,
+                annotation,
+                active: isActive,
+                isDragging: isBeingDragged,
+                isHovered: isHovered,
+                onDotDragStart: draggingHook.handleDotDragStart,
+                onDotDrag: draggingHook.handleDotDrag,
+                onMoveStart: draggingHook.handleMoveStart,
+                onMove: draggingHook.handleMove,
+                onDragEnd: draggingHook.handleMouseUp,
+                allowDelete: allowDelete,
+                onRemoveAnnotation: onRemoveAnnotation,
+                onConfirm: hasConfirmMode ? wrappedHandleConfirm : onConfirm,
+                onReset: hasConfirmMode ? wrappedHandleReset : onReset,
+              });
+            }
           }
           
           return renderHighlight({

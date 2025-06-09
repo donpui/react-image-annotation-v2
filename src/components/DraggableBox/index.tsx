@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DraggableDot, MoveButton, DeleteButton } from '../DraggableComponents';
+import { DraggableDot, MoveButton, DeleteButton, ConfirmResetButtons } from '../DraggableComponents';
 import { Annotation } from '../Annotation';
 
 interface DraggableBoxProps {
@@ -13,6 +13,8 @@ interface DraggableBoxProps {
   isDragging?: boolean;
   allowDelete?: boolean;
   onRemoveAnnotation?: (annotationId: string | number) => void;
+  onConfirm?: (annotationId: string | number) => void;
+  onReset?: (annotationId: string | number) => void;
 }
 
 interface BoxContainerProps {
@@ -56,6 +58,8 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
   isDragging,
   allowDelete,
   onRemoveAnnotation,
+  onConfirm,
+  onReset,
 }) => {
   const { geometry } = annotation;
   if (!geometry || !geometry.type || typeof geometry.x !== 'number' || typeof geometry.y !== 'number') {
@@ -120,6 +124,12 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       <MoveButton onMoveStart={onMoveStart} onMove={onMove} onMoveEnd={onDragEnd} annotationId={annotation.data?.id as string} />
       {allowDelete && onRemoveAnnotation && (
         <DeleteButton annotationId={annotation.data?.id as string} onRemove={onRemoveAnnotation} />
+      )}
+      {onConfirm && onReset && (
+        <ConfirmResetButtons 
+          onConfirm={() => onConfirm(annotation.data?.id as string)}
+          onReset={() => onReset(annotation.data?.id as string)}
+        />
       )}
     </BoxContainer>
   );

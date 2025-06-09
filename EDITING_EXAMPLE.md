@@ -21,6 +21,16 @@ const EditableAnnotationComponent = () => {
     setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId));
   }, []);
 
+  const handleConfirm = useCallback((annotationId: string | number) => {
+    console.log('Confirmed changes for annotation:', annotationId);
+    // Save changes to backend, show success message, etc.
+  }, []);
+
+  const handleReset = useCallback((annotationId: string | number) => {
+    console.log('Reset changes for annotation:', annotationId);
+    // Revert to original state
+  }, []);
+
   return (
     <Annotation
       src={imageUrl}
@@ -30,6 +40,8 @@ const EditableAnnotationComponent = () => {
       onAnnotationsChange={handleAnnotationsChange}
       allowDelete={true}
       onRemoveAnnotation={handleRemoveAnnotation}
+      onConfirm={handleConfirm}
+      onReset={handleReset}
       // renderDraggableHighlight will use the default implementation
     />
   );
@@ -119,6 +131,17 @@ const EditableAnnotationComponent = () => {
 - `allowDelete?: boolean` - Enables the delete functionality (default: `false`)
 - `onRemoveAnnotation?: (annotationId: string | number) => void` - Callback when an annotation is deleted
 
+### New Props for Confirm/Reset Functionality
+
+- `onConfirm?: (annotationId: string | number) => void` - Callback when user confirms changes (enables preview mode when provided with onReset)
+- `onReset?: (annotationId: string | number) => void` - Callback when user resets changes (both callbacks required for preview mode)
+
+**Preview Mode**: When both `onConfirm` and `onReset` are provided, the component enters "preview mode" where:
+- Drag operations show visual changes but don't immediately apply them
+- Changes are only applied to the parent state when the ✓ (confirm) button is clicked  
+- The ✕ (reset) button reverts to the original state before any edits
+- `onAnnotationsChange` is only called when changes are confirmed
+
 ### DraggableBox Component
 
 The `DraggableBox` component provides dragging and resizing functionality:
@@ -133,10 +156,11 @@ The `DraggableBox` component provides dragging and resizing functionality:
 2. **Drag to Move**: Click and drag annotations to reposition them
 3. **Resize**: Use corner and edge handles to resize annotations
 4. **Delete**: Optional delete button appears on hovered annotations (when enabled)
-5. **Live Updates**: Annotations update in real-time during dragging
-6. **Boundary Constraints**: Annotations are constrained within the image boundaries
-7. **Enhanced Visual Feedback**: Improved styling on hover and during drag operations
-8. **Improved Hover Areas**: Larger interactive zones around control elements to prevent accidental loss of hover state
+5. **Confirm/Reset**: Optional confirm (✓) and reset (✕) buttons with preview mode - changes are only applied when confirmed
+6. **Live Updates**: Annotations update in real-time during dragging
+7. **Boundary Constraints**: Annotations are constrained within the image boundaries
+8. **Enhanced Visual Feedback**: Improved styling on hover and during drag operations
+9. **Improved Hover Areas**: Larger interactive zones around control elements to prevent accidental loss of hover state
 
 ## Integration
 
