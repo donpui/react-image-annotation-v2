@@ -1,10 +1,10 @@
 import { getCoordPercentage } from '../utils/offsetCoordinates';
 
-const square = n => Math.pow(n, 2)
+const square = (x) => Math.pow(x, 2)
 
 export const TYPE = 'OVAL'
 
-export function intersects({ x, y }, geometry) {
+export function intersects({ x, y }, geometry, container) {
   if (!geometry) return false;
   if (!geometry.width || !geometry.height) return false;
 
@@ -26,12 +26,13 @@ export function intersects({ x, y }, geometry) {
   return (square(relX) / square(rx)) + (square(relY) / square(ry)) <= 1
 }
 
-export function area(geometry) {
-  if (!geometry) return 0;
-  if (!geometry.width || !geometry.height) return 0;
-  if (geometry.width <= 0 || geometry.height <= 0) return 0;
-
-  return Math.PI * Math.abs(geometry.width) * Math.abs(geometry.height) / 4
+export function area(geometry, container) {
+  if (!geometry) return 0
+  if (!geometry.width || !geometry.height) return 0
+  const width = Math.abs(geometry.width)
+  const height = Math.abs(geometry.height)
+  if (width <= 0 || height <= 0) return 0
+  return Math.PI * (width / 2) * (height / 2)
 }
 
 export const methods = {

@@ -94,7 +94,7 @@ const HoverTest: React.FC = () => {
     onMoveStart,
     onMove,
     onDragEnd,
-    allowDelete,
+    enableRemoval,
     onRemoveAnnotation
   }: {
     annotation: AnnotationType;
@@ -106,7 +106,7 @@ const HoverTest: React.FC = () => {
     onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
     onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
     onDragEnd: () => void;
-    allowDelete?: boolean;
+    enableRemoval?: boolean;
     onRemoveAnnotation?: (annotationId: string | number) => void;
   }) => {
     // Track which annotation is active
@@ -138,7 +138,7 @@ const HoverTest: React.FC = () => {
          onMove={onMove}
          onDragEnd={onDragEnd}
          isDragging={isDragging}
-         allowDelete={allowDelete}
+         enableRemoval={enableRemoval}
          onRemoveAnnotation={onRemoveAnnotation}
        />
      )
@@ -180,7 +180,7 @@ const HoverTest: React.FC = () => {
           enableEditing={true}
           onAnnotationsChange={handleAnnotationsChange}
           renderDraggableHighlight={renderDraggableHighlight}
-          allowDelete={true}
+          enableRemoval={true}
           onRemoveAnnotation={handleRemoveAnnotation}
         />
       </div>

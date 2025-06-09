@@ -1,162 +1,23 @@
+// Legacy type definitions - now redirects to the new core types
+// This file is kept for backward compatibility but all new types are in core.ts
+
 declare module "react-image-annotation-v2" {
-  export interface IGeometry {
-    type: string;
-    x?: number;
-    y?: number;
-    height?: number;
-    width?: number;
-  }
-  export interface ISelector {
-    TYPE: string;
-    intersects: (
-      { x, y }: { x: number; y: number },
-      geometry: IGeometry,
-      container: { width: number; height: number }
-    ) => boolean;
-    area: (
-      geometry: IGeometry,
-      container: { width: number; height: number }
-    ) => number;
-    methods: {
-      onMouseUp?: (annotation: IAnnotation, e: any) => IAnnotation | {};
-      onMouseDown?: (annotation: IAnnotation, e: any) => IAnnotation | {};
-      onMouseMove?: (annotation: IAnnotation, e: any) => IAnnotation | {};
-      onClick?: (annotation: IAnnotation, e: any) => IAnnotation | {};
-    };
-  }
-  export interface IAnnotation {
-    selection?: {
-      mode: string;
-      showEditor: boolean;
-    };
-    geometry: IGeometry;
-    data: {
-      text: string;
-      id?: number;
-    };
-  }
-  interface IAnnotationProps {
-    src: string;
-    alt?: string;
-    innerRef?: (e: any) => any;
-    onMouseUp?: (e: React.MouseEvent) => any;
-    onMouseDown?: (e: React.MouseEvent) => any;
-    onMouseMove?: (e: React.MouseEvent) => any;
-    onClick?: (e: React.MouseEvent) => any;
-
-    annotations: IAnnotation[];
-    type?: string;
-    selectors?: ISelector[];
-
-    value: IAnnotation | {};
-    onChange?: (e: any) => any;
-    onSubmit?: (e: any) => any;
-
-    activeAnnotationComparator?: (annotation: IAnnotation) => boolean;
-    activeAnnotations?: IAnnotation[];
-
-    disableAnnotation?: boolean;
-    disableSelector?: boolean;
-    renderSelector?: (
-      { annotation, active }: { annotation: IAnnotation; active: boolean }
-    ) => any;
-    disableEditor?: boolean;
-    renderEditor?: (
-      {
-        annotation,
-        onChange,
-        onSubmit
-      }: {
-        annotation: IAnnotation;
-        onChange: (annotation: IAnnotation | {}) => any;
-        onSubmit: (e?: any) => any;
-      }
-    ) => any;
-
-    renderHighlight?: (
-      { annotation, active }: { annotation: IAnnotation; active: boolean }
-    ) => any;
-    renderContent?: ({ annotation }: { annotation: IAnnotation }) => any;
-
-    disableOverlay?: boolean;
-    renderOverlay?: () => any;
-    allowTouch: boolean;
-
-    // Editing functionality props
-    enableEditing?: boolean;
-    onAnnotationsChange?: (annotations: IAnnotation[]) => void;
-    renderDraggableHighlight?: (props: {
-      key: string | number;
-      annotation: IAnnotation;
-      active: boolean;
-      isDragging: boolean;
-      isHovered: boolean;
-      onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-      onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
-      onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-      onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
-      onDragEnd: () => void;
-      allowDelete?: boolean;
-      onRemoveAnnotation?: (annotationId: string | number) => void;
-      onConfirm?: (annotationId: string | number) => void;
-      onReset?: (annotationId: string | number) => void;
-    }) => any;
-
-    // Delete functionality props
-    allowDelete?: boolean;
-    onRemoveAnnotation?: (annotationId: string | number) => void;
-
-    // Confirm/Reset functionality props
-    onConfirm?: (annotationId: string | number) => void;
-    onReset?: (annotationId: string | number) => void;
-  }
-
-  class Annotation extends React.Component<IAnnotationProps, {}> {}
-  export default Annotation;
-
-  // Dragging components
-  export interface IDraggableBoxProps {
-    annotation: IAnnotation;
-    onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
-    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
-    onDragEnd: () => void;
-    isDragging?: boolean;
-    allowDelete?: boolean;
-    onRemoveAnnotation?: (annotationId: string | number) => void;
-    onConfirm?: (annotationId: string | number) => void;
-    onReset?: (annotationId: string | number) => void;
-  }
-
-  export interface IDraggableDotProps {
-    position: 'top' | 'right' | 'bottom' | 'left';
-    onDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
-    onDragEnd?: () => void;
-    annotationId: string;
-  }
-
-  export interface IMoveButtonProps {
-    onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-    onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
-    onMoveEnd?: () => void;
-    annotationId: string;
-  }
-
-  export interface IDeleteButtonProps {
-    annotationId: string | number;
-    onRemove: (annotationId: string | number) => void;
-  }
-
-  export interface IConfirmResetButtonsProps {
-    onConfirm: () => void;
-    onReset: () => void;
-  }
-
-  export const DraggableBox: React.FC<IDraggableBoxProps>;
-  export const DraggableDot: React.FC<IDraggableDotProps>;
-  export const MoveButton: React.FC<IMoveButtonProps>;
-  export const DeleteButton: React.FC<IDeleteButtonProps>;
-  export const ConfirmResetButtons: React.FC<IConfirmResetButtonsProps>;
+  // Re-export all types from the new core module
+  export * from './core';
+  
+  // Main component
+  export { default as Annotation } from '../components/Annotation';
+  
+  // Selectors
+  export { RectangleSelector, PointSelector, OvalSelector } from '../selectors';
+  
+  // Draggable components
+  export { DraggableBox } from '../components/DraggableBox';
+  export { DraggableDot, MoveButton, DeleteButton, ConfirmResetButtons } from '../components/DraggableComponents';
+  
+  // Custom hooks
+  export { useRelativeMousePosition } from '../hooks/useRelativeMousePosition';
+  export { useMouseHover } from '../hooks/useMouseHover';
+  export { useSelectorMethods } from '../hooks/useSelectorMethods';
+  export { useAnnotationHitDetection } from '../hooks/useAnnotationHitDetection';
 }

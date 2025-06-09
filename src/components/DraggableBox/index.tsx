@@ -11,7 +11,7 @@ interface DraggableBoxProps {
   onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
   onDragEnd: () => void;
   isDragging?: boolean;
-  allowDelete?: boolean;
+  enableRemoval?: boolean;
   onRemoveAnnotation?: (annotationId: string | number) => void;
   onConfirm?: (annotationId: string | number) => void;
   onReset?: (annotationId: string | number) => void;
@@ -56,7 +56,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
   onMove,
   onDragEnd,
   isDragging,
-  allowDelete,
+  enableRemoval,
   onRemoveAnnotation,
   onConfirm,
   onReset,
@@ -122,7 +122,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       <DraggableDot position="bottom" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
       <DraggableDot position="left" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
       <MoveButton onMoveStart={onMoveStart} onMove={onMove} onMoveEnd={onDragEnd} annotationId={annotation.data?.id as string} />
-      {allowDelete && onRemoveAnnotation && (
+      {enableRemoval && onRemoveAnnotation && (
         <DeleteButton annotationId={annotation.data?.id as string} onRemove={onRemoveAnnotation} />
       )}
       {onConfirm && onReset && (

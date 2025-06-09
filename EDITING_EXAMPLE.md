@@ -38,7 +38,7 @@ const EditableAnnotationComponent = () => {
       // ... other required props
       enableEditing={true}
       onAnnotationsChange={handleAnnotationsChange}
-      allowDelete={true}
+      enableRemoval={true}
       onRemoveAnnotation={handleRemoveAnnotation}
       onConfirm={handleConfirm}
       onReset={handleReset}
@@ -128,7 +128,7 @@ const EditableAnnotationComponent = () => {
 
 ### New Props for Delete Functionality
 
-- `allowDelete?: boolean` - Enables the delete functionality (default: `false`)
+- `enableRemoval?: boolean` - Enables the delete functionality (default: `false`)
 - `onRemoveAnnotation?: (annotationId: string | number) => void` - Callback when an annotation is deleted
 
 ### New Props for Confirm/Reset Functionality

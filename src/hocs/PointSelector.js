@@ -11,15 +11,15 @@ export const TYPE = 'POINT'
 export function intersects ({ x, y }, geometry, container) {
   if (!geometry) return false
 
-  // No margin for exact point selection
-  // const { marginX, marginY } = marginToPercentage(container)
-  // const margin = Math.min(marginX, marginY) / 2
+  // Use margin for easier point selection
+  const { marginX, marginY } = marginToPercentage(container)
+  const margin = Math.min(marginX, marginY) / 2
 
   const dx = Math.abs(x - geometry.x)
   const dy = Math.abs(y - geometry.y)
 
-  // return dx <= margin && dy <= margin
-  return dx === 0 && dy === 0 // Exact match
+  return dx <= margin && dy <= margin
+  // return dx === 0 && dy === 0 // Exact match
 }
 
 export function area (geometry, container) {

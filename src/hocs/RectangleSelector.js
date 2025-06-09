@@ -2,7 +2,7 @@ import { getCoordPercentage } from '../utils/offsetCoordinates';
 
 export const TYPE = 'RECTANGLE'
 
-export function intersects({ x, y }, geometry) {
+export function intersects({ x, y }, geometry, container) {
   if (!geometry) return false
   
   const x1 = Math.min(geometry.x, geometry.x + geometry.width)
@@ -18,7 +18,7 @@ export function intersects({ x, y }, geometry) {
   return true
 }
 
-export function area(geometry) {
+export function area(geometry, container) {
   if (!geometry) return 0
   if (geometry.width <= 0 || geometry.height <= 0) return 0
   

@@ -1,3 +1,4 @@
+import React from 'react';
 import Point from './Point'
 import Editor from './Editor'
 import FancyRectangle from './FancyRectangle'
@@ -13,74 +14,110 @@ import {
   OvalSelector
 } from '../selectors'
 
-export default {
-  innerRef: () => {},
-  onChange: () => {},
-  onSubmit: () => {},
+import type {
+  AnnotationProps,
+  RenderSelectorProps,
+  RenderEditorProps,
+  RenderHighlightProps,
+  RenderContentProps,
+  RenderOverlayProps,
+  renderDraggableHighlightProps,
+  Annotation as AnnotationType,
+  AnnotationValue
+} from '../types/core';
+
+// Type guard to ensure annotation has required geometry properties
+const isValidAnnotation = (annotation: AnnotationType | AnnotationValue): annotation is AnnotationType => {
+  return !!(annotation.geometry && annotation.data?.id);
+};
+
+// Updated default props with proper typing and React 19 patterns
+export const defaultProps: Partial<AnnotationProps> = {
+  // Basic settings
+  disableAnnotation: false,
+  disableSelector: false,
+  disableEditor: false,
+  disableOverlay: false,
+  allowTouch: false,
+
+  // Selectors configuration
   type: RectangleSelector.TYPE,
   selectors: [
     RectangleSelector,
     PointSelector,
     OvalSelector
   ],
-  disableAnnotation: false,
-  disableSelector: false,
-  disableEditor: false,
-  disableOverlay: false,
-  activeAnnotationComparator: (a: any, b: any) => a === b,
-  renderSelector: ({ annotation }: any) => {
-    switch (annotation.geometry.type) {
+
+  // Comparator for active annotations
+  activeAnnotationComparator: (a, b) => a === b,
+
+  // Editing functionality defaults
+  enableEditing: false,
+  onAnnotationsChange: () => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        'onAnnotationsChange not provided. Annotation editing will not persist changes. ' +
+        'Please provide an onAnnotationsChange prop to handle annotation updates.'
+      );
+    }
+  },
+
+  // Render functions with improved typing
+  renderSelector: ({ annotation }: RenderSelectorProps) => {
+    switch (annotation.geometry?.type) {
       case RectangleSelector.TYPE:
         return (
           <FancyRectangle
-            annotation={annotation}
+            annotation={annotation as any}
           />
         )
       case PointSelector.TYPE:
         return (
           <Point
-            annotation={annotation}
+            annotation={annotation as any}
           />
         )
       case OvalSelector.TYPE:
         return (
           <Oval
-            annotation={annotation}
+            annotation={annotation as any}
           />
         )
       default:
         return null
     }
   },
-  renderEditor: ({ annotation, onChange, onSubmit }: any) => (
+
+  renderEditor: ({ annotation, onChange, onSubmit }: RenderEditorProps) => (
     <Editor
       annotation={annotation}
       onChange={onChange}
       onSubmit={onSubmit}
     />
   ),
-  renderHighlight: ({ key, annotation, active }: any) => {
+
+  renderHighlight: ({ key, annotation, active }: RenderHighlightProps) => {
     switch (annotation.geometry.type) {
       case RectangleSelector.TYPE:
         return (
           <Rectangle
             key={key}
-            annotation={annotation}
+            annotation={annotation as any}
             active={active}
           />
         )
-              case PointSelector.TYPE:
-          return (
-            <Point
-              key={key}
-              annotation={annotation}
-            />
-          )
+      case PointSelector.TYPE:
+        return (
+          <Point
+            key={key}
+            annotation={annotation as any}
+          />
+        )
       case OvalSelector.TYPE:
         return (
           <Oval
             key={key}
-            annotation={annotation}
+            annotation={annotation as any}
             active={active}
           />
         )
@@ -88,13 +125,15 @@ export default {
         return null
     }
   },
-  renderContent: ({ key, annotation }: any) => (
+
+  renderContent: ({ key, annotation }: RenderContentProps) => (
     <Content
       key={key}
       annotation={annotation}
     />
   ),
-  renderOverlay: ({ type, annotation }: any = {}) => {
+
+  renderOverlay: ({ type, annotation }: RenderOverlayProps = {}) => {
     switch (type) {
       case PointSelector.TYPE:
         return (
@@ -110,14 +149,23 @@ export default {
         )
     }
   },
-  
-  // Editing functionality defaults
-  enableEditing: false,
-  onAnnotationsChange: () => {
-    // Default empty implementation - users should provide their own for editing to work
-    console.warn('onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.');
-  },
-    renderDraggableHighlight: ({ key, annotation, active, isDragging, isHovered, onDotDragStart, onDotDrag, onMoveStart, onMove, onDragEnd, allowDelete, onRemoveAnnotation, onConfirm, onReset }: any) => {
+
+  renderDraggableHighlight: ({ 
+    key, 
+    annotation, 
+    active, 
+    isDragging, 
+    isHovered, 
+    onDotDragStart, 
+    onDotDrag, 
+    onMoveStart, 
+    onMove, 
+    onDragEnd, 
+    enableRemoval, 
+    onRemoveAnnotation, 
+    onConfirm, 
+    onReset 
+  }: renderDraggableHighlightProps) => {
     // Show draggable box for existing annotations that are hovered
     if (!annotation.data?.id || !isHovered) {
       // For inactive or new annotations, use regular highlight
@@ -126,7 +174,7 @@ export default {
           return (
             <Rectangle
               key={key}
-              annotation={annotation}
+              annotation={annotation as any}
               active={active}
             />
           )
@@ -134,14 +182,14 @@ export default {
           return (
             <Point
               key={key}
-              annotation={annotation}
+              annotation={annotation as any}
             />
           )
         case OvalSelector.TYPE:
           return (
             <Oval
               key={key}
-              annotation={annotation}
+              annotation={annotation as any}
               active={active}
             />
           )
@@ -162,7 +210,7 @@ export default {
           onMove={onMove}
           onDragEnd={onDragEnd}
           isDragging={isDragging}
-          allowDelete={allowDelete}
+          enableRemoval={enableRemoval}
           onRemoveAnnotation={onRemoveAnnotation}
           onConfirm={onConfirm}
           onReset={onReset}
@@ -174,9 +222,11 @@ export default {
     return (
       <Rectangle
         key={key}
-        annotation={annotation}
+        annotation={annotation as any}
         active={active}
       />
     )
   }
-} 
+};
+
+export default defaultProps; 
