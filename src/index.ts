@@ -4,9 +4,6 @@ import Annotation from './components/Annotation';
 // Selectors
 import { RectangleSelector, PointSelector, OvalSelector } from './selectors';
 
-// Draggable components
-import { DraggableBox } from './components/DraggableBox';
-import { DraggableDot, MoveButton, DeleteButton, ConfirmResetButtons } from './components/DraggableComponents';
 
 // Custom hooks (React 19 patterns)
 export { useRelativeMousePosition } from './hooks/useRelativeMousePosition';
@@ -23,11 +20,6 @@ export {
   RectangleSelector,
   PointSelector, 
   OvalSelector,
-  DraggableBox,
-  DraggableDot,
-  MoveButton,
-  DeleteButton,
-  ConfirmResetButtons
 };
 
 // Default export is the refactored component

@@ -6,7 +6,6 @@ import { useRelativeMousePosition } from '../hooks/useRelativeMousePosition';
 import { useMouseHover } from '../hooks/useMouseHover';
 import { useSelectorMethods } from '../hooks/useSelectorMethods';
 import { useAnnotationHitDetection } from '../hooks/useAnnotationHitDetection';
-import { useDragging } from '../utils/useDragging';
 
 // Import components
 import Overlay from './Overlay';
@@ -105,17 +104,6 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     renderContent,
     renderOverlay,
     
-    // Editing functionality
-    enableEditing,
-    onAnnotationsChange,
-    renderDraggableHighlight,
-    
-    // Interaction handlers
-    enableRemoval,
-    onRemoveAnnotation,
-    onConfirm,
-    onReset,
-    
     // Event handlers
     onImageMouseUp,
     onImageMouseDown,
@@ -148,22 +136,12 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     annotations,
     selectors,
     imageRef: imageRef as React.RefObject<HTMLImageElement>,
-    enableEditing,
   });
 
-  // Dragging functionality for editing mode
-  const hasConfirmMode = !!(onConfirm && onReset);
-  const draggingHook = enableEditing ? 
-    useDragging(annotations, onAnnotationsChange || (() => {}), hasConfirmMode) : 
-    null;
+
 
   // Hover state management for editing
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const [stableHoveredId, setStableHoveredId] = useState<string | null>(null);
-  const suppressHoverUntilRef = useRef<number>(0);
-
-  // Use annotations from dragging hook (which handles preview mode) or fallback to prop
-  const currentAnnotations = draggingHook?.displayAnnotations || annotations;
 
   // Mouse position values
   const { x: mouseX, y: mouseY } = mousePosition;
@@ -308,27 +286,6 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   }, [activeAnnotations, activeAnnotationComparator]);
 
   const topAnnotationAtMouse = getTopAnnotationAt(mouseX, mouseY);
-  console.log('topAnnotationAtMouse', topAnnotationAtMouse);
-  // Wrapped confirm/reset handlers for editing mode
-  const wrappedHandleConfirm = useCallback((annotationId: string | number) => {
-    suppressHoverUntilRef.current = Date.now() + 50;
-    setStableHoveredId(null);
-    if (draggingHook) {
-      draggingHook.handleConfirm(annotationId);
-    } else {
-      onConfirm?.(annotationId);
-    }
-  }, [draggingHook, onConfirm]);
-
-  const wrappedHandleReset = useCallback((annotationId: string | number) => {
-    suppressHoverUntilRef.current = Date.now() + 50;
-    setStableHoveredId(null);
-    if (draggingHook) {
-      draggingHook.handleReset(annotationId);
-    } else {
-      onReset?.(annotationId);
-    }
-  }, [draggingHook, onReset]);
 
   return (
     <AnnotationContainer
@@ -344,65 +301,16 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
         ref={setImageRef}
         src={src}
         alt={alt}
-        draggable={false}
       />
       
       <AnnotationItems>
-        {currentAnnotations.map(annotation => {
+        {annotations.map(annotation => {
           if (!annotation.data?.id) {
             console.warn('Annotation missing data.id:', annotation);
             return null;
           }
 
           const isActive = shouldAnnotationBeActive(annotation, topAnnotationAtMouse);
-
-          // Handle hover state for editing mode
-          if (enableEditing && draggingHook && !draggingHook.isDragging) {
-            const now = Date.now();
-            const isHoverSuppressed = now < suppressHoverUntilRef.current;
-            
-            if (isActive && stableHoveredId !== annotation.data.id && !isHoverSuppressed) {
-              if (hoverTimeoutRef.current) {
-                clearTimeout(hoverTimeoutRef.current);
-                hoverTimeoutRef.current = null;
-              }
-              setStableHoveredId(annotation.data.id as string);
-              draggingHook.setDraggingId(annotation.data.id as string);
-            } else if (!isActive && stableHoveredId === annotation.data.id) {
-              if (hoverTimeoutRef.current) {
-                clearTimeout(hoverTimeoutRef.current);
-              }
-              hoverTimeoutRef.current = setTimeout(() => {
-                setStableHoveredId(null);
-                draggingHook.setDraggingId(null);
-                hoverTimeoutRef.current = null;
-              }, 100);
-            }
-          }
-
-          // Use renderDraggableHighlight when editing is enabled, otherwise use renderHighlight
-          if (enableEditing && renderDraggableHighlight && draggingHook) {
-            const isHovered = draggingHook.draggingId === annotation.data.id;
-            const isBeingDragged = draggingHook.isDragging && draggingHook.draggingId === annotation.data.id;
-            const isInEditingState = hasConfirmMode && draggingHook.editingAnnotationId === annotation.data.id;
-            
-            return renderDraggableHighlight({
-              key: annotation.data.id,
-              annotation,
-              active: isActive,
-              isDragging: isBeingDragged,
-              isHovered,
-              onDotDragStart: draggingHook.handleDotDragStart,
-              onDotDrag: draggingHook.handleDotDrag,
-              onMoveStart: draggingHook.handleMoveStart,
-              onMove: draggingHook.handleMove,
-              onDragEnd: draggingHook.handleMouseUp,
-              enableRemoval,
-              onRemoveAnnotation,
-              onConfirm: hasConfirmMode ? wrappedHandleConfirm : onConfirm,
-              onReset: hasConfirmMode ? wrappedHandleReset : onReset,
-            });
-          }
 
           // Render regular highlight when editing is disabled
           return renderHighlight ? renderHighlight({
@@ -432,7 +340,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
         })
       )}
 
-      {currentAnnotations.map(annotation => {
+      {annotations.map(annotation => {
         if (!annotation.data?.id) return null;
         
                  return shouldAnnotationBeActive(annotation, topAnnotationAtMouse) && renderContent != null ? (

@@ -21,7 +21,6 @@ import type {
   RenderHighlightProps,
   RenderContentProps,
   RenderOverlayProps,
-  renderDraggableHighlightProps,
   Annotation as AnnotationType,
   AnnotationValue
 } from '../types/core';
@@ -150,83 +149,6 @@ export const defaultProps: Partial<AnnotationProps> = {
     }
   },
 
-  renderDraggableHighlight: ({ 
-    key, 
-    annotation, 
-    active, 
-    isDragging, 
-    isHovered, 
-    onDotDragStart, 
-    onDotDrag, 
-    onMoveStart, 
-    onMove, 
-    onDragEnd, 
-    enableRemoval, 
-    onRemoveAnnotation, 
-    onConfirm, 
-    onReset 
-  }: renderDraggableHighlightProps) => {
-    // Show draggable box for existing annotations that are hovered
-    if (!annotation.data?.id || !isHovered) {
-      // For inactive or new annotations, use regular highlight
-      switch (annotation.geometry.type) {
-        case RectangleSelector.TYPE:
-          return (
-            <Rectangle
-              key={key}
-              annotation={annotation as any}
-              active={active}
-            />
-          )
-        case PointSelector.TYPE:
-          return (
-            <Point
-              key={key}
-              annotation={annotation as any}
-            />
-          )
-        case OvalSelector.TYPE:
-          return (
-            <Oval
-              key={key}
-              annotation={annotation as any}
-              active={active}
-            />
-          )
-        default:
-          return null
-      }
-    }
-    
-    // For active existing annotations, use DraggableBox (only for rectangles currently)
-    if (annotation.geometry.type === RectangleSelector.TYPE) {
-      return (
-        <DraggableBox
-          key={key}
-          annotation={annotation}
-          onDotDragStart={onDotDragStart}
-          onDotDrag={onDotDrag}
-          onMoveStart={onMoveStart}
-          onMove={onMove}
-          onDragEnd={onDragEnd}
-          isDragging={isDragging}
-          enableRemoval={enableRemoval}
-          onRemoveAnnotation={onRemoveAnnotation}
-          onConfirm={onConfirm}
-          onReset={onReset}
-        />
-      )
-    }
-    
-    // Fallback to regular highlight for non-rectangle types
-    return (
-      <Rectangle
-        key={key}
-        annotation={annotation as any}
-        active={active}
-      />
-    )
-  }
 };
 
 export default defaultProps; 
