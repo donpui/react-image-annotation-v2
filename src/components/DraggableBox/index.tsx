@@ -42,7 +42,7 @@ const BoxContainer = styled.div<BoxContainerProps>`
   }
   
   &:hover {
-    border: ${props => props.$isDragging ? '1px dashed #FFFFFF' : '2px solid #1e90ff'};
+    border: ${props => props.$isDragging ? '1px dashed #FFFFFF' : '1px solid #1e90ff'};
     background: rgba(36, 179, 200, 0.2);
     box-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
   }
@@ -105,6 +105,8 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     e.stopPropagation();
   };
 
+  console.log('DraggableBox', annotation.data?.id, 'geometry', geometry);
+
   return (
     <BoxContainer
       style={{
@@ -112,6 +114,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
         top: `${geometry.y}%`,
         width: `${geometry.width}%`,
         height: `${geometry.height}%`,
+        boxSizing: 'border-box',
       }}
       $isDragging={isDragging}
       onMouseDown={handleMouseDown}

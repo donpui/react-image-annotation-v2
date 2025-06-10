@@ -26,6 +26,7 @@ function Rectangle (props: RectangleProps) {
   const { geometry } = props.annotation
   if (!geometry) return null
 
+  console.log('Rectangle', props.annotation.data?.id, 'geometry', geometry);
   return (
     <Container
       className={props.className}

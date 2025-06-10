@@ -14,7 +14,7 @@ const Drag: React.FC = () => {
   const [annotations, setAnnotations] = useState<AnnotationType[]>([
     // Add a test annotation to start with
     {
-      geometry: { type: 'RECTANGLE', x: 10, y: 10, width: 30, height: 20 },
+      geometry: { type: 'RECTANGLE', x: 10, y: 10, width: 30.2, height: 20.2 },
       data: { id: 'test-1', text: 'Test annotation - hover me!' }
     }
   ])
@@ -38,30 +38,40 @@ const Drag: React.FC = () => {
     setAnnotation({})
   }
 
-  const handleAnnotationsChange = useCallback((newAnnotations: AnnotationType[]) => {
-    setAnnotations(newAnnotations)
-  }, [])
-
-  const handleRemoveAnnotation = useCallback((annotationId: string | number) => {
-    setAnnotations(prev => prev.filter(ann => ann.data.id !== annotationId))
-  }, [])
-
-  const handleConfirm = useCallback((annotationId: string | number) => {
-    // Changes are automatically applied by the dragging hook
-    // This works silently, just like normal annotation changes
-  }, [])
-
-  const handleReset = useCallback((annotationId: string | number) => {
-    // Changes are automatically reverted by the dragging hook
-    // This works silently, just like canceling normal annotation changes
-  }, [])
-
-  const renderEditor = useCallback(({ annotation, onChange, onSubmit }: { 
-    annotation: AnnotationValue; 
-    onChange: (annotation: AnnotationValue) => void;
-    onSubmit: () => void;
-  }) => {
-    return <Editor annotation={annotation as any} onChange={onChange} onSubmit={onSubmit} />
+  const renderCustomContent = useCallback(({ annotation }: { annotation: AnnotationValue }) => {
+    const { geometry, data } = annotation;
+  if (!geometry || !data || typeof geometry.x !== 'number' || typeof geometry.y !== 'number' || typeof geometry.height !== 'number' || typeof geometry.width !== 'number') return null;
+  return (
+    <div>
+    <DraggableBox
+      annotation={annotation}
+      onDotDragStart={()=>{}}
+      onDotDrag={()=>{}}
+      onMoveStart={()=>{}}
+      onMove={()=>{}}
+      onDragEnd={()=>{}}
+      onConfirm={()=>{}}
+      onReset={()=>{}}
+      enableRemoval={false}
+      onRemoveAnnotation={()=>{}}
+    />
+    <div style={{ 
+      position: 'absolute', 
+      top: geometry.y + geometry.height + 5, 
+      left: geometry.x,
+      background: 'rgba(0,0,0,0.8)', 
+      color: 'white', 
+      padding: '4px 8px', 
+      borderRadius: '4px',
+      fontSize: '12px',
+      fontFamily: 'monospace',
+      pointerEvents: 'none',
+      zIndex: 1000
+    }}>
+      x: {Math.round(geometry.x)}, y: {Math.round(geometry.y)}, w: {Math.round(geometry.width)}, h: {Math.round(geometry.height)}
+    </div>
+    </div>
+  )
   }, [])
 
   return (
@@ -76,13 +86,7 @@ const Drag: React.FC = () => {
           value={annotation}
           onChange={onChange}
           onSubmit={onSubmit}
-          renderEditor={renderEditor}
-          enableEditing={true}
-          enableRemoval={false}
-          onAnnotationsChange={handleAnnotationsChange}
-          onRemoveAnnotation={handleRemoveAnnotation}
-          onConfirm={handleConfirm}
-          onReset={handleReset}
+          renderContent={renderCustomContent}
         />
       </div>
     </div>

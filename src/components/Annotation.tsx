@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useCallback, useMemo, Profiler } from 'react';
+import React, {
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  Profiler,
+} from 'react';
 import styled from 'styled-components';
 
 // Import custom hooks
@@ -9,10 +15,10 @@ import { useSelectorMethods } from '../hooks/useSelectorMethods';
 import Overlay from './Overlay';
 
 // Import types
-import type { 
-  AnnotationProps, 
+import type {
+  AnnotationProps,
   Annotation as AnnotationType,
-  AnnotationEvent 
+  AnnotationEvent,
 } from '../types/core';
 
 // Import default props
@@ -23,12 +29,12 @@ const AnnotationContainer = styled.div<{ $allowTouch?: boolean }>`
   clear: both;
   position: relative;
   width: 100%;
-  
+
   &:hover ${Overlay} {
     opacity: 1;
   }
-  
-  touch-action: ${props => props.$allowTouch ? 'pinch-zoom' : 'auto'};
+
+  touch-action: ${(props) => (props.$allowTouch ? 'pinch-zoom' : 'auto')};
 `;
 
 const AnnotationImage = styled.img`
@@ -60,12 +66,15 @@ const InteractionTarget = styled.div`
  */
 export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   // Merge props with defaults
-  const props = useMemo(() => ({
-    ...defaultProps,
-    ...incomingProps,
-    // Handle selectors explicitly to avoid override issues
-    selectors: incomingProps.selectors ?? defaultProps.selectors,
-  }), [incomingProps]);
+  const props = useMemo(
+    () => ({
+      ...defaultProps,
+      ...incomingProps,
+      // Handle selectors explicitly to avoid override issues
+      selectors: incomingProps.selectors ?? defaultProps.selectors,
+    }),
+    [incomingProps]
+  );
 
   const {
     // Basic props
@@ -75,7 +84,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     className,
     containerRef,
     children,
-    
+
     // Core functionality
     annotations,
     type,
@@ -83,25 +92,25 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     value,
     onChange,
     onSubmit,
-    
+
     // Active annotation handling
     activeAnnotationComparator,
     activeAnnotations,
-    
+
     // Feature toggles
     disableAnnotation,
     disableSelector,
     disableEditor,
     disableOverlay,
     allowTouch,
-    
+
     // Render props
     renderSelector,
     renderEditor,
     renderHighlight,
     renderContent,
     renderOverlay,
-    
+
     // Event handlers
     onImageMouseUp,
     onImageMouseDown,
@@ -116,19 +125,19 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   // Custom hooks
 
   // Optimized hovered annotation hook - only rerenders when hovered annotation changes
-  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } = useHoveredAnnotation({
-    targetRef: targetRef as React.RefObject<HTMLElement>,
-    imageRef: imageRef as React.RefObject<HTMLImageElement>,
-    annotations,
-    selectors,
-    enableEditing: !disableEditor,
-    throttleMs: 50, // Reduced frequency to minimize rerenders
-  });
+  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } =
+    useHoveredAnnotation({
+      targetRef: targetRef as React.RefObject<HTMLElement>,
+      imageRef: imageRef as React.RefObject<HTMLImageElement>,
+      annotations,
+      selectors,
+      enableEditing: !disableEditor,
+      throttleMs: 50, // Reduced frequency to minimize rerenders
+    });
 
-  
   // Effective type for selectors
   const effectiveType = type || selectors[0]?.TYPE;
-  
+
   // Selector methods hook
   const { callSelectorMethod } = useSelectorMethods({
     selectors,
@@ -138,7 +147,6 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     disableAnnotation,
   });
 
-
   // Hover state management for editing
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -146,32 +154,48 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   // const { x: mouseX, y: mouseY } = mousePosition;
 
   // Touch event handlers
-  const handleTouchStart = useCallback((e: globalThis.TouchEvent) => {
-    if (navigator.userAgent.toLowerCase().includes('safari') && 
-        !navigator.userAgent.toLowerCase().includes('chrome') && 
-        allowTouch) {
-      e.preventDefault();
-    }
-    callSelectorMethod('onTouchStart', e);
-  }, [allowTouch, callSelectorMethod]);
+  const handleTouchStart = useCallback(
+    (e: globalThis.TouchEvent) => {
+      if (
+        navigator.userAgent.toLowerCase().includes('safari') &&
+        !navigator.userAgent.toLowerCase().includes('chrome') &&
+        allowTouch
+      ) {
+        e.preventDefault();
+      }
+      callSelectorMethod('onTouchStart', e);
+    },
+    [allowTouch, callSelectorMethod]
+  );
 
-  const handleTouchEnd = useCallback((e: globalThis.TouchEvent) => {
-    callSelectorMethod('onTouchEnd', e);
-  }, [callSelectorMethod]);
+  const handleTouchEnd = useCallback(
+    (e: globalThis.TouchEvent) => {
+      callSelectorMethod('onTouchEnd', e);
+    },
+    [callSelectorMethod]
+  );
 
-  const handleTouchMove = useCallback((e: globalThis.TouchEvent) => {
-    hoveredMouseHandlers.onTouchMove(e);
-    if (navigator.userAgent.toLowerCase().includes('safari') && 
-        !navigator.userAgent.toLowerCase().includes('chrome') && 
-        allowTouch) {
-      e.preventDefault();
-    }
-    callSelectorMethod('onTouchMove', e);
-  }, [hoveredMouseHandlers, allowTouch, callSelectorMethod]);
+  const handleTouchMove = useCallback(
+    (e: globalThis.TouchEvent) => {
+      hoveredMouseHandlers.onTouchMove(e);
+      if (
+        navigator.userAgent.toLowerCase().includes('safari') &&
+        !navigator.userAgent.toLowerCase().includes('chrome') &&
+        allowTouch
+      ) {
+        e.preventDefault();
+      }
+      callSelectorMethod('onTouchMove', e);
+    },
+    [hoveredMouseHandlers, allowTouch, callSelectorMethod]
+  );
 
-  const handleTouchLeave = useCallback((e: globalThis.TouchEvent) => {
-    hoveredMouseHandlers.onTouchLeave(e);
-  }, [hoveredMouseHandlers]);
+  const handleTouchLeave = useCallback(
+    (e: globalThis.TouchEvent) => {
+      hoveredMouseHandlers.onTouchLeave(e);
+    },
+    [hoveredMouseHandlers]
+  );
 
   // Set up touch event listeners
   useEffect(() => {
@@ -191,7 +215,13 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
         targetElement.ontouchcancel = null;
       }
     };
-  }, [allowTouch, handleTouchStart, handleTouchEnd, handleTouchMove, handleTouchLeave]);
+  }, [
+    allowTouch,
+    handleTouchStart,
+    handleTouchEnd,
+    handleTouchMove,
+    handleTouchLeave,
+  ]);
 
   // Ref setters
   const setImageRef = useCallback((el: HTMLImageElement | null) => {
@@ -202,43 +232,63 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     targetRef.current = el;
   }, []);
 
-  const setContainerRef = useCallback((el: HTMLDivElement | null) => {
-    // setHoverRef(el);
-    if (containerRef) {
-      if (typeof containerRef === 'function') {
-        containerRef(el);
-      } else {
-        (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+  const setContainerRef = useCallback(
+    (el: HTMLDivElement | null) => {
+      // setHoverRef(el);
+      if (containerRef) {
+        if (typeof containerRef === 'function') {
+          containerRef(el);
+        } else {
+          (
+            containerRef as React.MutableRefObject<HTMLDivElement | null>
+          ).current = el;
+        }
       }
-    }
-  }, [containerRef]);
+    },
+    [containerRef]
+  );
 
   // Event handlers
-  const handleTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Use both handlers: mouse position for selector methods, hovered annotation for optimization
-    hoveredMouseHandlers.onMouseMove(e.nativeEvent);
-    onImageMouseMove?.(e as unknown as React.MouseEvent<HTMLElement>);
-    callSelectorMethod('onMouseMove', e as unknown as AnnotationEvent);
-  }, [hoveredMouseHandlers, onImageMouseMove, callSelectorMethod]);
+  const handleTargetMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      // Use both handlers: mouse position for selector methods, hovered annotation for optimization
+      hoveredMouseHandlers.onMouseMove(e.nativeEvent);
+      onImageMouseMove?.(e as unknown as React.MouseEvent<HTMLElement>);
+      callSelectorMethod('onMouseMove', e as unknown as AnnotationEvent);
+    },
+    [hoveredMouseHandlers, onImageMouseMove, callSelectorMethod]
+  );
 
-  const handleTargetMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    hoveredMouseHandlers.onMouseLeave(e.nativeEvent);
-  }, [hoveredMouseHandlers]);
+  const handleTargetMouseLeave = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      hoveredMouseHandlers.onMouseLeave(e.nativeEvent);
+    },
+    [hoveredMouseHandlers]
+  );
 
-  const handleMouseUp = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    onImageMouseUp?.(e);
-    callSelectorMethod('onMouseUp', e);
-  }, [onImageMouseUp, callSelectorMethod]);
+  const handleMouseUp = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      onImageMouseUp?.(e);
+      callSelectorMethod('onMouseUp', e);
+    },
+    [onImageMouseUp, callSelectorMethod]
+  );
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    onImageMouseDown?.(e);
-    callSelectorMethod('onMouseDown', e);
-  }, [onImageMouseDown, callSelectorMethod]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      onImageMouseDown?.(e);
+      callSelectorMethod('onMouseDown', e);
+    },
+    [onImageMouseDown, callSelectorMethod]
+  );
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    onImageClick?.(e);
-    callSelectorMethod('onClick', e);
-  }, [onImageClick, callSelectorMethod]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      onImageClick?.(e);
+      callSelectorMethod('onClick', e);
+    },
+    [onImageClick, callSelectorMethod]
+  );
 
   const handleSubmit = useCallback(() => {
     if (onSubmit && value) {
@@ -247,17 +297,20 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   }, [onSubmit, value]);
 
   // Keyboard event handling
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape' && onChange) {
-      if (value?.selection?.showEditor || value?.geometry) {
-        onChange({
-          selection: undefined,
-          geometry: undefined,
-          data: undefined,
-        });
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onChange) {
+        if (value?.selection?.showEditor || value?.geometry) {
+          onChange({
+            selection: undefined,
+            geometry: undefined,
+            data: undefined,
+          });
+        }
       }
-    }
-  }, [value, onChange]);
+    },
+    [value, onChange]
+  );
 
   useEffect(() => {
     if (value?.selection?.showEditor) {
@@ -279,17 +332,20 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   const topAnnotationAtMouse = hoveredAnnotation;
 
   // Active annotation detection - memoized for performance
-  const shouldAnnotationBeActive = useCallback((annotation: AnnotationType, topAnnotation?: AnnotationType): boolean => {
-    if (activeAnnotations) {
-      const isActive = activeAnnotations.some(active => 
-        activeAnnotationComparator
-          ? activeAnnotationComparator(annotation, active)
-          : annotation.data.id === active
-      );
-      return isActive || topAnnotation === annotation;
-    }
-    return topAnnotation === annotation;
-  }, [activeAnnotations, activeAnnotationComparator]);
+  const shouldAnnotationBeActive = useCallback(
+    (annotation: AnnotationType, topAnnotation?: AnnotationType): boolean => {
+      if (activeAnnotations) {
+        const isActive = activeAnnotations.some((active) =>
+          activeAnnotationComparator
+            ? activeAnnotationComparator(annotation, active)
+            : annotation.data.id === active
+        );
+        return isActive || topAnnotation === annotation;
+      }
+      return topAnnotation === annotation;
+    },
+    [activeAnnotations, activeAnnotationComparator]
+  );
 
   // Memoize active annotation IDs for performance
   // const activeAnnotationIds = useMemo(() => {
@@ -333,35 +389,39 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
       style={style}
       className={className}
       onMouseLeave={handleTargetMouseLeave}
-      onTouchCancel={handleTouchLeave as unknown as React.TouchEventHandler<HTMLDivElement>}
+      onTouchCancel={
+        handleTouchLeave as unknown as React.TouchEventHandler<HTMLDivElement>
+      }
       onMouseMove={handleTargetMouseMove}
       $allowTouch={allowTouch}
     >
-      <AnnotationImage
-        ref={setImageRef}
-        src={src}
-        alt={alt}
-      />
-      
+      <AnnotationImage ref={setImageRef} src={src} alt={alt} />
+
       <AnnotationItems>
-        {annotations.map(annotation => {
+        {annotations.map((annotation) => {
           if (!annotation.data?.id) {
             return null;
           }
 
-          const isActive = shouldAnnotationBeActive(annotation, topAnnotationAtMouse);
+          const isActive = shouldAnnotationBeActive(
+            annotation,
+            topAnnotationAtMouse
+          );
 
           // Render regular highlight when editing is disabled
-          return renderHighlight ? renderHighlight({
-            key: annotation.data.id,
-            annotation,
-            active: isActive,
-          }) : null;
+          return renderHighlight
+            ? renderHighlight({
+                key: annotation.data.id,
+                annotation,
+                active: isActive,
+              })
+            : null;
         })}
 
-        {!disableSelector && value?.geometry && renderSelector && (
-          renderSelector({ annotation: value })
-        )}
+        {!disableSelector &&
+          value?.geometry &&
+          renderSelector &&
+          renderSelector({ annotation: value })}
       </AnnotationItems>
 
       <InteractionTarget
@@ -372,34 +432,35 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
         onMouseDown={handleMouseDown}
       />
 
-      {!disableOverlay && renderOverlay && (
+      {!disableOverlay &&
+        renderOverlay &&
         renderOverlay({
           type: effectiveType,
           annotation: value,
-        })
-      )}
+        })}
 
-      {annotations.map(annotation => {
+      {annotations.map((annotation) => {
         if (!annotation.data?.id) return null;
-        
-                 return shouldAnnotationBeActive(annotation, topAnnotationAtMouse) && renderContent != null ? (
-           renderContent({
-             key: annotation.data.id,
-             annotation,
-           })
-         ) : null;
+
+        return shouldAnnotationBeActive(annotation, topAnnotationAtMouse) &&
+          renderContent != null
+          ? renderContent({
+              key: annotation.data.id,
+              annotation,
+            })
+          : null;
+
       })}
 
-      {!disableEditor && 
-       value?.selection?.showEditor && 
-       renderEditor && 
-       onChange && (
+      {!disableEditor &&
+        value?.selection?.showEditor &&
+        renderEditor &&
+        onChange &&
         renderEditor({
           annotation: value,
           onChange,
           onSubmit: handleSubmit,
-        })
-      )}
+        })}
 
       {children}
     </AnnotationContainer>
@@ -414,4 +475,4 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   return annotationContent;
 };
 
-export default Annotation; 
+export default Annotation;
