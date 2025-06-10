@@ -50,7 +50,7 @@ export function useAnnotationHitDetection({
     const point: Point = { x: xPos, y: yPos };
 
     const intersectingAnnotations = annotations
-      .map((annotation, index) => {
+      .map((annotation) => {
         const { geometry } = annotation;
         
         if (!geometry) {
@@ -59,7 +59,6 @@ export function useAnnotationHitDetection({
         
         const selector = getSelectorByType(geometry.type);
         if (!selector) {
-          console.warn(`🔍 No selector found for type: ${geometry.type}`);
           return null;
         }
 
@@ -84,10 +83,6 @@ export function useAnnotationHitDetection({
         }
 
         const intersects = selector.intersects(point, testGeometry, currentImage);
-        
-        if (intersects) {
-          console.log(`🎯 Hit detected on annotation ${annotation.data?.id}:`, { point, testGeometry, intersects });
-        }
         
         return intersects ? annotation : null;
       })

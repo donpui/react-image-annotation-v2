@@ -1,11 +1,9 @@
-import React, { useRef, useEffect, useCallback, useState, useMemo, Profiler } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo, Profiler } from 'react';
 import styled from 'styled-components';
 
 // Import custom hooks
-import { useRelativeMousePosition } from '../hooks/useRelativeMousePosition';
+import { useHoveredAnnotation } from '../hooks/useHoveredAnnotation';
 import { useSelectorMethods } from '../hooks/useSelectorMethods';
-import { useAnnotationHitDetection } from '../hooks/useAnnotationHitDetection';
-import { useRenderCount } from '../hooks/useRenderCount';
 
 // Import components
 import Overlay from './Overlay';
@@ -116,19 +114,17 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
 
   // Custom hooks
-  const { mousePosition, handlers: mouseHandlers } = useRelativeMousePosition(targetRef as React.RefObject<HTMLElement>);
-  // const { isHoveringOver, setRef: setHoverRef } = useMouseHover();
-  
-  // Debug hook for tracking rerenders (development only)
-  const { renderCount, logPropsChange } = useRenderCount({ 
-    logToConsole: true, 
-    componentName: 'Annotation' 
+
+  // Optimized hovered annotation hook - only rerenders when hovered annotation changes
+  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } = useHoveredAnnotation({
+    targetRef: targetRef as React.RefObject<HTMLElement>,
+    imageRef: imageRef as React.RefObject<HTMLImageElement>,
+    annotations,
+    selectors,
+    enableEditing: !disableEditor,
+    throttleMs: 50, // Reduced frequency to minimize rerenders
   });
-  
-  // Log props changes in development
-  if (process.env.NODE_ENV !== 'production') {
-    logPropsChange(props);
-  }
+
   
   // Effective type for selectors
   const effectiveType = type || selectors[0]?.TYPE;
@@ -142,20 +138,12 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     disableAnnotation,
   });
 
-  // Hit detection hook
-  const { getTopAnnotationAt } = useAnnotationHitDetection({
-    annotations,
-    selectors,
-    imageRef: imageRef as React.RefObject<HTMLImageElement>,
-  });
-
-
 
   // Hover state management for editing
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Mouse position values
-  const { x: mouseX, y: mouseY } = mousePosition;
+  // Mouse position values (for backwards compatibility and selector methods)
+  // const { x: mouseX, y: mouseY } = mousePosition;
 
   // Touch event handlers
   const handleTouchStart = useCallback((e: globalThis.TouchEvent) => {
@@ -172,18 +160,18 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   }, [callSelectorMethod]);
 
   const handleTouchMove = useCallback((e: globalThis.TouchEvent) => {
-    mouseHandlers.onTouchMove(e);
+    hoveredMouseHandlers.onTouchMove(e);
     if (navigator.userAgent.toLowerCase().includes('safari') && 
         !navigator.userAgent.toLowerCase().includes('chrome') && 
         allowTouch) {
       e.preventDefault();
     }
     callSelectorMethod('onTouchMove', e);
-  }, [mouseHandlers, allowTouch, callSelectorMethod]);
+  }, [hoveredMouseHandlers, allowTouch, callSelectorMethod]);
 
   const handleTouchLeave = useCallback((e: globalThis.TouchEvent) => {
-    mouseHandlers.onTouchLeave(e);
-  }, [mouseHandlers]);
+    hoveredMouseHandlers.onTouchLeave(e);
+  }, [hoveredMouseHandlers]);
 
   // Set up touch event listeners
   useEffect(() => {
@@ -227,14 +215,15 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
 
   // Event handlers
   const handleTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    mouseHandlers.onMouseMove(e.nativeEvent);
+    // Use both handlers: mouse position for selector methods, hovered annotation for optimization
+    hoveredMouseHandlers.onMouseMove(e.nativeEvent);
     onImageMouseMove?.(e as unknown as React.MouseEvent<HTMLElement>);
     callSelectorMethod('onMouseMove', e as unknown as AnnotationEvent);
-  }, [mouseHandlers, onImageMouseMove, callSelectorMethod]);
+  }, [hoveredMouseHandlers, onImageMouseMove, callSelectorMethod]);
 
   const handleTargetMouseLeave = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    mouseHandlers.onMouseLeave(e.nativeEvent);
-  }, [mouseHandlers]);
+    hoveredMouseHandlers.onMouseLeave(e.nativeEvent);
+  }, [hoveredMouseHandlers]);
 
   const handleMouseUp = useCallback((e: React.MouseEvent<HTMLElement>) => {
     onImageMouseUp?.(e);
@@ -286,7 +275,10 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     };
   }, []);
 
-  // Active annotation detection
+  // Use optimized hovered annotation instead of computing on every render
+  const topAnnotationAtMouse = hoveredAnnotation;
+
+  // Active annotation detection - memoized for performance
   const shouldAnnotationBeActive = useCallback((annotation: AnnotationType, topAnnotation?: AnnotationType): boolean => {
     if (activeAnnotations) {
       const isActive = activeAnnotations.some(active => 
@@ -299,31 +291,41 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     return topAnnotation === annotation;
   }, [activeAnnotations, activeAnnotationComparator]);
 
-  const topAnnotationAtMouse = getTopAnnotationAt(mouseX, mouseY);
+  // Memoize active annotation IDs for performance
+  // const activeAnnotationIds = useMemo(() => {
+  //   if (!activeAnnotations) return new Set();
+  //   return new Set(activeAnnotations.map(active => {
+  //     if (typeof active === 'object' && active !== null && 'data' in active) {
+  //       const annotationActive = active as AnnotationType;
+  //       return annotationActive.data?.id;
+  //     }
+  //     return active;
+  //   }));
+  // }, [activeAnnotations]);
 
   // Profiler callback for measuring rerenders (development only)
-  const onRenderProfiler = useCallback((
-    id: string,
-    phase: 'mount' | 'update' | 'nested-update',
-    actualDuration: number,
-    baseDuration: number,
-    startTime: number,
-    commitTime: number
-  ) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('🔄 Annotation Render Profile:', {
-        id,
-        phase,
-        actualDuration: `${actualDuration.toFixed(2)}ms`,
-        baseDuration: `${baseDuration.toFixed(2)}ms`,
-        startTime,
-        commitTime,
-        annotationsCount: annotations.length,
-        hasValue: !!value,
-        showEditor: !!value?.selection?.showEditor,
-      });
-    }
-  }, [annotations.length, value]);
+  // const onRenderProfiler = useCallback((
+  //   id: string,
+  //   phase: 'mount' | 'update' | 'nested-update',
+  //   actualDuration: number,
+  //   baseDuration: number,
+  //   startTime: number,
+  //   commitTime: number
+  // ) => {
+  //   if (process.env.NODE_ENV !== 'production') {
+  //     console.log('🔄 Annotation Render Profile:', {
+  //       id,
+  //       phase,
+  //       actualDuration: `${actualDuration.toFixed(2)}ms`,
+  //       baseDuration: `${baseDuration.toFixed(2)}ms`,
+  //       startTime,
+  //       commitTime,
+  //       annotationsCount: annotations.length,
+  //       hasValue: !!value,
+  //       showEditor: !!value?.selection?.showEditor,
+  //     });
+  //   }
+  // }, [annotations.length, value]);
 
   const annotationContent = (
     <AnnotationContainer
@@ -344,7 +346,6 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
       <AnnotationItems>
         {annotations.map(annotation => {
           if (!annotation.data?.id) {
-            console.warn('Annotation missing data.id:', annotation);
             return null;
           }
 
@@ -405,11 +406,12 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   );
 
   // Wrap with Profiler in development for rerender measurement
-  return process.env.NODE_ENV !== 'production' ? (
-    <Profiler id="Annotation" onRender={onRenderProfiler}>
-      {annotationContent}
-    </Profiler>
-  ) : annotationContent;
+  // return process.env.NODE_ENV !== 'production' ? (
+  //   <Profiler id="Annotation" onRender={onRenderProfiler}>
+  //     {annotationContent}
+  //   </Profiler>
+  // ) : annotationContent;
+  return annotationContent;
 };
 
 export default Annotation; 
