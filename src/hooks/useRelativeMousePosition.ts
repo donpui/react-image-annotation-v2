@@ -10,29 +10,33 @@ export interface UseRelativeMousePositionReturn {
     onTouchMove: (e: globalThis.TouchEvent) => void;
     onTouchLeave: (e: globalThis.TouchEvent) => void;
   };
-  setRef: (el: HTMLElement | null) => void;
 }
 
 /**
  * Custom hook for tracking relative mouse position within an element
  * Replaces the withRelativeMousePos HOC with modern React patterns
  */
-export function useRelativeMousePosition(): UseRelativeMousePositionReturn {
+export function useRelativeMousePosition(targetRef: React.RefObject<HTMLElement>): UseRelativeMousePositionReturn {
   const [mousePosition, setMousePosition] = useState<Point | { x: null; y: null }>({ x: null, y: null });
-  const containerRef = useRef<HTMLElement | null>(null);
 
   const handleMouseMove = useCallback((e: globalThis.MouseEvent) => {
     try {
-      const coordinates = getOffsetCoordPercentage(e);
+      const targetElement = targetRef.current;
+      if (!targetElement) {
+        setMousePosition({ x: null, y: null });
+        return;
+      }
+      
+      const coordinates = getOffsetCoordPercentage(e, targetElement);
       setMousePosition(coordinates);
     } catch (error) {
       // Fallback to null position if calculation fails
       setMousePosition({ x: null, y: null });
     }
-  }, []);
+  }, [targetRef]);
 
   const handleTouchMove = useCallback((e: globalThis.TouchEvent) => {
-    const container = containerRef.current;
+    const container = targetRef.current;
     if (!container || e.targetTouches.length !== 1) {
       return;
     }
@@ -64,7 +68,7 @@ export function useRelativeMousePosition(): UseRelativeMousePositionReturn {
     } catch (error) {
       setMousePosition({ x: null, y: null });
     }
-  }, []);
+  }, [targetRef]);
 
   const handleMouseLeave = useCallback((_e: globalThis.MouseEvent) => {
     setMousePosition({ x: null, y: null });
@@ -72,10 +76,6 @@ export function useRelativeMousePosition(): UseRelativeMousePositionReturn {
 
   const handleTouchLeave = useCallback((_e: globalThis.TouchEvent) => {
     setMousePosition({ x: null, y: null });
-  }, []);
-
-  const setRef = useCallback((el: HTMLElement | null) => {
-    containerRef.current = el;
   }, []);
 
   return {
@@ -86,6 +86,5 @@ export function useRelativeMousePosition(): UseRelativeMousePositionReturn {
       onTouchMove: handleTouchMove,
       onTouchLeave: handleTouchLeave,
     },
-    setRef,
   };
 } 

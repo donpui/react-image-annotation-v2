@@ -1,11 +1,11 @@
-import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback, useState, useMemo, Profiler } from 'react';
 import styled from 'styled-components';
 
 // Import custom hooks
 import { useRelativeMousePosition } from '../hooks/useRelativeMousePosition';
-import { useMouseHover } from '../hooks/useMouseHover';
 import { useSelectorMethods } from '../hooks/useSelectorMethods';
 import { useAnnotationHitDetection } from '../hooks/useAnnotationHitDetection';
+import { useRenderCount } from '../hooks/useRenderCount';
 
 // Import components
 import Overlay from './Overlay';
@@ -116,8 +116,19 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   const targetRef = useRef<HTMLDivElement>(null);
 
   // Custom hooks
-  const { mousePosition, handlers: mouseHandlers, setRef: setMouseRef } = useRelativeMousePosition();
-  const { isHoveringOver, setRef: setHoverRef } = useMouseHover();
+  const { mousePosition, handlers: mouseHandlers } = useRelativeMousePosition(targetRef as React.RefObject<HTMLElement>);
+  // const { isHoveringOver, setRef: setHoverRef } = useMouseHover();
+  
+  // Debug hook for tracking rerenders (development only)
+  const { renderCount, logPropsChange } = useRenderCount({ 
+    logToConsole: true, 
+    componentName: 'Annotation' 
+  });
+  
+  // Log props changes in development
+  if (process.env.NODE_ENV !== 'production') {
+    logPropsChange(props);
+  }
   
   // Effective type for selectors
   const effectiveType = type || selectors[0]?.TYPE;
@@ -197,11 +208,14 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   // Ref setters
   const setImageRef = useCallback((el: HTMLImageElement | null) => {
     imageRef.current = el;
-    setMouseRef(el);
-  }, [setMouseRef]);
+  }, []);
+
+  const setTargetRef = useCallback((el: HTMLDivElement | null) => {
+    targetRef.current = el;
+  }, []);
 
   const setContainerRef = useCallback((el: HTMLDivElement | null) => {
-    setHoverRef(el);
+    // setHoverRef(el);
     if (containerRef) {
       if (typeof containerRef === 'function') {
         containerRef(el);
@@ -209,7 +223,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
         (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
       }
     }
-  }, [setHoverRef, containerRef]);
+  }, [containerRef]);
 
   // Event handlers
   const handleTargetMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -287,7 +301,31 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
 
   const topAnnotationAtMouse = getTopAnnotationAt(mouseX, mouseY);
 
-  return (
+  // Profiler callback for measuring rerenders (development only)
+  const onRenderProfiler = useCallback((
+    id: string,
+    phase: 'mount' | 'update' | 'nested-update',
+    actualDuration: number,
+    baseDuration: number,
+    startTime: number,
+    commitTime: number
+  ) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🔄 Annotation Render Profile:', {
+        id,
+        phase,
+        actualDuration: `${actualDuration.toFixed(2)}ms`,
+        baseDuration: `${baseDuration.toFixed(2)}ms`,
+        startTime,
+        commitTime,
+        annotationsCount: annotations.length,
+        hasValue: !!value,
+        showEditor: !!value?.selection?.showEditor,
+      });
+    }
+  }, [annotations.length, value]);
+
+  const annotationContent = (
     <AnnotationContainer
       ref={setContainerRef}
       style={style}
@@ -326,7 +364,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
       </AnnotationItems>
 
       <InteractionTarget
-        ref={targetRef}
+        ref={setTargetRef}
         data-testid="annotation-target"
         onClick={handleClick}
         onMouseUp={handleMouseUp}
@@ -365,6 +403,13 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
       {children}
     </AnnotationContainer>
   );
+
+  // Wrap with Profiler in development for rerender measurement
+  return process.env.NODE_ENV !== 'production' ? (
+    <Profiler id="Annotation" onRender={onRenderProfiler}>
+      {annotationContent}
+    </Profiler>
+  ) : annotationContent;
 };
 
 export default Annotation; 

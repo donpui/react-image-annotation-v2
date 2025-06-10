@@ -1,4 +1,4 @@
-(function(L,h){typeof exports=="object"&&typeof module<"u"?h(exports,require("react"),require("styled-components")):typeof define=="function"&&define.amd?define(["exports","react","styled-components"],h):(L=typeof globalThis<"u"?globalThis:L||self,h(L.ReactImageAnnotation={},L.React,L.styled))})(this,function(L,h,j){"use strict";var me={exports:{}},le={};/**
+(function(N,h){typeof exports=="object"&&typeof module<"u"?h(exports,require("react"),require("styled-components")):typeof define=="function"&&define.amd?define(["exports","react","styled-components"],h):(N=typeof globalThis<"u"?globalThis:N||self,h(N.ReactImageAnnotation={},N.React,N.styled))})(this,function(N,h,S){"use strict";var re={exports:{}},$={};/**
  * @license React
  * react-jsx-runtime.production.js
  *
@@ -6,7 +6,7 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var Ne;function ft(){if(Ne)return le;Ne=1;var t=Symbol.for("react.transitional.element"),e=Symbol.for("react.fragment");function n(o,r,s){var c=null;if(s!==void 0&&(c=""+s),r.key!==void 0&&(c=""+r.key),"key"in r){s={};for(var a in r)a!=="key"&&(s[a]=r[a])}else s=r;return r=s.ref,{$$typeof:t,type:o,key:c,ref:r!==void 0?r:null,props:s}}return le.Fragment=e,le.jsx=n,le.jsxs=n,le}var ue={};/**
+ */var ve;function Ze(){if(ve)return $;ve=1;var t=Symbol.for("react.transitional.element"),e=Symbol.for("react.fragment");function n(r,s,c){var a=null;if(c!==void 0&&(a=""+c),s.key!==void 0&&(a=""+s.key),"key"in s){c={};for(var i in s)i!=="key"&&(c[i]=s[i])}else c=s;return s=c.ref,{$$typeof:t,type:r,key:a,ref:s!==void 0?s:null,props:c}}return $.Fragment=e,$.jsx=n,$.jsxs=n,$}var K={};/**
  * @license React
  * react-jsx-runtime.development.js
  *
@@ -14,12 +14,12 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var je;function ht(){return je||(je=1,process.env.NODE_ENV!=="production"&&function(){function t(i){if(i==null)return null;if(typeof i=="function")return i.$$typeof===S?null:i.displayName||i.name||null;if(typeof i=="string")return i;switch(i){case w:return"Fragment";case _:return"Profiler";case y:return"StrictMode";case G:return"Suspense";case T:return"SuspenseList";case k:return"Activity"}if(typeof i=="object")switch(typeof i.tag=="number"&&console.error("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."),i.$$typeof){case b:return"Portal";case $:return(i.displayName||"Context")+".Provider";case J:return(i._context.displayName||"Context")+".Consumer";case Y:var v=i.render;return i=i.displayName,i||(i=v.displayName||v.name||"",i=i!==""?"ForwardRef("+i+")":"ForwardRef"),i;case H:return v=i.displayName||null,v!==null?v:t(i.type)||"Memo";case R:v=i._payload,i=i._init;try{return t(i(v))}catch{}}return null}function e(i){return""+i}function n(i){try{e(i);var v=!1}catch{v=!0}if(v){v=console;var C=v.error,X=typeof Symbol=="function"&&Symbol.toStringTag&&i[Symbol.toStringTag]||i.constructor.name||"Object";return C.call(v,"The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",X),e(i)}}function o(i){if(i===w)return"<>";if(typeof i=="object"&&i!==null&&i.$$typeof===R)return"<...>";try{var v=t(i);return v?"<"+v+">":"<...>"}catch{return"<...>"}}function r(){var i=D.A;return i===null?null:i.getOwner()}function s(){return Error("react-stack-top-frame")}function c(i){if(U.call(i,"key")){var v=Object.getOwnPropertyDescriptor(i,"key").get;if(v&&v.isReactWarning)return!1}return i.key!==void 0}function a(i,v){function C(){O||(O=!0,console.error("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",v))}C.isReactWarning=!0,Object.defineProperty(i,"key",{get:C,configurable:!0})}function u(){var i=t(this.type);return P[i]||(P[i]=!0,console.error("Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.")),i=this.props.ref,i!==void 0?i:null}function f(i,v,C,X,B,V,se,ee){return C=V.ref,i={$$typeof:m,type:i,key:v,props:V,_owner:B},(C!==void 0?C:null)!==null?Object.defineProperty(i,"ref",{enumerable:!1,get:u}):Object.defineProperty(i,"ref",{enumerable:!1,value:null}),i._store={},Object.defineProperty(i._store,"validated",{configurable:!1,enumerable:!1,writable:!0,value:0}),Object.defineProperty(i,"_debugInfo",{configurable:!1,enumerable:!1,writable:!0,value:null}),Object.defineProperty(i,"_debugStack",{configurable:!1,enumerable:!1,writable:!0,value:se}),Object.defineProperty(i,"_debugTask",{configurable:!1,enumerable:!1,writable:!0,value:ee}),Object.freeze&&(Object.freeze(i.props),Object.freeze(i)),i}function p(i,v,C,X,B,V,se,ee){var I=v.children;if(I!==void 0)if(X)if(W(I)){for(X=0;X<I.length;X++)l(I[X]);Object.freeze&&Object.freeze(I)}else console.error("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");else l(I);if(U.call(v,"key")){I=t(i);var N=Object.keys(v).filter(function(F){return F!=="key"});X=0<N.length?"{key: someKey, "+N.join(": ..., ")+": ...}":"{key: someKey}",z[I+X]||(N=0<N.length?"{"+N.join(": ..., ")+": ...}":"{}",console.error(`A props object containing a "key" prop is being spread into JSX:
+ */var Ee;function Qe(){return Ee||(Ee=1,process.env.NODE_ENV!=="production"&&function(){function t(o){if(o==null)return null;if(typeof o=="function")return o.$$typeof===L?null:o.displayName||o.name||null;if(typeof o=="string")return o;switch(o){case w:return"Fragment";case M:return"Profiler";case T:return"StrictMode";case X:return"Suspense";case y:return"SuspenseList";case G:return"Activity"}if(typeof o=="object")switch(typeof o.tag=="number"&&console.error("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."),o.$$typeof){case E:return"Portal";case z:return(o.displayName||"Context")+".Provider";case I:return(o._context.displayName||"Context")+".Consumer";case _:var m=o.render;return o=o.displayName,o||(o=m.displayName||m.name||"",o=o!==""?"ForwardRef("+o+")":"ForwardRef"),o;case O:return m=o.displayName||null,m!==null?m:t(o.type)||"Memo";case D:m=o._payload,o=o._init;try{return t(o(m))}catch{}}return null}function e(o){return""+o}function n(o){try{e(o);var m=!1}catch{m=!0}if(m){m=console;var v=m.error,C=typeof Symbol=="function"&&Symbol.toStringTag&&o[Symbol.toStringTag]||o.constructor.name||"Object";return v.call(m,"The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",C),e(o)}}function r(o){if(o===w)return"<>";if(typeof o=="object"&&o!==null&&o.$$typeof===D)return"<...>";try{var m=t(o);return m?"<"+m+">":"<...>"}catch{return"<...>"}}function s(){var o=U.A;return o===null?null:o.getOwner()}function c(){return Error("react-stack-top-frame")}function a(o){if(F.call(o,"key")){var m=Object.getOwnPropertyDescriptor(o,"key").get;if(m&&m.isReactWarning)return!1}return o.key!==void 0}function i(o,m){function v(){J||(J=!0,console.error("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",m))}v.isReactWarning=!0,Object.defineProperty(o,"key",{get:v,configurable:!0})}function l(){var o=t(this.type);return le[o]||(le[o]=!0,console.error("Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.")),o=this.props.ref,o!==void 0?o:null}function f(o,m,v,C,j,k,Z,Q){return v=k.ref,o={$$typeof:x,type:o,key:m,props:k,_owner:j},(v!==void 0?v:null)!==null?Object.defineProperty(o,"ref",{enumerable:!1,get:l}):Object.defineProperty(o,"ref",{enumerable:!1,value:null}),o._store={},Object.defineProperty(o._store,"validated",{configurable:!1,enumerable:!1,writable:!0,value:0}),Object.defineProperty(o,"_debugInfo",{configurable:!1,enumerable:!1,writable:!0,value:null}),Object.defineProperty(o,"_debugStack",{configurable:!1,enumerable:!1,writable:!0,value:Z}),Object.defineProperty(o,"_debugTask",{configurable:!1,enumerable:!1,writable:!0,value:Q}),Object.freeze&&(Object.freeze(o.props),Object.freeze(o)),o}function p(o,m,v,C,j,k,Z,Q){var R=m.children;if(R!==void 0)if(C)if(B(R)){for(C=0;C<R.length;C++)d(R[C]);Object.freeze&&Object.freeze(R)}else console.error("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");else d(R);if(F.call(m,"key")){R=t(o);var V=Object.keys(m).filter(function(xe){return xe!=="key"});C=0<V.length?"{key: someKey, "+V.join(": ..., ")+": ...}":"{key: someKey}",te[R+C]||(V=0<V.length?"{"+V.join(": ..., ")+": ...}":"{}",console.error(`A props object containing a "key" prop is being spread into JSX:
   let props = %s;
   <%s {...props} />
 React keys must be passed directly to JSX without using spread:
   let props = %s;
-  <%s key={someKey} {...props} />`,X,I,N,I),z[I+X]=!0)}if(I=null,C!==void 0&&(n(C),I=""+C),c(v)&&(n(v.key),I=""+v.key),"key"in v){C={};for(var te in v)te!=="key"&&(C[te]=v[te])}else C=v;return I&&a(C,typeof i=="function"?i.displayName||i.name||"Unknown":i),f(i,I,V,B,r(),C,se,ee)}function l(i){typeof i=="object"&&i!==null&&i.$$typeof===m&&i._store&&(i._store.validated=1)}var g=h,m=Symbol.for("react.transitional.element"),b=Symbol.for("react.portal"),w=Symbol.for("react.fragment"),y=Symbol.for("react.strict_mode"),_=Symbol.for("react.profiler"),J=Symbol.for("react.consumer"),$=Symbol.for("react.context"),Y=Symbol.for("react.forward_ref"),G=Symbol.for("react.suspense"),T=Symbol.for("react.suspense_list"),H=Symbol.for("react.memo"),R=Symbol.for("react.lazy"),k=Symbol.for("react.activity"),S=Symbol.for("react.client.reference"),D=g.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE,U=Object.prototype.hasOwnProperty,W=Array.isArray,Q=console.createTask?console.createTask:function(){return null};g={"react-stack-bottom-frame":function(i){return i()}};var O,P={},M=g["react-stack-bottom-frame"].bind(g,s)(),E=Q(o(s)),z={};ue.Fragment=w,ue.jsx=function(i,v,C,X,B){var V=1e4>D.recentlyCreatedOwnerStacks++;return p(i,v,C,!1,X,B,V?Error("react-stack-top-frame"):M,V?Q(o(i)):E)},ue.jsxs=function(i,v,C,X,B){var V=1e4>D.recentlyCreatedOwnerStacks++;return p(i,v,C,!0,X,B,V?Error("react-stack-top-frame"):M,V?Q(o(i)):E)}}()),ue}var _e;function pt(){return _e||(_e=1,process.env.NODE_ENV==="production"?me.exports=ft():me.exports=ht()),me.exports}var x=pt();const Ye=t=>{if(!t.currentTarget||typeof t.currentTarget.getBoundingClientRect!="function")return{x:0,y:0};const e=t.currentTarget.getBoundingClientRect(),n=t.clientX-e.x,o=t.clientY-e.y;return{x:n/e.width*100,y:o/e.height*100}},Oe=(t,e,n)=>Math.max(t,Math.min(e,n)),gt=t=>{if(!t.currentTarget||typeof t.currentTarget.getBoundingClientRect!="function")return{x:0,y:0};const e=t.targetTouches[0],n=t.currentTarget.getBoundingClientRect(),o=e.pageX-n.left,r=e.pageY-(n.top+window.scrollY);return{x:Oe(0,100,o/n.width*100),y:Oe(0,100,r/n.height*100)}},oe=t=>mt(t)?xt(t)?(bt(t)&&t.preventDefault(),gt(t)):{x:null}:Ye(t),mt=t=>t.targetTouches!==void 0,xt=t=>t.targetTouches.length===1,bt=t=>t.type==="touchmove";function Ie(){const[t,e]=h.useState({x:null,y:null}),n=h.useRef(null),o=h.useCallback(u=>{try{const f=Ye(u);e(f)}catch{e({x:null,y:null})}},[]),r=h.useCallback(u=>{const f=n.current;if(!f||u.targetTouches.length!==1)return;const p=u.targetTouches[0],l=f.offsetParent;if(l)try{const g=p.pageX-l.offsetLeft,m=p.pageY-l.offsetTop,b=f,w=b.width,y=b.height;w>0&&y>0?e({x:g/w*100,y:m/y*100}):e({x:null,y:null})}catch{e({x:null,y:null})}},[]),s=h.useCallback(u=>{e({x:null,y:null})},[]),c=h.useCallback(u=>{e({x:null,y:null})},[]),a=h.useCallback(u=>{n.current=u},[]);return{mousePosition:t,handlers:{onMouseMove:o,onMouseLeave:s,onTouchMove:r,onTouchLeave:c},setRef:a}}var xe={exports:{}},ye={};/**
+  <%s key={someKey} {...props} />`,C,R,V,R),te[R+C]=!0)}if(R=null,v!==void 0&&(n(v),R=""+v),a(m)&&(n(m.key),R=""+m.key),"key"in m){v={};for(var ne in m)ne!=="key"&&(v[ne]=m[ne])}else v=m;return R&&i(v,typeof o=="function"?o.displayName||o.name||"Unknown":o),f(o,R,k,j,s(),v,Z,Q)}function d(o){typeof o=="object"&&o!==null&&o.$$typeof===x&&o._store&&(o._store.validated=1)}var b=h,x=Symbol.for("react.transitional.element"),E=Symbol.for("react.portal"),w=Symbol.for("react.fragment"),T=Symbol.for("react.strict_mode"),M=Symbol.for("react.profiler"),I=Symbol.for("react.consumer"),z=Symbol.for("react.context"),_=Symbol.for("react.forward_ref"),X=Symbol.for("react.suspense"),y=Symbol.for("react.suspense_list"),O=Symbol.for("react.memo"),D=Symbol.for("react.lazy"),G=Symbol.for("react.activity"),L=Symbol.for("react.client.reference"),U=b.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE,F=Object.prototype.hasOwnProperty,B=Array.isArray,W=console.createTask?console.createTask:function(){return null};b={"react-stack-bottom-frame":function(o){return o()}};var J,le={},P=b["react-stack-bottom-frame"].bind(b,c)(),ue=W(r(c)),te={};K.Fragment=w,K.jsx=function(o,m,v,C,j){var k=1e4>U.recentlyCreatedOwnerStacks++;return p(o,m,v,!1,C,j,k?Error("react-stack-top-frame"):P,k?W(r(o)):ue)},K.jsxs=function(o,m,v,C,j){var k=1e4>U.recentlyCreatedOwnerStacks++;return p(o,m,v,!0,C,j,k?Error("react-stack-top-frame"):P,k?W(r(o)):ue)}}()),K}var ye;function $e(){return ye||(ye=1,process.env.NODE_ENV==="production"?re.exports=Ze():re.exports=Qe()),re.exports}var g=$e();const Te=(t,e)=>{const n=e||t.currentTarget;if(!n||typeof n.getBoundingClientRect!="function")return{x:0,y:0};const r=n.getBoundingClientRect(),s=t.clientX-r.x,c=t.clientY-r.y;return{x:s/r.width*100,y:c/r.height*100}},we=(t,e,n)=>Math.max(t,Math.min(e,n)),Ke=t=>{if(!t.currentTarget||typeof t.currentTarget.getBoundingClientRect!="function")return{x:0,y:0};const e=t.targetTouches[0],n=t.currentTarget.getBoundingClientRect(),r=e.pageX-n.left,s=e.pageY-(n.top+window.scrollY);return{x:we(0,100,r/n.width*100),y:we(0,100,s/n.height*100)}},H=(t,e)=>qe(t)?et(t)?(tt(t)&&t.preventDefault(),Ke(t)):{x:null}:Te(t,e),qe=t=>t.targetTouches!==void 0,et=t=>t.targetTouches.length===1,tt=t=>t.type==="touchmove";function Re(t){const[e,n]=h.useState({x:null,y:null}),r=h.useCallback(i=>{try{const l=t.current;if(!l){n({x:null,y:null});return}const f=Te(i,l);n(f)}catch{n({x:null,y:null})}},[t]),s=h.useCallback(i=>{const l=t.current;if(!l||i.targetTouches.length!==1)return;const f=i.targetTouches[0],p=l.offsetParent;if(p)try{const d=f.pageX-p.offsetLeft,b=f.pageY-p.offsetTop,x=l,E=x.width,w=x.height;E>0&&w>0?n({x:d/E*100,y:b/w*100}):n({x:null,y:null})}catch{n({x:null,y:null})}},[t]),c=h.useCallback(i=>{n({x:null,y:null})},[]),a=h.useCallback(i=>{n({x:null,y:null})},[]);return{mousePosition:e,handlers:{onMouseMove:r,onMouseLeave:c,onTouchMove:s,onTouchLeave:a}}}function Ce({selectors:t,effectiveType:e,value:n,onChange:r,disableAnnotation:s}){const c=h.useCallback(i=>{if(i)return t.find(l=>l.TYPE===i)},[t]);return{callSelectorMethod:h.useCallback((i,l)=>{if(s)return;const f=c(e);if(!(f!=null&&f.methods[i]))return;const p=f.methods[i];try{const d=p(n||{},l);if(typeof d>"u"){process.env.NODE_ENV!=="production"&&console.error(`Selector method ${String(i)} of type ${e} returned undefined. Make sure to explicitly return the previous state or new state.`);return}r==null||r(d)}catch(d){process.env.NODE_ENV!=="production"&&console.error(`Error calling selector method ${String(i)}:`,d)}},[s,c,e,n,r]),getSelectorByType:c}}var se={exports:{}},fe={};/**
  * @license React
  * react-compiler-runtime.production.js
  *
@@ -27,7 +27,7 @@ React keys must be passed directly to JSX without using spread:
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var Le;function vt(){if(Le)return ye;Le=1;var t=h.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;return ye.c=function(e){return t.H.useMemoCache(e)},ye}var Re={};/**
+ */var Ne;function nt(){if(Ne)return fe;Ne=1;var t=h.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;return fe.c=function(e){return t.H.useMemoCache(e)},fe}var he={};/**
  * @license React
  * react-compiler-runtime.development.js
  *
@@ -35,11 +35,11 @@ React keys must be passed directly to JSX without using spread:
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
- */var Xe;function wt(){return Xe||(Xe=1,process.env.NODE_ENV!=="production"&&function(){var t=h.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;Re.c=function(e){var n=t.H;return n===null&&console.error(`Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+ */var Me;function ot(){return Me||(Me=1,process.env.NODE_ENV!=="production"&&function(){var t=h.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;he.c=function(e){var n=t.H;return n===null&&console.error(`Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
 1. You might have mismatching versions of React and the renderer (such as React DOM)
 2. You might be breaking the Rules of Hooks
 3. You might have more than one copy of React in the same app
-See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.`),n.useMemoCache(e)}}()),Re}var Be;function Et(){return Be||(Be=1,process.env.NODE_ENV==="production"?xe.exports=vt():xe.exports=wt()),xe.exports}var Z=Et();function yt(t,e){if(!t||typeof t.getBoundingClientRect!="function")return!1;const{pageX:n,pageY:o}=e,{left:r,right:s,bottom:c,top:a}=t.getBoundingClientRect();return n>r&&n<s&&o>a&&o<c}function He(){const t=Z.c(5),[e,n]=h.useState(!1),o=h.useRef(null);let r,s;t[0]===Symbol.for("react.memo_cache_sentinel")?(r=()=>{const f=p=>{const l=o.current,g={pageX:p.pageX,pageY:p.pageY},m=yt(l,g);n(m)};return document.addEventListener("mousemove",f,{passive:!0}),()=>{document.removeEventListener("mousemove",f)}},s=[],t[0]=r,t[1]=s):(r=t[0],s=t[1]),h.useEffect(r,s);let c;t[2]===Symbol.for("react.memo_cache_sentinel")?(c=f=>{o.current=f},t[2]=c):c=t[2];const a=c;let u;return t[3]!==e?(u={isHoveringOver:e,setRef:a},t[3]=e,t[4]=u):u=t[4],u}function ze({selectors:t,effectiveType:e,value:n,onChange:o,disableAnnotation:r}){const s=h.useCallback(a=>{if(a)return t.find(u=>u.TYPE===a)},[t]);return{callSelectorMethod:h.useCallback((a,u)=>{if(r)return;const f=s(e);if(!(f!=null&&f.methods[a]))return;const p=f.methods[a];try{const l=p(n||{},u);if(typeof l>"u"){process.env.NODE_ENV!=="production"&&console.error(`Selector method ${String(a)} of type ${e} returned undefined. Make sure to explicitly return the previous state or new state.`);return}o==null||o(l)}catch(l){process.env.NODE_ENV!=="production"&&console.error(`Error calling selector method ${String(a)}:`,l)}},[r,s,e,n,o]),getSelectorByType:s}}function Fe(t){const e=Z.c(12),{annotations:n,selectors:o,imageRef:r,enableEditing:s}=t;let c,a;e[0]!==o?(a=new Map(o.map(Tt)),e[0]=o,e[1]=a):a=e[1],c=a;const u=c;let f;e[2]!==u?(f=b=>{if(b)return u.get(b)},e[2]=u,e[3]=f):f=e[3];const p=f;let l;e[4]!==n||e[5]!==s||e[6]!==p||e[7]!==r?(l=(b,w)=>{const y=r.current;if(!y||b===null||w===null)return;const _={x:b,y:w},J=n.map((Y,G)=>{var S;const{geometry:T}=Y;if(!T)return null;const H=p(T.type);if(!H)return console.warn(`🔍 No selector found for type: ${T.type}`),null;let R=T;s&&T.type==="RECTANGLE"&&typeof T.x=="number"&&typeof T.y=="number"&&typeof T.width=="number"&&typeof T.height=="number"&&(R={...T,x:Math.max(0,T.x-2),y:Math.max(0,T.y-2),width:Math.min(100-T.x+2,T.width+4),height:Math.min(100-T.y+2,T.height+4)});const k=H.intersects(_,R,y);return k&&console.log(`🎯 Hit detected on annotation ${(S=Y.data)==null?void 0:S.id}:`,{point:_,testGeometry:R,intersects:k}),k?Y:null}).filter(Rt);return J.length===0?void 0:J.sort((Y,G)=>{const T=p(Y.geometry.type),H=p(G.geometry.type);return!T||!H?0:T.area(Y.geometry,y)-H.area(G.geometry,y)})[0]},e[4]=n,e[5]=s,e[6]=p,e[7]=r,e[8]=l):l=e[8];const g=l;let m;return e[9]!==p||e[10]!==g?(m={getTopAnnotationAt:g,getSelectorByType:p},e[9]=p,e[10]=g,e[11]=m):m=e[11],m}function Rt(t){return t!==null}function Tt(t){return[t.TYPE,t]}const Mt=(t,e,n)=>{const[o,r]=h.useState(!1),[s,c]=h.useState(null),[a,u]=h.useState(null),[f,p]=h.useState(null),l=h.useRef(null),g=h.useRef(t),m=h.useRef(t),[b,w]=h.useState(t);g.current=n?b:t,h.useEffect(()=>{(!n||!o)&&(m.current=t,n&&w(t))},[t,n,o]);const y=h.useCallback((R,k)=>{const S=g.current.map(D=>D.data.id===R?{...D,isDragging:k}:D);g.current=S,n?w(S):e(S),r(k),c(k?R:null)},[e,n]),_=h.useCallback((R,k)=>{n&&p(R),y(R,!0);const S=g.current.find(D=>D.data.id===R);S&&(l.current={...S.geometry,initialCursorPosition:k})},[y,n]),J=h.useCallback((R,k,S)=>{if(!s||!l.current)return;const D=R.clientX-S.x,U=R.clientY-S.y,W=document.querySelector(".annotation-container");if(!W)return;const Q=W.getBoundingClientRect(),O=Q.width,P=Q.height,M=100,E={...l.current};switch(k){case"top":E.height=Math.min(l.current.height-U/P*M,l.current.y+l.current.height),E.y=Math.max(l.current.y+U/P*M,0);break;case"right":E.width=Math.min(l.current.width+D/O*M,M-l.current.x);break;case"bottom":E.height=Math.min(l.current.height+U/P*M,M-l.current.y);break;case"left":E.width=Math.min(l.current.width-D/O*M,l.current.x+l.current.width),E.x=Math.max(l.current.x+D/O*M,0);break}E.width=Math.max(E.width,0),E.height=Math.max(E.height,0),E.x=Math.min(E.x,M-E.width),E.y=Math.min(E.y,M-E.height);const z=g.current.map(i=>i.data.id===s?{...i,geometry:E}:i);g.current=z,n?w(z):e(z)},[s,e,n]),$=h.useCallback((R,k)=>{n&&p(R),y(R,!0);const S=g.current.find(D=>D.data.id===R);S&&(l.current={...S.geometry,initialCursorPosition:k})},[y,n]),Y=h.useCallback((R,k)=>{if(!s||!l.current)return;const S=R.clientX-k.x,D=R.clientY-k.y,U=document.querySelector(".annotation-container");if(!U)return;const W=U.getBoundingClientRect(),Q=W.width,O=W.height,P=100,M={...l.current};M.x=Math.max(Math.min(l.current.x+S/Q*P,P-l.current.width),0),M.y=Math.max(Math.min(l.current.y+D/O*P,P-l.current.height),0);const E=g.current.map(z=>z.data.id===s?{...z,geometry:M}:z);g.current=E,n?w(E):e(E)},[s,e,n]),G=h.useCallback(()=>{s&&(r(!1),c(null)),l.current=null},[s]),T=h.useCallback(R=>{console.log("handleConfirm hasConfirmMode",n),e(b),m.current=b,p(null),c(null),r(!1)},[e,b]),H=h.useCallback(R=>{w(m.current),g.current=m.current,p(null),c(null),r(!1)},[]);return{isDragging:o,draggingId:s,activeAnnotationId:a,editingAnnotationId:f,setActiveAnnotationId:u,setDraggingId:c,handleDotDragStart:_,handleDotDrag:J,handleMoveStart:$,handleMove:Y,handleMouseUp:G,handleConfirm:T,handleReset:H,displayAnnotations:n?b:t}},Te=j.div`
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.`),n.useMemoCache(e)}}()),he}var _e;function rt(){return _e||(_e=1,process.env.NODE_ENV==="production"?se.exports=nt():se.exports=ot()),se.exports}var Y=rt();function Se(t){const e=Y.c(12),{annotations:n,selectors:r,imageRef:s,enableEditing:c}=t;let a,i;e[0]!==r?(i=new Map(r.map(ct)),e[0]=r,e[1]=i):i=e[1],a=i;const l=a;let f;e[2]!==l?(f=E=>{if(E)return l.get(E)},e[2]=l,e[3]=f):f=e[3];const p=f;let d;e[4]!==n||e[5]!==c||e[6]!==p||e[7]!==s?(d=(E,w)=>{const T=s.current;if(!T||E===null||w===null)return;const M={x:E,y:w},I=n.map((_,X)=>{var L;const{geometry:y}=_;if(!y)return null;const O=p(y.type);if(!O)return console.warn(`🔍 No selector found for type: ${y.type}`),null;let D=y;c&&y.type==="RECTANGLE"&&typeof y.x=="number"&&typeof y.y=="number"&&typeof y.width=="number"&&typeof y.height=="number"&&(D={...y,x:Math.max(0,y.x-2),y:Math.max(0,y.y-2),width:Math.min(100-y.x+2,y.width+4),height:Math.min(100-y.y+2,y.height+4)});const G=O.intersects(M,D,T);return G&&console.log(`🎯 Hit detected on annotation ${(L=_.data)==null?void 0:L.id}:`,{point:M,testGeometry:D,intersects:G}),G?_:null}).filter(st);return I.length===0?void 0:I.sort((_,X)=>{const y=p(_.geometry.type),O=p(X.geometry.type);return!y||!O?0:y.area(_.geometry,T)-O.area(X.geometry,T)})[0]},e[4]=n,e[5]=c,e[6]=p,e[7]=s,e[8]=d):d=e[8];const b=d;let x;return e[9]!==p||e[10]!==b?(x={getTopAnnotationAt:b,getSelectorByType:p},e[9]=p,e[10]=b,e[11]=x):x=e[11],x}function st(t){return t!==null}function ct(t){return[t.TYPE,t]}function it(t={}){const{logToConsole:e=!1,componentName:n="Component"}=t,r=h.useRef(0),s=h.useRef();r.current+=1,e&&process.env.NODE_ENV!=="production"&&console.log(`🔄 ${n} rendered ${r.current} times`);const c=a=>{if(process.env.NODE_ENV!=="production"&&e){if(s.current){const i=[];Object.keys(a).forEach(l=>{a[l]!==s.current[l]&&i.push(l)}),i.length>0&&console.log(`📝 ${n} props changed:`,i)}s.current=a}};return{renderCount:r.current,logPropsChange:c}}const me=S.div`
   background: rgba(0, 0, 0, .4);
   border-radius: 5px;
   bottom: 4px;
@@ -53,7 +53,7 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
   right: 4px;
   transition: opacity 0.21s ease-in-out;
   user-select: none;
-`,Ct=j.div`
+`,at=S.div`
   border: solid 3px white;
   border-radius: 50%;
   box-sizing: border-box;
@@ -65,7 +65,7 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
   position: absolute;
   transform: translate3d(-50%, -50%, 0);
   width: 16px;
-`;function Me(t){const e=Z.c(3),{geometry:n}=t.annotation;if(!n)return null;const o=`${n.y}%`,r=`${n.x}%`;let s;return e[0]!==o||e[1]!==r?(s=x.jsx(Ct,{style:{top:o,left:r}}),e[0]=o,e[1]=r,e[2]=s):s=e[2],s}const kt=j.div`
+`;function ke(t){const e=Y.c(3),{geometry:n}=t.annotation;if(!n)return null;const r=`${n.y}%`,s=`${n.x}%`;let c;return e[0]!==r||e[1]!==s?(c=g.jsx(at,{style:{top:r,left:s}}),e[0]=r,e[1]=s,e[2]=c):c=e[2],c}const lt=S.div`
   padding: 8px 16px;
 
   textarea {
@@ -75,7 +75,7 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
     min-height: 60px;
     outline: 0;
   }
-`,St=j.div`
+`,ut=S.div`
   background: whitesmoke;
   border: 0;
   box-sizing: border-box;
@@ -94,7 +94,7 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
   &:focus, &:hover {
     background: #eeeeee;
   }
-`,Dt=t=>{const e=Z.c(11),{onChange:n,onSubmit:o,onFocus:r,onBlur:s,value:c}=t;let a;e[0]!==s||e[1]!==n||e[2]!==r||e[3]!==c?(a=x.jsx(kt,{children:x.jsx("textarea",{placeholder:"Write description",onFocus:r,onBlur:s,onChange:n,value:c})}),e[0]=s,e[1]=n,e[2]=r,e[3]=c,e[4]=a):a=e[4];let u;e[5]!==o||e[6]!==c?(u=c&&x.jsx(St,{onClick:o,children:"Submit"}),e[5]=o,e[6]=c,e[7]=u):u=e[7];let f;return e[8]!==a||e[9]!==u?(f=x.jsxs(h.Fragment,{children:[a,u]}),e[8]=a,e[9]=u,e[10]=f):f=e[10],f},At=j.keyframes`
+`,dt=t=>{const e=Y.c(11),{onChange:n,onSubmit:r,onFocus:s,onBlur:c,value:a}=t;let i;e[0]!==c||e[1]!==n||e[2]!==s||e[3]!==a?(i=g.jsx(lt,{children:g.jsx("textarea",{placeholder:"Write description",onFocus:s,onBlur:c,onChange:n,value:a})}),e[0]=c,e[1]=n,e[2]=s,e[3]=a,e[4]=i):i=e[4];let l;e[5]!==r||e[6]!==a?(l=a&&g.jsx(ut,{onClick:r,children:"Submit"}),e[5]=r,e[6]=a,e[7]=l):l=e[7];let f;return e[8]!==i||e[9]!==l?(f=g.jsxs(h.Fragment,{children:[i,l]}),e[8]=i,e[9]=l,e[10]=f):f=e[10],f},ft=S.keyframes`
   from {
     opacity: 0;
     transform: scale(0);
@@ -104,7 +104,7 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
     opacity: 1;
     transform: scale(1);
   }
-`,Pt=j.div`
+`,ht=S.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -114,29 +114,29 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
   margin-top: 16px;
   transform-origin: top left;
 
-  animation: ${At} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: ${ft} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-`,Nt=t=>{var J;const e=Z.c(17),{annotation:n,onChange:o,onSubmit:r,className:s,style:c}=t,a=s===void 0?"":s;let u;e[0]!==c?(u=c===void 0?{}:c,e[0]=c,e[1]=u):u=e[1];const f=u,{geometry:p}=n;if(!p)return null;const l=`${p.x}%`,g=`${p.y+p.height}%`;let m;e[2]!==f||e[3]!==l||e[4]!==g?(m={position:"absolute",left:l,top:g,...f},e[2]=f,e[3]=l,e[4]=g,e[5]=m):m=e[5];let b;e[6]!==n||e[7]!==o?(b=$=>o({...n,data:{...n.data,text:$.target.value}}),e[6]=n,e[7]=o,e[8]=b):b=e[8];const w=(J=n.data)==null?void 0:J.text;let y;e[9]!==r||e[10]!==b||e[11]!==w?(y=x.jsx(Dt,{onChange:b,onSubmit:r,value:w}),e[9]=r,e[10]=b,e[11]=w,e[12]=y):y=e[12];let _;return e[13]!==a||e[14]!==m||e[15]!==y?(_=x.jsx(Pt,{className:a,style:m,children:y}),e[13]=a,e[14]=m,e[15]=y,e[16]=_):_=e[16],_},be=j.div`
+`,mt=t=>{var I;const e=Y.c(17),{annotation:n,onChange:r,onSubmit:s,className:c,style:a}=t,i=c===void 0?"":c;let l;e[0]!==a?(l=a===void 0?{}:a,e[0]=a,e[1]=l):l=e[1];const f=l,{geometry:p}=n;if(!p)return null;const d=`${p.x}%`,b=`${p.y+p.height}%`;let x;e[2]!==f||e[3]!==d||e[4]!==b?(x={position:"absolute",left:d,top:b,...f},e[2]=f,e[3]=d,e[4]=b,e[5]=x):x=e[5];let E;e[6]!==n||e[7]!==r?(E=z=>r({...n,data:{...n.data,text:z.target.value}}),e[6]=n,e[7]=r,e[8]=E):E=e[8];const w=(I=n.data)==null?void 0:I.text;let T;e[9]!==s||e[10]!==E||e[11]!==w?(T=g.jsx(dt,{onChange:E,onSubmit:s,value:w}),e[9]=s,e[10]=E,e[11]=w,e[12]=T):T=e[12];let M;return e[13]!==i||e[14]!==x||e[15]!==T?(M=g.jsx(ht,{className:i,style:x,children:T}),e[13]=i,e[14]=x,e[15]=T,e[16]=M):M=e[16],M},ce=S.div`
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
-`,jt=j.div`
+`,pt=S.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-`;function Ge(t){const e=Z.c(21),{geometry:n}=t.annotation;if(!n)return null;const o=`${n.y}%`;let r;e[0]!==o?(r=x.jsx(be,{style:{height:o,width:"100%"}}),e[0]=o,e[1]=r):r=e[1];const s=`${n.y}%`,c=`${n.height}%`,a=`${n.x}%`;let u;e[2]!==s||e[3]!==c||e[4]!==a?(u=x.jsx(be,{style:{top:s,height:c,width:a}}),e[2]=s,e[3]=c,e[4]=a,e[5]=u):u=e[5];const f=`${n.y}%`,p=`${n.x+n.width}%`,l=`${n.height}%`,g=`${100-(n.x+n.width)}%`;let m;e[6]!==f||e[7]!==p||e[8]!==l||e[9]!==g?(m=x.jsx(be,{style:{top:f,left:p,height:l,width:g}}),e[6]=f,e[7]=p,e[8]=l,e[9]=g,e[10]=m):m=e[10];const b=`${n.y+n.height}%`,w=`${100-(n.y+n.height)}%`;let y;e[11]!==b||e[12]!==w?(y=x.jsx(be,{style:{top:b,height:w,width:"100%"}}),e[11]=b,e[12]=w,e[13]=y):y=e[13];let _;return e[14]!==t.className||e[15]!==t.style||e[16]!==r||e[17]!==m||e[18]!==y||e[19]!==u?(_=x.jsxs(jt,{className:t.className,style:t.style,children:[r,u,m,y]}),e[14]=t.className,e[15]=t.style,e[16]=r,e[17]=m,e[18]=y,e[19]=u,e[20]=_):_=e[20],_}Ge.defaultProps={className:"",style:{}};const _t=j.div`
+`;function Ae(t){const e=Y.c(21),{geometry:n}=t.annotation;if(!n)return null;const r=`${n.y}%`;let s;e[0]!==r?(s=g.jsx(ce,{style:{height:r,width:"100%"}}),e[0]=r,e[1]=s):s=e[1];const c=`${n.y}%`,a=`${n.height}%`,i=`${n.x}%`;let l;e[2]!==c||e[3]!==a||e[4]!==i?(l=g.jsx(ce,{style:{top:c,height:a,width:i}}),e[2]=c,e[3]=a,e[4]=i,e[5]=l):l=e[5];const f=`${n.y}%`,p=`${n.x+n.width}%`,d=`${n.height}%`,b=`${100-(n.x+n.width)}%`;let x;e[6]!==f||e[7]!==p||e[8]!==d||e[9]!==b?(x=g.jsx(ce,{style:{top:f,left:p,height:d,width:b}}),e[6]=f,e[7]=p,e[8]=d,e[9]=b,e[10]=x):x=e[10];const E=`${n.y+n.height}%`,w=`${100-(n.y+n.height)}%`;let T;e[11]!==E||e[12]!==w?(T=g.jsx(ce,{style:{top:E,height:w,width:"100%"}}),e[11]=E,e[12]=w,e[13]=T):T=e[13];let M;return e[14]!==t.className||e[15]!==t.style||e[16]!==s||e[17]!==x||e[18]!==T||e[19]!==l?(M=g.jsxs(pt,{className:t.className,style:t.style,children:[s,l,x,T]}),e[14]=t.className,e[15]=t.style,e[16]=s,e[17]=x,e[18]=T,e[19]=l,e[20]=M):M=e[20],M}Ae.defaultProps={className:"",style:{}};const gt=S.div`
   border: dashed 2px black;
   box-shadow: 0px 0px 1px 1px white inset;
   box-sizing: border-box;
   transition: box-shadow 0.21s ease-in-out;
-`;function ve(t){const e=Z.c(10),{geometry:n}=t.annotation;if(!n)return null;const o=`${n.x}%`,r=`${n.y}%`,s=`${n.height}%`,c=`${n.width}%`,a=t.active?"0 0 1px 1px yellow inset":void 0;let u;e[0]!==t.style||e[1]!==o||e[2]!==r||e[3]!==s||e[4]!==c||e[5]!==a?(u={position:"absolute",left:o,top:r,height:s,width:c,boxShadow:a,...t.style},e[0]=t.style,e[1]=o,e[2]=r,e[3]=s,e[4]=c,e[5]=a,e[6]=u):u=e[6];let f;return e[7]!==t.className||e[8]!==u?(f=x.jsx(_t,{className:t.className,style:u}),e[7]=t.className,e[8]=u,e[9]=f):f=e[9],f}ve.defaultProps={className:"",style:{}};const Yt=j.div`
+`;function Pe(t){const e=Y.c(10),{geometry:n}=t.annotation;if(!n)return null;const r=`${n.x}%`,s=`${n.y}%`,c=`${n.height}%`,a=`${n.width}%`,i=t.active?"0 0 1px 1px yellow inset":void 0;let l;e[0]!==t.style||e[1]!==r||e[2]!==s||e[3]!==c||e[4]!==a||e[5]!==i?(l={position:"absolute",left:r,top:s,height:c,width:a,boxShadow:i,...t.style},e[0]=t.style,e[1]=r,e[2]=s,e[3]=c,e[4]=a,e[5]=i,e[6]=l):l=e[6];let f;return e[7]!==t.className||e[8]!==l?(f=g.jsx(gt,{className:t.className,style:l}),e[7]=t.className,e[8]=l,e[9]=f):f=e[9],f}Pe.defaultProps={className:"",style:{}};const xt=S.div`
   border: dashed 2px black;
   border-radius: 100%;
   box-shadow: 0px 0px 1px 1px white inset;
   box-sizing: border-box;
   transition: box-shadow 0.21s ease-in-out;
-`;function we(t){const e=Z.c(10),{geometry:n}=t.annotation;if(!n)return null;const o=`${n.x}%`,r=`${n.y}%`,s=`${n.height}%`,c=`${n.width}%`,a=t.active?"0 0 1px 1px yellow inset":void 0;let u;e[0]!==t.style||e[1]!==o||e[2]!==r||e[3]!==s||e[4]!==c||e[5]!==a?(u={position:"absolute",left:o,top:r,height:s,width:c,boxShadow:a,...t.style},e[0]=t.style,e[1]=o,e[2]=r,e[3]=s,e[4]=c,e[5]=a,e[6]=u):u=e[6];let f;return e[7]!==t.className||e[8]!==u?(f=x.jsx(Yt,{className:t.className,style:u}),e[7]=t.className,e[8]=u,e[9]=f):f=e[9],f}we.defaultProps={className:"",style:{}};const Ot=j.div`
+`;function pe(t){const e=Y.c(10),{geometry:n}=t.annotation;if(!n)return null;const r=`${n.x}%`,s=`${n.y}%`,c=`${n.height}%`,a=`${n.width}%`,i=t.active?"0 0 1px 1px yellow inset":void 0;let l;e[0]!==t.style||e[1]!==r||e[2]!==s||e[3]!==c||e[4]!==a||e[5]!==i?(l={position:"absolute",left:r,top:s,height:c,width:a,boxShadow:i,...t.style},e[0]=t.style,e[1]=r,e[2]=s,e[3]=c,e[4]=a,e[5]=i,e[6]=l):l=e[6];let f;return e[7]!==t.className||e[8]!==l?(f=g.jsx(xt,{className:t.className,style:l}),e[7]=t.className,e[8]=l,e[9]=f):f=e[9],f}pe.defaultProps={className:"",style:{}};const bt=S.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -146,223 +146,31 @@ See https://react.dev/link/invalid-hook-call for tips about how to debug and fix
   padding: 8px 16px;
   margin-top: 8px;
   margin-left: 8px;
-`;function Ue(t){const e=Z.c(8),{geometry:n}=t.annotation;if(!n||typeof n.x>"u"||typeof n.y>"u"||typeof n.width>"u"||typeof n.height>"u")return null;const o=`${n.x}%`,r=`${n.y+n.height}%`;let s;e[0]!==t.style||e[1]!==o||e[2]!==r?(s={position:"absolute",left:o,top:r,...t.style},e[0]=t.style,e[1]=o,e[2]=r,e[3]=s):s=e[3];const c=t.annotation.data&&t.annotation.data.text;let a;return e[4]!==t.className||e[5]!==s||e[6]!==c?(a=x.jsx(Ot,{style:s,className:t.className,children:c}),e[4]=t.className,e[5]=s,e[6]=c,e[7]=a):a=e[7],a}Ue.defaultProps={style:{},className:""};const It=j.div`
-  border-radius: 10px;
-  position: absolute;
-  border: none !important;
-  box-shadow: 0 0 10px rgba(119, 127, 152, 0.2);
-  font-size: 16px;
-  z-index: 20;
-  background-color: white;
-  height: 20px;
-  width: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  top: -10px;
-  right: -10px;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-
-  /* Add larger hover area using pseudo-element */
-  &::before {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    top: -5px;
-    left: -5px;
-    z-index: -1;
-    pointer-events: auto;
-  }
-
-  &:hover {
-    background-color: #f5f5f5;
-    transform: scale(1.1);
-  }
-`,Lt=j.div`
-  &::before {
-    content: "×";
-    font-size: 14px;
-    font-weight: bold;
-    color: #666;
-    line-height: 1;
-  }
-`,We=t=>{const e=Z.c(6),{annotationId:n,onRemove:o}=t;let r;e[0]!==n||e[1]!==o?(r=u=>{u.stopPropagation(),o(n)},e[0]=n,e[1]=o,e[2]=r):r=e[2];const s=r;let c;e[3]===Symbol.for("react.memo_cache_sentinel")?(c=x.jsx(Lt,{}),e[3]=c):c=e[3];let a;return e[4]!==s?(a=x.jsx(It,{onClick:s,children:c}),e[4]=s,e[5]=a):a=e[5],a},Xt=j.div`
-  position: absolute;
-  bottom: -25px;
-  right: 0;
-  display: flex;
-  gap: 5px;
-`,Ve=j.button`
-  width: 20px;
-  height: 20px;
-  background-color: white;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 0 10px rgba(119, 127, 152, 0.2);
-  font-size: 13px;
-  font-weight: 600;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background-color: lightgray;
-    transform: scale(1.1);
-  }
-`,Je=t=>{const e=Z.c(11),{onConfirm:n,onReset:o}=t;let r;e[0]!==n?(r=l=>{l.stopPropagation(),n()},e[0]=n,e[1]=r):r=e[1];const s=r;let c;e[2]!==o?(c=l=>{l.stopPropagation(),o()},e[2]=o,e[3]=c):c=e[3];const a=c;let u;e[4]!==s?(u=x.jsx(Ve,{$variant:"confirm",onClick:s,children:"✓"}),e[4]=s,e[5]=u):u=e[5];let f;e[6]!==a?(f=x.jsx(Ve,{$variant:"reset",onClick:a,children:"✕"}),e[6]=a,e[7]=f):f=e[7];let p;return e[8]!==u||e[9]!==f?(p=x.jsxs(Xt,{children:[u,f]}),e[8]=u,e[9]=f,e[10]=p):p=e[10],p},Bt=j.div`
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: white;
-  border: 1px solid #24B3C8;
-  border-radius: 50%;
-  cursor: move;
-  z-index: 15;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-
-  /* Add larger hover area using pseudo-element */
-  &::before {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: -5px;
-    left: -5px;
-    z-index: -1;
-    pointer-events: auto;
-  }
-
-  &:hover {
-    width: 12px;
-    height: 12px;
-    background: #1e90ff;
-    border: 2px solid #ffffff;
-    box-shadow: 0 0 4px rgba(30, 144, 255, 0.6);
-  }
-
-  ${t=>{switch(t.position){case"top":return`
-          top: -5px;
-          left: 50%;
-          transform: translateX(-50%);
-          
-          &:hover {
-            top: -6px;
-            transform: translateX(-50%);
-          }
-        `;case"right":return`
-          top: 50%;
-          right: -5px;
-          transform: translateY(-50%);
-          
-          &:hover {
-            right: -6px;
-            transform: translateY(-50%);
-          }
-        `;case"bottom":return`
-          bottom: -5px;
-          left: 50%;
-          transform: translateX(-50%);
-          
-          &:hover {
-            bottom: -6px;
-            transform: translateX(-50%);
-          }
-        `;case"left":return`
-          top: 50%;
-          left: -5px;
-          transform: translateY(-50%);
-          
-          &:hover {
-            left: -6px;
-            transform: translateY(-50%);
-          }
-        `;default:return""}}}
-`,Ht=j.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  background: white;
-  border: 1px solid #24B3C8;
-  border-radius: 50%;
-  cursor: move;
-  z-index: 15;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #24B3C8;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    width: 24px;
-    height: 24px;
-    background: #1e90ff;
-    border: 2px solid #ffffff;
-    color: white;
-    font-size: 14px;
-    box-shadow: 0 0 6px rgba(30, 144, 255, 0.6);
-  }
-`,de=t=>{const e=Z.c(9),{position:n,onDragStart:o,onDrag:r,onDragEnd:s,annotationId:c}=t;let a;e[0]!==c||e[1]!==r||e[2]!==s||e[3]!==o||e[4]!==n?(a=l=>{l.preventDefault(),l.stopPropagation();const g={x:l.clientX,y:l.clientY};o(c,g);const m=w=>{w.preventDefault(),w.stopPropagation(),r(w,n,g)},b=w=>{w.preventDefault(),w.stopPropagation(),document.removeEventListener("mousemove",m),document.removeEventListener("mouseup",b),s==null||s()};document.addEventListener("mousemove",m),document.addEventListener("mouseup",b)},e[0]=c,e[1]=r,e[2]=s,e[3]=o,e[4]=n,e[5]=a):a=e[5];const u=a,f=zt;let p;return e[6]!==u||e[7]!==n?(p=x.jsx(Bt,{position:n,onMouseDown:u,onClick:f,"data-type":"dot"}),e[6]=u,e[7]=n,e[8]=p):p=e[8],p},Ze=t=>{const e=Z.c(7),{onMoveStart:n,onMove:o,onMoveEnd:r,annotationId:s}=t;let c;e[0]!==s||e[1]!==o||e[2]!==r||e[3]!==n?(c=p=>{p.preventDefault(),p.stopPropagation();const l={x:p.clientX,y:p.clientY};n(s,l);const g=b=>{b.preventDefault(),b.stopPropagation(),o(b,l)},m=b=>{b.preventDefault(),b.stopPropagation(),document.removeEventListener("mousemove",g),document.removeEventListener("mouseup",m),r==null||r()};document.addEventListener("mousemove",g),document.addEventListener("mouseup",m)},e[0]=s,e[1]=o,e[2]=r,e[3]=n,e[4]=c):c=e[4];const a=c,u=Ft;let f;return e[5]!==a?(f=x.jsx(Ht,{onMouseDown:a,onClick:u,"data-type":"move-button",children:"↕"}),e[5]=a,e[6]=f):f=e[6],f};function zt(t){t.preventDefault(),t.stopPropagation()}function Ft(t){t.preventDefault(),t.stopPropagation()}const Gt=j.div`
-  position: absolute;
-  border: ${t=>t.$isDragging?"1px dashed #FFFFFF":"1px solid #24B3C8"};
-  background: rgba(36, 179, 200, 0.1);
-  pointer-events: auto;
-  z-index: 10;
-  cursor: move;
-  
-  /* Add padding to create a larger hover area */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    z-index: -1;
-    pointer-events: none;
-  }
-  
-  &:hover {
-    border: ${t=>t.$isDragging?"1px dashed #FFFFFF":"2px solid #1e90ff"};
-    background: rgba(36, 179, 200, 0.2);
-    box-shadow: 0 0 8px rgba(30, 144, 255, 0.4);
-  }
-`,Qe=t=>{var z,i,v,C,X,B,V,se,ee,I,N,te;const e=Z.c(53),{annotation:n,onDotDragStart:o,onDotDrag:r,onMoveStart:s,onMove:c,onDragEnd:a,isDragging:u,enableRemoval:f,onRemoveAnnotation:p,onConfirm:l,onReset:g}=t,{geometry:m}=n;if(!m||!m.type||typeof m.x!="number"||typeof m.y!="number")return null;let b;e[0]!==((z=n.data)==null?void 0:z.id)||e[1]!==c||e[2]!==s?(b=F=>{var pe;const A=F.target;if(A.closest('[data-type="dot"]')||A.closest('[data-type="move-button"]'))return;F.preventDefault(),F.stopPropagation();const q={x:F.clientX,y:F.clientY},he=(pe=n.data)==null?void 0:pe.id;he&&s(he,q);const ae=ne=>{ne.preventDefault(),ne.stopPropagation(),c(ne,q)},ce=ne=>{ne.preventDefault(),ne.stopPropagation(),document.removeEventListener("mousemove",ae),document.removeEventListener("mouseup",ce)};document.addEventListener("mousemove",ae),document.addEventListener("mouseup",ce)},e[0]=(i=n.data)==null?void 0:i.id,e[1]=c,e[2]=s,e[3]=b):b=e[3];const w=b,y=Ut,_=`${m.x}%`,J=`${m.y}%`,$=`${m.width}%`,Y=`${m.height}%`;let G;e[4]!==_||e[5]!==J||e[6]!==$||e[7]!==Y?(G={left:_,top:J,width:$,height:Y},e[4]=_,e[5]=J,e[6]=$,e[7]=Y,e[8]=G):G=e[8];const T=(v=n.data)==null?void 0:v.id;let H;e[9]!==r||e[10]!==o||e[11]!==a||e[12]!==T?(H=x.jsx(de,{position:"top",onDragStart:o,onDrag:r,onDragEnd:a,annotationId:T}),e[9]=r,e[10]=o,e[11]=a,e[12]=T,e[13]=H):H=e[13];const R=(C=n.data)==null?void 0:C.id;let k;e[14]!==r||e[15]!==o||e[16]!==a||e[17]!==R?(k=x.jsx(de,{position:"right",onDragStart:o,onDrag:r,onDragEnd:a,annotationId:R}),e[14]=r,e[15]=o,e[16]=a,e[17]=R,e[18]=k):k=e[18];const S=(X=n.data)==null?void 0:X.id;let D;e[19]!==r||e[20]!==o||e[21]!==a||e[22]!==S?(D=x.jsx(de,{position:"bottom",onDragStart:o,onDrag:r,onDragEnd:a,annotationId:S}),e[19]=r,e[20]=o,e[21]=a,e[22]=S,e[23]=D):D=e[23];const U=(B=n.data)==null?void 0:B.id;let W;e[24]!==r||e[25]!==o||e[26]!==a||e[27]!==U?(W=x.jsx(de,{position:"left",onDragStart:o,onDrag:r,onDragEnd:a,annotationId:U}),e[24]=r,e[25]=o,e[26]=a,e[27]=U,e[28]=W):W=e[28];const Q=(V=n.data)==null?void 0:V.id;let O;e[29]!==a||e[30]!==c||e[31]!==s||e[32]!==Q?(O=x.jsx(Ze,{onMoveStart:s,onMove:c,onMoveEnd:a,annotationId:Q}),e[29]=a,e[30]=c,e[31]=s,e[32]=Q,e[33]=O):O=e[33];let P;e[34]!==((se=n.data)==null?void 0:se.id)||e[35]!==f||e[36]!==p?(P=f&&p&&x.jsx(We,{annotationId:(ee=n.data)==null?void 0:ee.id,onRemove:p}),e[34]=(I=n.data)==null?void 0:I.id,e[35]=f,e[36]=p,e[37]=P):P=e[37];let M;e[38]!==((N=n.data)==null?void 0:N.id)||e[39]!==l||e[40]!==g?(M=l&&g&&x.jsx(Je,{onConfirm:()=>{var F;return l((F=n.data)==null?void 0:F.id)},onReset:()=>{var F;return g((F=n.data)==null?void 0:F.id)}}),e[38]=(te=n.data)==null?void 0:te.id,e[39]=l,e[40]=g,e[41]=M):M=e[41];let E;return e[42]!==w||e[43]!==u||e[44]!==k||e[45]!==D||e[46]!==W||e[47]!==O||e[48]!==P||e[49]!==M||e[50]!==G||e[51]!==H?(E=x.jsxs(Gt,{style:G,$isDragging:u,onMouseDown:w,onClick:y,children:[H,k,D,W,O,P,M]}),e[42]=w,e[43]=u,e[44]=k,e[45]=D,e[46]=W,e[47]=O,e[48]=P,e[49]=M,e[50]=G,e[51]=H,e[52]=E):E=e[52],E};function Ut(t){t.preventDefault(),t.stopPropagation()}const Ke="RECTANGLE";function Wt({x:t,y:e},n,o){if(!n)return!1;const r=Math.min(n.x,n.x+n.width),s=Math.max(n.x,n.x+n.width),c=Math.min(n.y,n.y+n.height),a=Math.max(n.y,n.y+n.height);return!(t<r||e<c||t>s||e>a)}function Vt(t,e){if(!t||t.width<=0||t.height<=0)return 0;const n=Math.abs(t.width),o=Math.abs(t.height);return n*o}const Jt={onTouchStart(t,e){return $e(t,e)},onTouchEnd(t,e){return qe(t)},onTouchMove(t,e){return et(t,e)},onMouseDown(t,e){return $e(t,e)},onMouseUp(t,e){return qe(t)},onMouseMove(t,e){return et(t,e)}};function $e(t,e){if(t.selection)return{};{const{x:n,y:o}=oe(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:o}}}}function qe(t,e){if(t.selection){const{selection:n,geometry:o}=t;if(!o)return{};switch(t.selection.mode){case"SELECTING":return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}}}return t}function et(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:o}=t.selection,{x:r,y:s}=oe(e),c=r-n,a=s-o;return{...t,geometry:{...t.geometry,type:Ke,x:c>0?n:r,y:a>0?o:s,width:Math.abs(c),height:Math.abs(a)}}}return t}const re={TYPE:Ke,intersects:Wt,area:Vt,methods:Jt},tt=6,Zt=(t={width:100,height:100})=>({marginX:tt/t.width*100,marginY:tt/t.height*100}),nt="POINT";function Qt({x:t,y:e},n,o){if(!n)return!1;const{marginX:r,marginY:s}=Zt(o),c=Math.min(r,s)/2,a=Math.abs(t-n.x),u=Math.abs(e-n.y);return a<=c&&u<=c}function Kt(t,e){return 0}const ie={TYPE:nt,intersects:Qt,area:Kt,methods:{onClick(t,e){return t.geometry?{}:{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"},geometry:{...t.geometry,...oe(e),width:0,height:0,type:nt}}}}},Ee=t=>Math.pow(t,2),Ce="OVAL";function $t({x:t,y:e},n,o){if(!n||!n.width||!n.height)return!1;const r=Math.abs(n.width),s=Math.abs(n.height),c={x:n.x+r/2,y:n.y+s/2},a=r/2,u=s/2;if(a===0||u===0)return!1;const f=t-c.x,p=e-c.y;return Ee(f)/Ee(a)+Ee(p)/Ee(u)<=1}function qt(t,e){if(!t||!t.width||!t.height)return 0;const n=Math.abs(t.width),o=Math.abs(t.height);return n<=0||o<=0?0:Math.PI*(n/2)*(o/2)}const en={onTouchStart(t,e){return tn(t,e)},onTouchEnd(t,e){return nn(t)},onTouchMove(t,e){return on(t,e)},onMouseDown(t,e){if(!t.geometry){const{x:n,y:o}=oe(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:o}}}return t},onMouseUp(t,e){if(t.selection&&t.selection.mode==="SELECTING")return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}},onMouseMove(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:o}=t.selection,{x:r,y:s}=oe(e);return{...t,geometry:{...t.geometry,type:Ce,x:Math.min(n,r),y:Math.min(o,s),width:Math.abs(r-n),height:Math.abs(s-o)}}}return t}};function tn(t,e){if(t.selection)return{};{const{x:n,y:o}=oe(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:o}}}}function nn(t,e){if(t.selection){const{selection:n,geometry:o}=t;if(!o)return{};switch(t.selection.mode){case"SELECTING":return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}}}return t}function on(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:o}=t.selection,{x:r,y:s}=oe(e),c=r-n,a=s-o;return{...t,geometry:{...t.geometry,type:Ce,x:c>0?n:r,y:a>0?o:s,width:Math.abs(c),height:Math.abs(a)}}}return t}const fe={TYPE:Ce,intersects:$t,area:qt,methods:en},ot={disableAnnotation:!1,disableSelector:!1,disableEditor:!1,disableOverlay:!1,allowTouch:!1,type:re.TYPE,selectors:[re,ie,fe],activeAnnotationComparator:(t,e)=>t===e,enableEditing:!1,onAnnotationsChange:()=>{process.env.NODE_ENV!=="production"&&console.warn("onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.")},renderSelector:({annotation:t})=>{var e;switch((e=t.geometry)==null?void 0:e.type){case re.TYPE:return x.jsx(Ge,{annotation:t});case ie.TYPE:return x.jsx(Me,{annotation:t});case fe.TYPE:return x.jsx(we,{annotation:t});default:return null}},renderEditor:({annotation:t,onChange:e,onSubmit:n})=>x.jsx(Nt,{annotation:t,onChange:e,onSubmit:n}),renderHighlight:({key:t,annotation:e,active:n})=>{switch(e.geometry.type){case re.TYPE:return x.jsx(ve,{annotation:e,active:n},t);case ie.TYPE:return x.jsx(Me,{annotation:e},t);case fe.TYPE:return x.jsx(we,{annotation:e,active:n},t);default:return null}},renderContent:({key:t,annotation:e})=>x.jsx(Ue,{annotation:e},t),renderOverlay:({type:t,annotation:e}={})=>{switch(t){case ie.TYPE:return x.jsx(Te,{children:"Click to Annotate"});default:return x.jsx(Te,{children:"Click and Drag to Annotate"})}},renderDraggableHighlight:({key:t,annotation:e,active:n,isDragging:o,isHovered:r,onDotDragStart:s,onDotDrag:c,onMoveStart:a,onMove:u,onDragEnd:f,enableRemoval:p,onRemoveAnnotation:l,onConfirm:g,onReset:m})=>{var b;if(!((b=e.data)!=null&&b.id)||!r)switch(e.geometry.type){case re.TYPE:return x.jsx(ve,{annotation:e,active:n},t);case ie.TYPE:return x.jsx(Me,{annotation:e},t);case fe.TYPE:return x.jsx(we,{annotation:e,active:n},t);default:return null}return e.geometry.type===re.TYPE?x.jsx(Qe,{annotation:e,onDotDragStart:s,onDotDrag:c,onMoveStart:a,onMove:u,onDragEnd:f,isDragging:o,enableRemoval:p,onRemoveAnnotation:l,onConfirm:g,onReset:m},t):x.jsx(ve,{annotation:e,active:n},t)}},rn=j.div`
+`;function Oe(t){const e=Y.c(8),{geometry:n}=t.annotation;if(!n||typeof n.x>"u"||typeof n.y>"u"||typeof n.width>"u"||typeof n.height>"u")return null;const r=`${n.x}%`,s=`${n.y+n.height}%`;let c;e[0]!==t.style||e[1]!==r||e[2]!==s?(c={position:"absolute",left:r,top:s,...t.style},e[0]=t.style,e[1]=r,e[2]=s,e[3]=c):c=e[3];const a=t.annotation.data&&t.annotation.data.text;let i;return e[4]!==t.className||e[5]!==c||e[6]!==a?(i=g.jsx(bt,{style:c,className:t.className,children:a}),e[4]=t.className,e[5]=c,e[6]=a,e[7]=i):i=e[7],i}Oe.defaultProps={style:{},className:""};const je="RECTANGLE";function vt({x:t,y:e},n,r){if(!n)return!1;const s=Math.min(n.x,n.x+n.width),c=Math.max(n.x,n.x+n.width),a=Math.min(n.y,n.y+n.height),i=Math.max(n.y,n.y+n.height);return!(t<s||e<a||t>c||e>i)}function Et(t,e){if(!t||t.width<=0||t.height<=0)return 0;const n=Math.abs(t.width),r=Math.abs(t.height);return n*r}const yt={onTouchStart(t,e){return Ye(t,e)},onTouchEnd(t,e){return Ie(t)},onTouchMove(t,e){return De(t,e)},onMouseDown(t,e){return Ye(t,e)},onMouseUp(t,e){return Ie(t)},onMouseMove(t,e){return De(t,e)}};function Ye(t,e){if(t.selection)return{};{const{x:n,y:r}=H(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:r}}}}function Ie(t,e){if(t.selection){const{selection:n,geometry:r}=t;if(!r)return{};switch(t.selection.mode){case"SELECTING":return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}}}return t}function De(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:r}=t.selection,{x:s,y:c}=H(e),a=s-n,i=c-r;return{...t,geometry:{...t.geometry,type:je,x:a>0?n:s,y:i>0?r:c,width:Math.abs(a),height:Math.abs(i)}}}return t}const q={TYPE:je,intersects:vt,area:Et,methods:yt},Le=6,Tt=(t={width:100,height:100})=>({marginX:Le/t.width*100,marginY:Le/t.height*100}),Xe="POINT";function wt({x:t,y:e},n,r){if(!n)return!1;const{marginX:s,marginY:c}=Tt(r),a=Math.min(s,c)/2,i=Math.abs(t-n.x),l=Math.abs(e-n.y);return i<=a&&l<=a}function Rt(t,e){return 0}const ee={TYPE:Xe,intersects:wt,area:Rt,methods:{onClick(t,e){return t.geometry?{}:{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"},geometry:{...t.geometry,...H(e),width:0,height:0,type:Xe}}}}},ie=t=>Math.pow(t,2),ge="OVAL";function Ct({x:t,y:e},n,r){if(!n||!n.width||!n.height)return!1;const s=Math.abs(n.width),c=Math.abs(n.height),a={x:n.x+s/2,y:n.y+c/2},i=s/2,l=c/2;if(i===0||l===0)return!1;const f=t-a.x,p=e-a.y;return ie(f)/ie(i)+ie(p)/ie(l)<=1}function Nt(t,e){if(!t||!t.width||!t.height)return 0;const n=Math.abs(t.width),r=Math.abs(t.height);return n<=0||r<=0?0:Math.PI*(n/2)*(r/2)}const Mt={onTouchStart(t,e){return _t(t,e)},onTouchEnd(t,e){return St(t)},onTouchMove(t,e){return kt(t,e)},onMouseDown(t,e){if(!t.geometry){const{x:n,y:r}=H(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:r}}}return t},onMouseUp(t,e){if(t.selection&&t.selection.mode==="SELECTING")return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}},onMouseMove(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:r}=t.selection,{x:s,y:c}=H(e);return{...t,geometry:{...t.geometry,type:ge,x:Math.min(n,s),y:Math.min(r,c),width:Math.abs(s-n),height:Math.abs(c-r)}}}return t}};function _t(t,e){if(t.selection)return{};{const{x:n,y:r}=H(e);return{...t,selection:{...t.selection,mode:"SELECTING",anchorX:n,anchorY:r}}}}function St(t,e){if(t.selection){const{selection:n,geometry:r}=t;if(!r)return{};switch(t.selection.mode){case"SELECTING":return{...t,selection:{...t.selection,showEditor:!0,mode:"EDITING"}}}}return t}function kt(t,e){if(t.selection&&t.selection.mode==="SELECTING"){const{anchorX:n,anchorY:r}=t.selection,{x:s,y:c}=H(e),a=s-n,i=c-r;return{...t,geometry:{...t.geometry,type:ge,x:a>0?n:s,y:i>0?r:c,width:Math.abs(a),height:Math.abs(i)}}}return t}const ae={TYPE:ge,intersects:Ct,area:Nt,methods:Mt},Ge={disableAnnotation:!1,disableSelector:!1,disableEditor:!1,disableOverlay:!1,allowTouch:!1,type:q.TYPE,selectors:[q,ee,ae],activeAnnotationComparator:(t,e)=>t===e,enableEditing:!1,onAnnotationsChange:()=>{process.env.NODE_ENV!=="production"&&console.warn("onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.")},renderSelector:({annotation:t})=>{var e;switch((e=t.geometry)==null?void 0:e.type){case q.TYPE:return g.jsx(Ae,{annotation:t});case ee.TYPE:return g.jsx(ke,{annotation:t});case ae.TYPE:return g.jsx(pe,{annotation:t});default:return null}},renderEditor:({annotation:t,onChange:e,onSubmit:n})=>g.jsx(mt,{annotation:t,onChange:e,onSubmit:n}),renderHighlight:({key:t,annotation:e,active:n})=>{switch(e.geometry.type){case q.TYPE:return g.jsx(Pe,{annotation:e,active:n},t);case ee.TYPE:return g.jsx(ke,{annotation:e},t);case ae.TYPE:return g.jsx(pe,{annotation:e,active:n},t);default:return null}},renderContent:({key:t,annotation:e})=>g.jsx(Oe,{annotation:e},t),renderOverlay:({type:t,annotation:e}={})=>{switch(t){case ee.TYPE:return g.jsx(me,{children:"Click to Annotate"});default:return g.jsx(me,{children:"Click and Drag to Annotate"})}}},At=S.div`
   clear: both;
   position: relative;
   width: 100%;
   
-  &:hover ${Te} {
+  &:hover ${me} {
     opacity: 1;
   }
   
   touch-action: ${t=>t.$allowTouch?"pinch-zoom":"auto"};
-`,sn=j.img`
+`,Pt=S.img`
   display: block;
   width: 100%;
   user-select: none;
-`,an=j.div`
+`,Ot=S.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   pointer-events: none;
-`,cn=j.div`
+`,jt=S.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
-`,rt=t=>{var lt,ut,dt;const e=h.useMemo(()=>({...ot,...t,selectors:t.selectors??ot.selectors}),[t]),{src:n,alt:o="Annotation Image",style:r,className:s,containerRef:c,children:a,annotations:u,type:f,selectors:p,value:l,onChange:g,onSubmit:m,activeAnnotationComparator:b,activeAnnotations:w,disableAnnotation:y,disableSelector:_,disableEditor:J,disableOverlay:$,allowTouch:Y,renderSelector:G,renderEditor:T,renderHighlight:H,renderContent:R,renderOverlay:k,enableEditing:S,onAnnotationsChange:D,renderDraggableHighlight:U,enableRemoval:W,onRemoveAnnotation:Q,onConfirm:O,onReset:P,onImageMouseUp:M,onImageMouseDown:E,onImageMouseMove:z,onImageClick:i}=e,v=h.useRef(null),C=h.useRef(null),{mousePosition:X,handlers:B,setRef:V}=Ie(),{isHoveringOver:se,setRef:ee}=He(),I=f||((lt=p[0])==null?void 0:lt.TYPE),{callSelectorMethod:N}=ze({selectors:p,effectiveType:I,value:l,onChange:g,disableAnnotation:y}),{getTopAnnotationAt:te}=Fe({annotations:u,selectors:p,imageRef:v,enableEditing:S}),F=!!(O&&P),A=S?Mt(u,D||(()=>{}),F):null,q=h.useRef(null),[he,ae]=h.useState(null),ce=h.useRef(0),pe=(A==null?void 0:A.displayAnnotations)||u,{x:ne,y:ln}=X,st=h.useCallback(d=>{navigator.userAgent.toLowerCase().includes("safari")&&!navigator.userAgent.toLowerCase().includes("chrome")&&Y&&d.preventDefault(),N("onTouchStart",d)},[Y,N]),at=h.useCallback(d=>{N("onTouchEnd",d)},[N]),it=h.useCallback(d=>{B.onTouchMove(d),navigator.userAgent.toLowerCase().includes("safari")&&!navigator.userAgent.toLowerCase().includes("chrome")&&Y&&d.preventDefault(),N("onTouchMove",d)},[B,Y,N]),ke=h.useCallback(d=>{B.onTouchLeave(d)},[B]);h.useEffect(()=>{const d=C.current;if(!(!Y||!d))return d.ontouchstart=st,d.ontouchend=at,d.ontouchmove=it,d.ontouchcancel=ke,()=>{d&&(d.ontouchstart=null,d.ontouchend=null,d.ontouchmove=null,d.ontouchcancel=null)}},[Y,st,at,it,ke]);const un=h.useCallback(d=>{v.current=d,V(d)},[V]),dn=h.useCallback(d=>{ee(d),c&&(typeof c=="function"?c(d):c.current=d)},[ee,c]),fn=h.useCallback(d=>{B.onMouseMove(d.nativeEvent),z==null||z(d),N("onMouseMove",d)},[B,z,N]),hn=h.useCallback(d=>{B.onMouseLeave(d.nativeEvent)},[B]),pn=h.useCallback(d=>{M==null||M(d),N("onMouseUp",d)},[M,N]),gn=h.useCallback(d=>{E==null||E(d),N("onMouseDown",d)},[E,N]),mn=h.useCallback(d=>{i==null||i(d),N("onClick",d)},[i,N]),xn=h.useCallback(()=>{m&&l&&m(l)},[m,l]),Se=h.useCallback(d=>{var K;d.key==="Escape"&&g&&((K=l==null?void 0:l.selection)!=null&&K.showEditor||l!=null&&l.geometry)&&g({selection:void 0,geometry:void 0,data:void 0})},[l,g]);h.useEffect(()=>{var d;if((d=l==null?void 0:l.selection)!=null&&d.showEditor)return window.addEventListener("keydown",Se),()=>window.removeEventListener("keydown",Se)},[(ut=l==null?void 0:l.selection)==null?void 0:ut.showEditor,Se]),h.useEffect(()=>()=>{q.current&&clearTimeout(q.current)},[]);const ct=h.useCallback((d,K)=>w&&w.some(ge=>b?b(d,ge):d.data.id===ge)||K===d,[w,b]),De=te(ne,ln);console.log("topAnnotationAtMouse",De);const bn=h.useCallback(d=>{ce.current=Date.now()+50,ae(null),A?A.handleConfirm(d):O==null||O(d)},[A,O]),vn=h.useCallback(d=>{ce.current=Date.now()+50,ae(null),A?A.handleReset(d):P==null||P(d)},[A,P]);return x.jsxs(rn,{ref:dn,style:r,className:s,onMouseLeave:hn,onTouchCancel:ke,onMouseMove:fn,$allowTouch:Y,children:[x.jsx(sn,{ref:un,src:n,alt:o,draggable:!1}),x.jsxs(an,{children:[pe.map(d=>{var Ae;if(!((Ae=d.data)!=null&&Ae.id))return console.warn("Annotation missing data.id:",d),null;const K=ct(d,De);if(S&&A&&!A.isDragging){const Pe=Date.now()<ce.current;K&&he!==d.data.id&&!Pe?(q.current&&(clearTimeout(q.current),q.current=null),ae(d.data.id),A.setDraggingId(d.data.id)):!K&&he===d.data.id&&(q.current&&clearTimeout(q.current),q.current=setTimeout(()=>{ae(null),A.setDraggingId(null),q.current=null},100))}if(S&&U&&A){const ge=A.draggingId===d.data.id,Pe=A.isDragging&&A.draggingId===d.data.id;return F&&(A.editingAnnotationId,d.data.id),U({key:d.data.id,annotation:d,active:K,isDragging:Pe,isHovered:ge,onDotDragStart:A.handleDotDragStart,onDotDrag:A.handleDotDrag,onMoveStart:A.handleMoveStart,onMove:A.handleMove,onDragEnd:A.handleMouseUp,enableRemoval:W,onRemoveAnnotation:Q,onConfirm:F?bn:O,onReset:F?vn:P})}return H?H({key:d.data.id,annotation:d,active:K}):null}),!_&&(l==null?void 0:l.geometry)&&G&&G({annotation:l})]}),x.jsx(cn,{ref:C,"data-testid":"annotation-target",onClick:mn,onMouseUp:pn,onMouseDown:gn}),!$&&k&&k({type:I,annotation:l}),pe.map(d=>{var K;return(K=d.data)!=null&&K.id&&ct(d,De)&&R!=null?R({key:d.data.id,annotation:d}):null}),!J&&((dt=l==null?void 0:l.selection)==null?void 0:dt.showEditor)&&T&&g&&T({annotation:l,onChange:g,onSubmit:xn}),a]})};L.Annotation=rt,L.ConfirmResetButtons=Je,L.DeleteButton=We,L.DraggableBox=Qe,L.DraggableDot=de,L.MoveButton=Ze,L.OvalSelector=fe,L.PointSelector=ie,L.RectangleSelector=re,L.default=rt,L.useAnnotationHitDetection=Fe,L.useMouseHover=He,L.useRelativeMousePosition=Ie,L.useSelectorMethods=ze,Object.defineProperties(L,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}})});
+`,Ue=t=>{var ze,Be,We;const e=h.useMemo(()=>({...Ge,...t,selectors:t.selectors??Ge.selectors}),[t]),{src:n,alt:r="Annotation Image",style:s,className:c,containerRef:a,children:i,annotations:l,type:f,selectors:p,value:d,onChange:b,onSubmit:x,activeAnnotationComparator:E,activeAnnotations:w,disableAnnotation:T,disableSelector:M,disableEditor:I,disableOverlay:z,allowTouch:_,renderSelector:X,renderEditor:y,renderHighlight:O,renderContent:D,renderOverlay:G,onImageMouseUp:L,onImageMouseDown:U,onImageMouseMove:F,onImageClick:B}=e,W=h.useRef(null),J=h.useRef(null),{mousePosition:le,handlers:P}=Re(J),{logPropsChange:ue}=it({logToConsole:!0,componentName:"Annotation"});process.env.NODE_ENV!=="production"&&ue(e);const te=f||((ze=p[0])==null?void 0:ze.TYPE),{callSelectorMethod:o}=Ce({selectors:p,effectiveType:te,value:d,onChange:b,disableAnnotation:T}),{getTopAnnotationAt:m}=Se({annotations:l,selectors:p,imageRef:W}),v=h.useRef(null),{x:C,y:j}=le,k=h.useCallback(u=>{navigator.userAgent.toLowerCase().includes("safari")&&!navigator.userAgent.toLowerCase().includes("chrome")&&_&&u.preventDefault(),o("onTouchStart",u)},[_,o]),Z=h.useCallback(u=>{o("onTouchEnd",u)},[o]),Q=h.useCallback(u=>{P.onTouchMove(u),navigator.userAgent.toLowerCase().includes("safari")&&!navigator.userAgent.toLowerCase().includes("chrome")&&_&&u.preventDefault(),o("onTouchMove",u)},[P,_,o]),R=h.useCallback(u=>{P.onTouchLeave(u)},[P]);h.useEffect(()=>{const u=J.current;if(!(!_||!u))return u.ontouchstart=k,u.ontouchend=Z,u.ontouchmove=Q,u.ontouchcancel=R,()=>{u&&(u.ontouchstart=null,u.ontouchend=null,u.ontouchmove=null,u.ontouchcancel=null)}},[_,k,Z,Q,R]);const V=h.useCallback(u=>{W.current=u},[]),ne=h.useCallback(u=>{J.current=u},[]),xe=h.useCallback(u=>{a&&(typeof a=="function"?a(u):a.current=u)},[a]),Dt=h.useCallback(u=>{P.onMouseMove(u.nativeEvent),F==null||F(u),o("onMouseMove",u)},[P,F,o]),Lt=h.useCallback(u=>{P.onMouseLeave(u.nativeEvent)},[P]),Xt=h.useCallback(u=>{L==null||L(u),o("onMouseUp",u)},[L,o]),Gt=h.useCallback(u=>{U==null||U(u),o("onMouseDown",u)},[U,o]),Ut=h.useCallback(u=>{B==null||B(u),o("onClick",u)},[B,o]),Vt=h.useCallback(()=>{x&&d&&x(d)},[x,d]),be=h.useCallback(u=>{var A;u.key==="Escape"&&b&&((A=d==null?void 0:d.selection)!=null&&A.showEditor||d!=null&&d.geometry)&&b({selection:void 0,geometry:void 0,data:void 0})},[d,b]);h.useEffect(()=>{var u;if((u=d==null?void 0:d.selection)!=null&&u.showEditor)return window.addEventListener("keydown",be),()=>window.removeEventListener("keydown",be)},[(Be=d==null?void 0:d.selection)==null?void 0:Be.showEditor,be]),h.useEffect(()=>()=>{v.current&&clearTimeout(v.current)},[]);const Ve=h.useCallback((u,A)=>w&&w.some(de=>E?E(u,de):u.data.id===de)||A===u,[w,E]),He=m(C,j),Ht=h.useCallback((u,A,oe,de,Ft,zt)=>{var Je;process.env.NODE_ENV!=="production"&&console.log("🔄 Annotation Render Profile:",{id:u,phase:A,actualDuration:`${oe.toFixed(2)}ms`,baseDuration:`${de.toFixed(2)}ms`,startTime:Ft,commitTime:zt,annotationsCount:l.length,hasValue:!!d,showEditor:!!((Je=d==null?void 0:d.selection)!=null&&Je.showEditor)})},[l.length,d]),Fe=g.jsxs(At,{ref:xe,style:s,className:c,onMouseLeave:Lt,onTouchCancel:R,onMouseMove:Dt,$allowTouch:_,children:[g.jsx(Pt,{ref:V,src:n,alt:r}),g.jsxs(Ot,{children:[l.map(u=>{var oe;if(!((oe=u.data)!=null&&oe.id))return console.warn("Annotation missing data.id:",u),null;const A=Ve(u,He);return O?O({key:u.data.id,annotation:u,active:A}):null}),!M&&(d==null?void 0:d.geometry)&&X&&X({annotation:d})]}),g.jsx(jt,{ref:ne,"data-testid":"annotation-target",onClick:Ut,onMouseUp:Xt,onMouseDown:Gt}),!z&&G&&G({type:te,annotation:d}),l.map(u=>{var A;return(A=u.data)!=null&&A.id&&Ve(u,He)&&D!=null?D({key:u.data.id,annotation:u}):null}),!I&&((We=d==null?void 0:d.selection)==null?void 0:We.showEditor)&&y&&b&&y({annotation:d,onChange:b,onSubmit:Vt}),i]});return process.env.NODE_ENV!=="production"?g.jsx(h.Profiler,{id:"Annotation",onRender:Ht,children:Fe}):Fe};function Yt(t,e){if(!t||typeof t.getBoundingClientRect!="function")return!1;const{pageX:n,pageY:r}=e,{left:s,right:c,bottom:a,top:i}=t.getBoundingClientRect();return n>s&&n<c&&r>i&&r<a}function It(){const t=Y.c(5),[e,n]=h.useState(!1),r=h.useRef(null);let s,c;t[0]===Symbol.for("react.memo_cache_sentinel")?(s=()=>{const f=p=>{const d=r.current,b={pageX:p.pageX,pageY:p.pageY},x=Yt(d,b);n(x)};return document.addEventListener("mousemove",f,{passive:!0}),()=>{document.removeEventListener("mousemove",f)}},c=[],t[0]=s,t[1]=c):(s=t[0],c=t[1]),h.useEffect(s,c);let a;t[2]===Symbol.for("react.memo_cache_sentinel")?(a=f=>{r.current=f},t[2]=a):a=t[2];const i=a;let l;return t[3]!==e?(l={isHoveringOver:e,setRef:i},t[3]=e,t[4]=l):l=t[4],l}N.Annotation=Ue,N.OvalSelector=ae,N.PointSelector=ee,N.RectangleSelector=q,N.default=Ue,N.useAnnotationHitDetection=Se,N.useMouseHover=It,N.useRelativeMousePosition=Re,N.useSelectorMethods=Ce,Object.defineProperties(N,{__esModule:{value:!0},[Symbol.toStringTag]:{value:"Module"}})});

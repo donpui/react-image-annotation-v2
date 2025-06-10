@@ -1,14 +1,17 @@
-const getMouseRelativeCoordinates = (e: MouseEvent): { x: number; y: number } => {
+const getMouseRelativeCoordinates = (e: MouseEvent, targetElement?: HTMLElement): { x: number; y: number } => {
     // nativeEvent.offsetX gives inconsistent results when dragging
     // up and to the left rather than the more natural down and to the
     // right. The reason could be browser implementation (it is still experimental)
     // or it could be that nativeEvent offsets are based on target rather than
     // currentTarget.
     // To keep consistent behavior of the selector use the bounding client rect.
-    if (!e.currentTarget || typeof (e.currentTarget as HTMLElement).getBoundingClientRect !== 'function') {
+    const element = targetElement || e.currentTarget as HTMLElement;
+    
+    if (!element || typeof element.getBoundingClientRect !== 'function') {
       return { x: 0, y: 0 }; // Return a default or handle error appropriately
     }
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+
+    const rect = element.getBoundingClientRect();
     const offsetX = e.clientX - rect.x;
     const offsetY = e.clientY - rect.y;
 
@@ -37,7 +40,7 @@ const getTouchRelativeCoordinates = (e: TouchEvent): { x: number; y: number } =>
   }
 }
 
-const getCoordPercentage = (e: MouseEvent | TouchEvent): { x: number | null; y?: number } => {
+const getCoordPercentage = (e: MouseEvent | TouchEvent, targetElement?: HTMLElement): { x: number | null; y?: number } => {
   if (isTouchEvent(e)) {
     if (isValidTouchEvent(e)) {
       isTouchMoveEvent(e) && e.preventDefault()
@@ -48,7 +51,7 @@ const getCoordPercentage = (e: MouseEvent | TouchEvent): { x: number | null; y?:
       }
     }
   } else {
-    return getMouseRelativeCoordinates(e as MouseEvent)
+    return getMouseRelativeCoordinates(e as MouseEvent, targetElement)
   }
 }
 
