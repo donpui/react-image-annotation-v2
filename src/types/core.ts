@@ -120,6 +120,7 @@ export interface AnnotationBaseProps {
   style?: React.CSSProperties;
   className?: string;
   containerRef?: React.Ref<HTMLDivElement>;
+  imageRef?: React.Ref<HTMLImageElement>;
   children?: React.ReactNode;
 
   // Core annotation props

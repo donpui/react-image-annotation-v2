@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useCallback,
   useMemo,
+  forwardRef,
   Profiler,
 } from 'react';
 import styled from 'styled-components';
@@ -64,7 +65,7 @@ const InteractionTarget = styled.div`
  * Modern React image annotation component
  * Refactored to use React 19 patterns and custom hooks
  */
-export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
+export const Annotation = forwardRef<HTMLImageElement, AnnotationProps>((incomingProps, forwardedImageRef) => {
   // Merge props with defaults
   const props = useMemo(
     () => ({
@@ -83,6 +84,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
     style,
     className,
     containerRef,
+    imageRef,
     children,
 
     // Core functionality
@@ -119,7 +121,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   } = props;
 
   // Refs
-  const imageRef = useRef<HTMLImageElement>(null);
+  const internalImageRef = useRef<HTMLImageElement>(null);
   const targetRef = useRef<HTMLDivElement>(null);
 
   // Custom hooks
@@ -128,7 +130,7 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } =
     useHoveredAnnotation({
       targetRef: targetRef as React.RefObject<HTMLElement>,
-      imageRef: imageRef as React.RefObject<HTMLImageElement>,
+      imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
       annotations,
       selectors,
       enableEditing: !disableEditor,
@@ -225,8 +227,26 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
 
   // Ref setters
   const setImageRef = useCallback((el: HTMLImageElement | null) => {
-    imageRef.current = el;
-  }, []);
+    internalImageRef.current = el;
+    
+    // Set the forwarded ref
+    if (forwardedImageRef) {
+      if (typeof forwardedImageRef === 'function') {
+        forwardedImageRef(el);
+      } else {
+        forwardedImageRef.current = el;
+      }
+    }
+    
+    // Set the imageRef prop if provided
+    if (imageRef) {
+      if (typeof imageRef === 'function') {
+        imageRef(el);
+      } else {
+        imageRef.current = el;
+      }
+    }
+  }, [forwardedImageRef, imageRef]);
 
   const setTargetRef = useCallback((el: HTMLDivElement | null) => {
     targetRef.current = el;
@@ -473,6 +493,8 @@ export const Annotation: React.FC<AnnotationProps> = (incomingProps) => {
   //   </Profiler>
   // ) : annotationContent;
   return annotationContent;
-};
+});
+
+Annotation.displayName = 'Annotation';
 
 export default Annotation;
