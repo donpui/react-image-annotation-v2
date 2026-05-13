@@ -1,7 +1,7 @@
 ## 1.0.0
 
-- Updated packages. Support React 18, 19
-- Partly migration to typescript
+- Updated packages. Support React 19
+- Partly migration to Typescript v6
 
 ## 0.9.8
 

@@ -1,778 +1,491 @@
-import re, { useRef as ee, useState as et, useCallback as K, useEffect as ae, useMemo as _t } from "react";
-import H, { keyframes as Ct } from "styled-components";
-var Ae = { exports: {} }, ce = {};
-/**
- * @license React
- * react-jsx-runtime.production.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var at;
-function At() {
-  if (at) return ce;
-  at = 1;
-  var n = Symbol.for("react.transitional.element"), e = Symbol.for("react.fragment");
-  function t(s, c, l) {
-    var i = null;
-    if (l !== void 0 && (i = "" + l), c.key !== void 0 && (i = "" + c.key), "key" in c) {
-      l = {};
-      for (var r in c)
-        r !== "key" && (l[r] = c[r]);
-    } else l = c;
-    return c = l.ref, {
-      $$typeof: n,
-      type: s,
-      key: i,
-      ref: c !== void 0 ? c : null,
-      props: l
-    };
-  }
-  return ce.Fragment = e, ce.jsx = t, ce.jsxs = t, ce;
+import e, { useCallback as t, useEffect as n, useMemo as r, useRef as i, useState as a } from "react";
+import o, { keyframes as s } from "styled-components";
+//#region \0rolldown/runtime.js
+var c = (e, t) => () => (t || (e((t = { exports: {} }).exports, t), e = null), t.exports), l = /* @__PURE__ */ ((e) => typeof require < "u" ? require : typeof Proxy < "u" ? new Proxy(e, { get: (e, t) => (typeof require < "u" ? require : e)[t] }) : e)(function(e) {
+	if (typeof require < "u") return require.apply(this, arguments);
+	throw Error("Calling `require` for \"" + e + "\" in an environment that doesn't expose the `require` function. See https://rolldown.rs/in-depth/bundling-cjs#require-external-modules for more details.");
+}), u = (e, t) => {
+	let n = t || e.currentTarget;
+	if (!n || typeof n.getBoundingClientRect != "function") return {
+		x: 0,
+		y: 0
+	};
+	let r = n.getBoundingClientRect(), i = e.clientX - r.x, a = e.clientY - r.y;
+	return {
+		x: i / r.width * 100,
+		y: a / r.height * 100
+	};
+}, d = (e, t, n) => Math.max(e, Math.min(t, n)), f = (e) => {
+	if (!e.currentTarget || typeof e.currentTarget.getBoundingClientRect != "function") return {
+		x: 0,
+		y: 0
+	};
+	let t = e.targetTouches[0], n = e.currentTarget.getBoundingClientRect(), r = t.pageX - n.left, i = t.pageY - (n.top + window.scrollY);
+	return {
+		x: d(0, 100, r / n.width * 100),
+		y: d(0, 100, i / n.height * 100)
+	};
+}, p = (e, t) => m(e) ? h(e) ? (g(e) && e.preventDefault(), f(e)) : { x: null } : u(e, t), m = (e) => e.targetTouches !== void 0, h = (e) => e.targetTouches.length === 1, g = (e) => e.type === "touchmove";
+//#endregion
+//#region src/hooks/useRelativeMousePosition.ts
+function _(e, r = {}) {
+	let { onPositionChange: o, throttleMs: s = 16 } = r, c = i({
+		x: null,
+		y: null
+	}), [l, d] = a({
+		x: null,
+		y: null
+	}), f = i(0), p = i(null), m = t((e) => {
+		if (c.current = e, o) {
+			let t = Date.now();
+			s <= 0 || t - f.current >= s ? (d(e), o(e), f.current = t) : (p.current && clearTimeout(p.current), p.current = setTimeout(() => {
+				d(e), o(e), f.current = Date.now();
+			}, s - (t - f.current)));
+		}
+	}, [o, s]), h = t((t) => {
+		try {
+			let n = e.current;
+			if (!n) {
+				m({
+					x: null,
+					y: null
+				});
+				return;
+			}
+			m(u(t, n));
+		} catch {
+			m({
+				x: null,
+				y: null
+			});
+		}
+	}, [e, m]), g = t((t) => {
+		let n = e.current;
+		if (!n || t.targetTouches.length !== 1) return;
+		let r = t.targetTouches[0], i = n.offsetParent;
+		if (i) try {
+			let e = r.pageX - i.offsetLeft, t = r.pageY - i.offsetTop, a = n, o = a.width, s = a.height;
+			m(o > 0 && s > 0 ? {
+				x: e / o * 100,
+				y: t / s * 100
+			} : {
+				x: null,
+				y: null
+			});
+		} catch {
+			m({
+				x: null,
+				y: null
+			});
+		}
+	}, [e, m]), _ = t((e) => {
+		m({
+			x: null,
+			y: null
+		});
+	}, [m]), v = t((e) => {
+		m({
+			x: null,
+			y: null
+		});
+	}, [m]), y = t(() => c.current, []);
+	return n(() => () => {
+		p.current && clearTimeout(p.current);
+	}, []), {
+		mousePosition: o ? l : c.current,
+		handlers: {
+			onMouseMove: h,
+			onMouseLeave: _,
+			onTouchMove: g,
+			onTouchLeave: v
+		},
+		getCurrentMousePosition: y
+	};
 }
-var le = {};
-/**
- * @license React
- * react-jsx-runtime.development.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var ut;
-function St() {
-  return ut || (ut = 1, process.env.NODE_ENV !== "production" && function() {
-    function n(o) {
-      if (o == null) return null;
-      if (typeof o == "function")
-        return o.$$typeof === I ? null : o.displayName || o.name || null;
-      if (typeof o == "string") return o;
-      switch (o) {
-        case E:
-          return "Fragment";
-        case C:
-          return "Profiler";
-        case b:
-          return "StrictMode";
-        case T:
-          return "Suspense";
-        case N:
-          return "SuspenseList";
-        case z:
-          return "Activity";
-      }
-      if (typeof o == "object")
-        switch (typeof o.tag == "number" && console.error(
-          "Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."
-        ), o.$$typeof) {
-          case f:
-            return "Portal";
-          case S:
-            return o.displayName || "Context";
-          case $:
-            return (o._context.displayName || "Context") + ".Consumer";
-          case y:
-            var h = o.render;
-            return o = o.displayName, o || (o = h.displayName || h.name || "", o = o !== "" ? "ForwardRef(" + o + ")" : "ForwardRef"), o;
-          case j:
-            return h = o.displayName || null, h !== null ? h : n(o.type) || "Memo";
-          case G:
-            h = o._payload, o = o._init;
-            try {
-              return n(o(h));
-            } catch {
-            }
-        }
-      return null;
-    }
-    function e(o) {
-      return "" + o;
-    }
-    function t(o) {
-      try {
-        e(o);
-        var h = !1;
-      } catch {
-        h = !0;
-      }
-      if (h) {
-        h = console;
-        var w = h.error, _ = typeof Symbol == "function" && Symbol.toStringTag && o[Symbol.toStringTag] || o.constructor.name || "Object";
-        return w.call(
-          h,
-          "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.",
-          _
-        ), e(o);
-      }
-    }
-    function s(o) {
-      if (o === E) return "<>";
-      if (typeof o == "object" && o !== null && o.$$typeof === G)
-        return "<...>";
-      try {
-        var h = n(o);
-        return h ? "<" + h + ">" : "<...>";
-      } catch {
-        return "<...>";
-      }
-    }
-    function c() {
-      var o = Y.A;
-      return o === null ? null : o.getOwner();
-    }
-    function l() {
-      return Error("react-stack-top-frame");
-    }
-    function i(o) {
-      if (P.call(o, "key")) {
-        var h = Object.getOwnPropertyDescriptor(o, "key").get;
-        if (h && h.isReactWarning) return !1;
-      }
-      return o.key !== void 0;
-    }
-    function r(o, h) {
-      function w() {
-        U || (U = !0, console.error(
-          "%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)",
-          h
-        ));
-      }
-      w.isReactWarning = !0, Object.defineProperty(o, "key", {
-        get: w,
-        configurable: !0
-      });
-    }
-    function d() {
-      var o = n(this.type);
-      return q[o] || (q[o] = !0, console.error(
-        "Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."
-      )), o = this.props.ref, o !== void 0 ? o : null;
-    }
-    function u(o, h, w, _, R, V) {
-      var A = w.ref;
-      return o = {
-        $$typeof: x,
-        type: o,
-        key: h,
-        props: w,
-        _owner: _
-      }, (A !== void 0 ? A : null) !== null ? Object.defineProperty(o, "ref", {
-        enumerable: !1,
-        get: d
-      }) : Object.defineProperty(o, "ref", { enumerable: !1, value: null }), o._store = {}, Object.defineProperty(o._store, "validated", {
-        configurable: !1,
-        enumerable: !1,
-        writable: !0,
-        value: 0
-      }), Object.defineProperty(o, "_debugInfo", {
-        configurable: !1,
-        enumerable: !1,
-        writable: !0,
-        value: null
-      }), Object.defineProperty(o, "_debugStack", {
-        configurable: !1,
-        enumerable: !1,
-        writable: !0,
-        value: R
-      }), Object.defineProperty(o, "_debugTask", {
-        configurable: !1,
-        enumerable: !1,
-        writable: !0,
-        value: V
-      }), Object.freeze && (Object.freeze(o.props), Object.freeze(o)), o;
-    }
-    function m(o, h, w, _, R, V) {
-      var A = h.children;
-      if (A !== void 0)
-        if (_)
-          if (B(A)) {
-            for (_ = 0; _ < A.length; _++)
-              v(A[_]);
-            Object.freeze && Object.freeze(A);
-          } else
-            console.error(
-              "React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead."
-            );
-        else v(A);
-      if (P.call(h, "key")) {
-        A = n(o);
-        var O = Object.keys(h).filter(function(J) {
-          return J !== "key";
-        });
-        _ = 0 < O.length ? "{key: someKey, " + O.join(": ..., ") + ": ...}" : "{key: someKey}", D[A + _] || (O = 0 < O.length ? "{" + O.join(": ..., ") + ": ...}" : "{}", console.error(
-          `A props object containing a "key" prop is being spread into JSX:
-  let props = %s;
-  <%s {...props} />
-React keys must be passed directly to JSX without using spread:
-  let props = %s;
-  <%s key={someKey} {...props} />`,
-          _,
-          A,
-          O,
-          A
-        ), D[A + _] = !0);
-      }
-      if (A = null, w !== void 0 && (t(w), A = "" + w), i(h) && (t(h.key), A = "" + h.key), "key" in h) {
-        w = {};
-        for (var k in h)
-          k !== "key" && (w[k] = h[k]);
-      } else w = h;
-      return A && r(
-        w,
-        typeof o == "function" ? o.displayName || o.name || "Unknown" : o
-      ), u(
-        o,
-        A,
-        w,
-        c(),
-        R,
-        V
-      );
-    }
-    function v(o) {
-      a(o) ? o._store && (o._store.validated = 1) : typeof o == "object" && o !== null && o.$$typeof === G && (o._payload.status === "fulfilled" ? a(o._payload.value) && o._payload.value._store && (o._payload.value._store.validated = 1) : o._store && (o._store.validated = 1));
-    }
-    function a(o) {
-      return typeof o == "object" && o !== null && o.$$typeof === x;
-    }
-    var p = re, x = Symbol.for("react.transitional.element"), f = Symbol.for("react.portal"), E = Symbol.for("react.fragment"), b = Symbol.for("react.strict_mode"), C = Symbol.for("react.profiler"), $ = Symbol.for("react.consumer"), S = Symbol.for("react.context"), y = Symbol.for("react.forward_ref"), T = Symbol.for("react.suspense"), N = Symbol.for("react.suspense_list"), j = Symbol.for("react.memo"), G = Symbol.for("react.lazy"), z = Symbol.for("react.activity"), I = Symbol.for("react.client.reference"), Y = p.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, P = Object.prototype.hasOwnProperty, B = Array.isArray, L = console.createTask ? console.createTask : function() {
-      return null;
-    };
-    p = {
-      react_stack_bottom_frame: function(o) {
-        return o();
-      }
-    };
-    var U, q = {}, X = p.react_stack_bottom_frame.bind(
-      p,
-      l
-    )(), F = L(s(l)), D = {};
-    le.Fragment = E, le.jsx = function(o, h, w) {
-      var _ = 1e4 > Y.recentlyCreatedOwnerStacks++;
-      return m(
-        o,
-        h,
-        w,
-        !1,
-        _ ? Error("react-stack-top-frame") : X,
-        _ ? L(s(o)) : F
-      );
-    }, le.jsxs = function(o, h, w) {
-      var _ = 1e4 > Y.recentlyCreatedOwnerStacks++;
-      return m(
-        o,
-        h,
-        w,
-        !0,
-        _ ? Error("react-stack-top-frame") : X,
-        _ ? L(s(o)) : F
-      );
-    };
-  }()), le;
+//#endregion
+//#region src/hooks/useAnnotationHitDetection.ts
+function v({ annotations: e, selectors: n, imageRef: i, enableEditing: a }) {
+	let o = r(() => new Map(n.map((e) => [e.TYPE, e])), [n]), s = t((e) => {
+		if (e) return o.get(e);
+	}, [o]);
+	return {
+		getTopAnnotationAt: t((t, n) => {
+			let r = i.current;
+			if (!r || t === null || n === null) return;
+			let o = {
+				x: t,
+				y: n
+			}, c = e.map((e) => {
+				let { geometry: t } = e;
+				if (!t) return null;
+				let n = s(t.type);
+				if (!n) return null;
+				let i = t;
+				return a && t.type === "RECTANGLE" && typeof t.x == "number" && typeof t.y == "number" && typeof t.width == "number" && typeof t.height == "number" && (i = {
+					...t,
+					x: Math.max(0, t.x - 2),
+					y: Math.max(0, t.y - 2),
+					width: Math.min(100 - t.x + 2, t.width + 4),
+					height: Math.min(100 - t.y + 2, t.height + 4)
+				}), n.intersects(o, i, r) ? e : null;
+			}).filter((e) => e !== null);
+			if (c.length !== 0) return c.sort((e, t) => {
+				let n = s(e.geometry.type), i = s(t.geometry.type);
+				return !n || !i ? 0 : n.area(e.geometry, r) - i.area(t.geometry, r);
+			})[0];
+		}, [
+			e,
+			s,
+			i,
+			a
+		]),
+		getSelectorByType: s
+	};
 }
-var dt;
-function Nt() {
-  return dt || (dt = 1, process.env.NODE_ENV === "production" ? Ae.exports = At() : Ae.exports = St()), Ae.exports;
+//#endregion
+//#region src/hooks/useHoveredAnnotation.ts
+function y({ targetRef: e, imageRef: o, annotations: s, selectors: c, enableEditing: l, throttleMs: u = 50 }) {
+	let [d, f] = a(void 0), p = i(void 0), m = i(void 0), { getTopAnnotationAt: h } = v({
+		annotations: s,
+		selectors: c,
+		imageRef: o,
+		enableEditing: l
+	}), { handlers: g } = _(e, {
+		onPositionChange: t((e) => {
+			let { x: t, y: n } = e, r = h(t, n), i = r?.data?.id;
+			i !== m.current && (m.current = i, p.current = r, f(r));
+		}, [h]),
+		throttleMs: u
+	});
+	return n(() => {
+		f(void 0), p.current = void 0, m.current = void 0;
+	}, [s, c]), {
+		hoveredAnnotation: d,
+		mouseHandlers: r(() => g, [g])
+	};
 }
-var M = Nt(), Se = { exports: {} }, qe = {};
-/**
- * @license React
- * react-compiler-runtime.production.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var ft;
-function Ot() {
-  if (ft) return qe;
-  ft = 1;
-  var n = re.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-  return qe.c = function(e) {
-    return n.H.useMemoCache(e);
-  }, qe;
+//#endregion
+//#region src/hooks/useSelectorMethods.ts
+function b({ selectors: e, effectiveType: n, value: r, onChange: i, disableAnnotation: a }) {
+	let o = t((t) => {
+		if (t) return e.find((e) => e.TYPE === t);
+	}, [e]);
+	return {
+		callSelectorMethod: t((e, t) => {
+			if (a) return;
+			let s = o(n);
+			if (!s?.methods[e]) return;
+			let c = s.methods[e];
+			try {
+				let a = c(r || {}, t);
+				if (a === void 0) {
+					process.env.NODE_ENV !== "production" && console.error(`Selector method ${String(e)} of type ${n} returned undefined. Make sure to explicitly return the previous state or new state.`);
+					return;
+				}
+				i?.(a);
+			} catch (t) {
+				process.env.NODE_ENV !== "production" && console.error(`Error calling selector method ${String(e)}:`, t);
+			}
+		}, [
+			a,
+			o,
+			n,
+			r,
+			i
+		]),
+		getSelectorByType: o
+	};
 }
-var Je = {};
-/**
- * @license React
- * react-compiler-runtime.development.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-var ht;
-function kt() {
-  return ht || (ht = 1, process.env.NODE_ENV !== "production" && function() {
-    var n = re.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
-    Je.c = function(e) {
-      var t = n.H;
-      return t === null && console.error(
-        `Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
-1. You might have mismatching versions of React and the renderer (such as React DOM)
-2. You might be breaking the Rules of Hooks
-3. You might have more than one copy of React in the same app
-See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.`
-      ), t.useMemoCache(e);
-    };
-  }()), Je;
+//#endregion
+//#region src/hooks/useAnnotationViewModel.ts
+function x(e, t) {
+	e && (typeof e == "function" ? e(t) : e.current = t);
 }
-var pt;
-function $t() {
-  return pt || (pt = 1, process.env.NODE_ENV === "production" ? Se.exports = Ot() : Se.exports = kt()), Se.exports;
+function S(e, r) {
+	let { src: a, alt: o = "Annotation Image", style: s, className: c, containerRef: l, imageRef: u, annotations: d, type: f, selectors: p, value: m, onChange: h, onSubmit: g, activeAnnotationComparator: _, activeAnnotations: v, editModeAnnotationIds: S, disableAnnotation: C, disableSelector: w, disableEditor: T, disableOverlay: E, allowTouch: D, renderSelector: O, renderEditor: k, renderHighlight: A, renderContent: j, renderOverlay: M, onImageMouseUp: N, onImageMouseDown: P, onImageMouseMove: F, onImageClick: I } = e, L = i(null), R = i(null), { hoveredAnnotation: ee, mouseHandlers: z } = y({
+		targetRef: R,
+		imageRef: L,
+		annotations: d,
+		selectors: p,
+		enableEditing: !T,
+		throttleMs: 50
+	}), te = f || p[0]?.TYPE, { callSelectorMethod: B } = b({
+		selectors: p,
+		effectiveType: te,
+		value: m,
+		onChange: h,
+		disableAnnotation: C
+	}), V = t((e) => {
+		navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && D && e.preventDefault(), B("onTouchStart", e);
+	}, [D, B]), H = t((e) => {
+		B("onTouchEnd", e);
+	}, [B]), U = t((e) => {
+		z.onTouchMove(e), navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && D && e.preventDefault(), B("onTouchMove", e);
+	}, [
+		z,
+		D,
+		B
+	]), W = t((e) => {
+		z.onTouchLeave(e);
+	}, [z]);
+	n(() => {
+		let e = R.current;
+		if (!(!D || !e)) return e.ontouchstart = V, e.ontouchend = H, e.ontouchmove = U, e.ontouchcancel = W, () => {
+			e.ontouchstart = null, e.ontouchend = null, e.ontouchmove = null, e.ontouchcancel = null;
+		};
+	}, [
+		D,
+		V,
+		H,
+		U,
+		W
+	]);
+	let ne = t((e) => {
+		L.current = e, x(r, e), x(u, e);
+	}, [r, u]), re = t((e) => {
+		R.current = e;
+	}, []), ie = t((e) => {
+		x(l, e);
+	}, [l]), G = t((e) => {
+		z.onMouseMove(e.nativeEvent), F?.(e), B("onMouseMove", e);
+	}, [
+		z,
+		F,
+		B
+	]), K = t((e) => {
+		z.onMouseLeave(e.nativeEvent);
+	}, [z]), q = t((e) => {
+		N?.(e), B("onMouseUp", e);
+	}, [N, B]), J = t((e) => {
+		P?.(e), B("onMouseDown", e);
+	}, [P, B]), ae = t((e) => {
+		I?.(e), B("onClick", e);
+	}, [I, B]), oe = t(() => {
+		g && m && g(m);
+	}, [g, m]), Y = t((e) => {
+		e.key === "Escape" && h && (m?.selection?.showEditor || m?.geometry) && h({
+			selection: void 0,
+			geometry: void 0,
+			data: void 0
+		});
+	}, [m, h]);
+	n(() => {
+		if (m?.selection?.showEditor) return window.addEventListener("keydown", Y), () => window.removeEventListener("keydown", Y);
+	}, [m?.selection?.showEditor, Y]);
+	let se = ee;
+	return {
+		setContainerRef: ie,
+		style: s,
+		className: c,
+		onContainerMouseLeave: K,
+		onContainerTouchCancel: W,
+		onContainerMouseMove: G,
+		allowTouch: D,
+		setImageRef: ne,
+		src: a,
+		alt: o,
+		annotations: d,
+		shouldAnnotationBeActive: t((e, t) => v && v.some((t) => _ ? _(e, t) : e.data.id === t) || t === e, [v, _]),
+		topAnnotationAtMouse: se,
+		disableSelector: !!w,
+		value: m,
+		setTargetRef: re,
+		onInteractionTargetClick: ae,
+		onInteractionTargetMouseUp: q,
+		onInteractionTargetMouseDown: J,
+		disableOverlay: !!E,
+		effectiveType: te,
+		editModeAnnotationIds: S,
+		disableEditor: !!T,
+		onChange: h,
+		onEditorSubmit: oe,
+		renderSlots: {
+			renderHighlight: A,
+			renderSelector: O,
+			renderOverlay: M,
+			renderContent: j,
+			renderEditor: k
+		}
+	};
 }
-var W = $t();
-const Tt = (n, e) => {
-  const t = e || n.currentTarget;
-  if (!t || typeof t.getBoundingClientRect != "function")
-    return {
-      x: 0,
-      y: 0
-    };
-  const s = t.getBoundingClientRect(), c = n.clientX - s.x, l = n.clientY - s.y;
-  return {
-    x: c / s.width * 100,
-    y: l / s.height * 100
-  };
-}, gt = (n, e, t) => Math.max(n, Math.min(e, t)), Pt = (n) => {
-  if (!n.currentTarget || typeof n.currentTarget.getBoundingClientRect != "function")
-    return {
-      x: 0,
-      y: 0
-    };
-  const e = n.targetTouches[0], t = n.currentTarget.getBoundingClientRect(), s = e.pageX - t.left, c = e.pageY - (t.top + window.scrollY);
-  return {
-    x: gt(0, 100, s / t.width * 100),
-    y: gt(0, 100, c / t.height * 100)
-  };
-}, ne = (n, e) => jt(n) ? Yt(n) ? (It(n) && n.preventDefault(), Pt(n)) : {
-  x: null
-} : Tt(n, e), jt = (n) => n.targetTouches !== void 0, Yt = (n) => n.targetTouches.length === 1, It = (n) => n.type === "touchmove";
-function Lt(n, e = {}) {
-  const {
-    onPositionChange: t,
-    throttleMs: s = 16
-  } = e, c = ee({
-    x: null,
-    y: null
-  }), [l, i] = et({
-    x: null,
-    y: null
-  }), r = ee(0), d = ee(null), u = K((f) => {
-    if (c.current = f, t) {
-      const E = Date.now();
-      s <= 0 || E - r.current >= s ? (i(f), t(f), r.current = E) : (d.current && clearTimeout(d.current), d.current = setTimeout(() => {
-        i(f), t(f), r.current = Date.now();
-      }, s - (E - r.current)));
-    }
-  }, [t, s]), m = K((f) => {
-    try {
-      const E = n.current;
-      if (!E) {
-        u({
-          x: null,
-          y: null
-        });
-        return;
-      }
-      const b = Tt(f, E);
-      u(b);
-    } catch {
-      u({
-        x: null,
-        y: null
-      });
-    }
-  }, [n, u]), v = K((f) => {
-    const E = n.current;
-    if (!E || f.targetTouches.length !== 1)
-      return;
-    const b = f.targetTouches[0], C = E.offsetParent;
-    if (C)
-      try {
-        const $ = b.pageX - C.offsetLeft, S = b.pageY - C.offsetTop, y = E, T = y.width, N = y.height;
-        T > 0 && N > 0 ? u({
-          x: $ / T * 100,
-          y: S / N * 100
-        }) : u({
-          x: null,
-          y: null
-        });
-      } catch {
-        u({
-          x: null,
-          y: null
-        });
-      }
-  }, [n, u]), a = K((f) => {
-    u({
-      x: null,
-      y: null
-    });
-  }, [u]), p = K((f) => {
-    u({
-      x: null,
-      y: null
-    });
-  }, [u]), x = K(() => c.current, []);
-  return ae(() => () => {
-    d.current && clearTimeout(d.current);
-  }, []), {
-    mousePosition: t ? l : c.current,
-    handlers: {
-      onMouseMove: m,
-      onMouseLeave: a,
-      onTouchMove: v,
-      onTouchLeave: p
-    },
-    getCurrentMousePosition: x
-  };
-}
-function Dt(n) {
-  const e = W.c(12), {
-    annotations: t,
-    selectors: s,
-    imageRef: c,
-    enableEditing: l
-  } = n;
-  let i, r;
-  e[0] !== s ? (r = new Map(s.map(Gt)), e[0] = s, e[1] = r) : r = e[1], i = r;
-  const d = i;
-  let u;
-  e[2] !== d ? (u = (x) => {
-    if (x)
-      return d.get(x);
-  }, e[2] = d, e[3] = u) : u = e[3];
-  const m = u;
-  let v;
-  e[4] !== t || e[5] !== l || e[6] !== m || e[7] !== c ? (v = (x, f) => {
-    const E = c.current;
-    if (!E || x === null || f === null)
-      return;
-    const b = {
-      x,
-      y: f
-    }, C = t.map((S) => {
-      const {
-        geometry: y
-      } = S;
-      if (!y)
-        return null;
-      const T = m(y.type);
-      if (!T)
-        return null;
-      let N = y;
-      return l && y.type === "RECTANGLE" && typeof y.x == "number" && typeof y.y == "number" && typeof y.width == "number" && typeof y.height == "number" && (N = {
-        ...y,
-        x: Math.max(0, y.x - 2),
-        y: Math.max(0, y.y - 2),
-        width: Math.min(100 - y.x + 2, y.width + 4),
-        height: Math.min(100 - y.y + 2, y.height + 4)
-      }), T.intersects(b, N, E) ? S : null;
-    }).filter(Ht);
-    return C.length === 0 ? void 0 : C.sort((S, y) => {
-      const T = m(S.geometry.type), N = m(y.geometry.type);
-      return !T || !N ? 0 : T.area(S.geometry, E) - N.area(y.geometry, E);
-    })[0];
-  }, e[4] = t, e[5] = l, e[6] = m, e[7] = c, e[8] = v) : v = e[8];
-  const a = v;
-  let p;
-  return e[9] !== m || e[10] !== a ? (p = {
-    getTopAnnotationAt: a,
-    getSelectorByType: m
-  }, e[9] = m, e[10] = a, e[11] = p) : p = e[11], p;
-}
-function Ht(n) {
-  return n !== null;
-}
-function Gt(n) {
-  return [n.TYPE, n];
-}
-function Ut(n) {
-  const e = W.c(17), {
-    targetRef: t,
-    imageRef: s,
-    annotations: c,
-    selectors: l,
-    enableEditing: i,
-    throttleMs: r
-  } = n, d = r === void 0 ? 50 : r, [u, m] = et(void 0), v = ee(void 0), a = ee(void 0);
-  let p;
-  e[0] !== c || e[1] !== i || e[2] !== s || e[3] !== l ? (p = {
-    annotations: c,
-    selectors: l,
-    imageRef: s,
-    enableEditing: i
-  }, e[0] = c, e[1] = i, e[2] = s, e[3] = l, e[4] = p) : p = e[4];
-  const {
-    getTopAnnotationAt: x
-  } = Dt(p);
-  let f;
-  e[5] !== x ? (f = (j) => {
-    var P;
-    const {
-      x: G,
-      y: z
-    } = j, I = x(G, z), Y = (P = I == null ? void 0 : I.data) == null ? void 0 : P.id;
-    Y !== a.current && (a.current = Y, v.current = I, m(I));
-  }, e[5] = x, e[6] = f) : f = e[6];
-  const E = f;
-  let b;
-  e[7] !== E || e[8] !== d ? (b = {
-    onPositionChange: E,
-    throttleMs: d
-  }, e[7] = E, e[8] = d, e[9] = b) : b = e[9];
-  const {
-    handlers: C
-  } = Lt(t, b);
-  let $;
-  e[10] === Symbol.for("react.memo_cache_sentinel") ? ($ = () => {
-    m(void 0), v.current = void 0, a.current = void 0;
-  }, e[10] = $) : $ = e[10];
-  let S;
-  e[11] !== c || e[12] !== l ? (S = [c, l], e[11] = c, e[12] = l, e[13] = S) : S = e[13], ae($, S);
-  let y;
-  y = C;
-  const T = y;
-  let N;
-  return e[14] !== u || e[15] !== T ? (N = {
-    hoveredAnnotation: u,
-    mouseHandlers: T
-  }, e[14] = u, e[15] = T, e[16] = N) : N = e[16], N;
-}
-function Xt({
-  selectors: n,
-  effectiveType: e,
-  value: t,
-  onChange: s,
-  disableAnnotation: c
-}) {
-  const l = K((r) => {
-    if (r)
-      return n.find((d) => d.TYPE === r);
-  }, [n]);
-  return {
-    callSelectorMethod: K((r, d) => {
-      if (c)
-        return;
-      const u = l(e);
-      if (!(u != null && u.methods[r]))
-        return;
-      const m = u.methods[r];
-      try {
-        const v = m(t || {}, d);
-        if (typeof v > "u") {
-          process.env.NODE_ENV !== "production" && console.error(`Selector method ${String(r)} of type ${e} returned undefined. Make sure to explicitly return the previous state or new state.`);
-          return;
-        }
-        s == null || s(v);
-      } catch (v) {
-        process.env.NODE_ENV !== "production" && console.error(`Error calling selector method ${String(r)}:`, v);
-      }
-    }, [c, l, e, t, s]),
-    getSelectorByType: l
-  };
-}
-function Ze(n, e) {
-  n && (typeof n == "function" ? n(e) : n.current = e);
-}
-function Ft(n, e) {
-  var nt, ot, rt, st, it, ct;
-  const t = W.c(97), {
-    src: s,
-    alt: c,
-    style: l,
-    className: i,
-    containerRef: r,
-    imageRef: d,
-    annotations: u,
-    type: m,
-    selectors: v,
-    value: a,
-    onChange: p,
-    onSubmit: x,
-    activeAnnotationComparator: f,
-    activeAnnotations: E,
-    editModeAnnotationIds: b,
-    disableAnnotation: C,
-    disableSelector: $,
-    disableEditor: S,
-    disableOverlay: y,
-    allowTouch: T,
-    renderSelector: N,
-    renderEditor: j,
-    renderHighlight: G,
-    renderContent: z,
-    renderOverlay: I,
-    onImageMouseUp: Y,
-    onImageMouseDown: P,
-    onImageMouseMove: B,
-    onImageClick: L
-  } = n, U = c === void 0 ? "Annotation Image" : c, q = ee(null), X = ee(null), F = !S;
-  let D;
-  t[0] !== u || t[1] !== v || t[2] !== F ? (D = {
-    targetRef: X,
-    imageRef: q,
-    annotations: u,
-    selectors: v,
-    enableEditing: F,
-    throttleMs: 50
-  }, t[0] = u, t[1] = v, t[2] = F, t[3] = D) : D = t[3];
-  const {
-    hoveredAnnotation: o,
-    mouseHandlers: h
-  } = Ut(D), w = m || ((nt = v[0]) == null ? void 0 : nt.TYPE);
-  let _;
-  t[4] !== C || t[5] !== w || t[6] !== p || t[7] !== v || t[8] !== a ? (_ = {
-    selectors: v,
-    effectiveType: w,
-    value: a,
-    onChange: p,
-    disableAnnotation: C
-  }, t[4] = C, t[5] = w, t[6] = p, t[7] = v, t[8] = a, t[9] = _) : _ = t[9];
-  const {
-    callSelectorMethod: R
-  } = Xt(_);
-  let V;
-  t[10] !== T || t[11] !== R ? (V = (g) => {
-    navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && T && g.preventDefault(), R("onTouchStart", g);
-  }, t[10] = T, t[11] = R, t[12] = V) : V = t[12];
-  const A = V;
-  let O;
-  t[13] !== R ? (O = (g) => {
-    R("onTouchEnd", g);
-  }, t[13] = R, t[14] = O) : O = t[14];
-  const k = O;
-  let J;
-  t[15] !== T || t[16] !== R || t[17] !== h ? (J = (g) => {
-    h.onTouchMove(g), navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && T && g.preventDefault(), R("onTouchMove", g);
-  }, t[15] = T, t[16] = R, t[17] = h, t[18] = J) : J = t[18];
-  const Z = J;
-  let de;
-  t[19] !== h ? (de = (g) => {
-    h.onTouchLeave(g);
-  }, t[19] = h, t[20] = de) : de = t[20];
-  const se = de;
-  let fe, he;
-  t[21] !== T || t[22] !== k || t[23] !== se || t[24] !== Z || t[25] !== A ? (fe = () => {
-    const g = X.current;
-    if (!(!T || !g))
-      return g.ontouchstart = A, g.ontouchend = k, g.ontouchmove = Z, g.ontouchcancel = se, () => {
-        g.ontouchstart = null, g.ontouchend = null, g.ontouchmove = null, g.ontouchcancel = null;
-      };
-  }, he = [T, A, k, Z, se], t[21] = T, t[22] = k, t[23] = se, t[24] = Z, t[25] = A, t[26] = fe, t[27] = he) : (fe = t[26], he = t[27]), ae(fe, he);
-  let pe;
-  t[28] !== e || t[29] !== d ? (pe = (g) => {
-    q.current = g, Ze(e, g), Ze(d, g);
-  }, t[28] = e, t[29] = d, t[30] = pe) : pe = t[30];
-  const Pe = pe;
-  let ge;
-  t[31] === Symbol.for("react.memo_cache_sentinel") ? (ge = (g) => {
-    X.current = g;
-  }, t[31] = ge) : ge = t[31];
-  const Mt = ge;
-  let me;
-  t[32] !== r ? (me = (g) => {
-    Ze(r, g);
-  }, t[32] = r, t[33] = me) : me = t[33];
-  const je = me;
-  let xe;
-  t[34] !== R || t[35] !== h || t[36] !== B ? (xe = (g) => {
-    h.onMouseMove(g.nativeEvent), B == null || B(g), R("onMouseMove", g);
-  }, t[34] = R, t[35] = h, t[36] = B, t[37] = xe) : xe = t[37];
-  const Ye = xe;
-  let ve;
-  t[38] !== h ? (ve = (g) => {
-    h.onMouseLeave(g.nativeEvent);
-  }, t[38] = h, t[39] = ve) : ve = t[39];
-  const Ie = ve;
-  let Ee;
-  t[40] !== R || t[41] !== Y ? (Ee = (g) => {
-    Y == null || Y(g), R("onMouseUp", g);
-  }, t[40] = R, t[41] = Y, t[42] = Ee) : Ee = t[42];
-  const Le = Ee;
-  let be;
-  t[43] !== R || t[44] !== P ? (be = (g) => {
-    P == null || P(g), R("onMouseDown", g);
-  }, t[43] = R, t[44] = P, t[45] = be) : be = t[45];
-  const De = be;
-  let ye;
-  t[46] !== R || t[47] !== L ? (ye = (g) => {
-    L == null || L(g), R("onClick", g);
-  }, t[46] = R, t[47] = L, t[48] = ye) : ye = t[48];
-  const He = ye;
-  let Te;
-  t[49] !== x || t[50] !== a ? (Te = () => {
-    x && a && x(a);
-  }, t[49] = x, t[50] = a, t[51] = Te) : Te = t[51];
-  const Ge = Te;
-  let we;
-  t[52] !== p || t[53] !== (a == null ? void 0 : a.geometry) || t[54] !== ((ot = a == null ? void 0 : a.selection) == null ? void 0 : ot.showEditor) ? (we = (g) => {
-    var ie;
-    g.key === "Escape" && p && ((ie = a == null ? void 0 : a.selection) != null && ie.showEditor || a != null && a.geometry) && p({
-      selection: void 0,
-      geometry: void 0,
-      data: void 0
-    });
-  }, t[52] = p, t[53] = a == null ? void 0 : a.geometry, t[54] = (rt = a == null ? void 0 : a.selection) == null ? void 0 : rt.showEditor, t[55] = we) : we = t[55];
-  const te = we;
-  let Re;
-  t[56] !== te || t[57] !== ((st = a == null ? void 0 : a.selection) == null ? void 0 : st.showEditor) ? (Re = () => {
-    var g;
-    if ((g = a == null ? void 0 : a.selection) != null && g.showEditor)
-      return window.addEventListener("keydown", te), () => window.removeEventListener("keydown", te);
-  }, t[56] = te, t[57] = (it = a == null ? void 0 : a.selection) == null ? void 0 : it.showEditor, t[58] = Re) : Re = t[58];
-  const Ue = (ct = a == null ? void 0 : a.selection) == null ? void 0 : ct.showEditor;
-  let Me;
-  t[59] !== te || t[60] !== Ue ? (Me = [Ue, te], t[59] = te, t[60] = Ue, t[61] = Me) : Me = t[61], ae(Re, Me);
-  const Xe = o;
-  let _e;
-  t[62] !== f || t[63] !== E ? (_e = (g, ie) => E && E.some((lt) => f ? f(g, lt) : g.data.id === lt) || ie === g, t[62] = f, t[63] = E, t[64] = _e) : _e = t[64];
-  const Fe = _e, Ve = se, ze = !!$, Be = !!y, We = !!S;
-  let oe;
-  t[65] !== z || t[66] !== j || t[67] !== G || t[68] !== I || t[69] !== N ? (oe = {
-    renderHighlight: G,
-    renderSelector: N,
-    renderOverlay: I,
-    renderContent: z,
-    renderEditor: j
-  }, t[65] = z, t[66] = j, t[67] = G, t[68] = I, t[69] = N, t[70] = oe) : oe = t[70];
-  let Ce;
-  return t[71] !== T || t[72] !== U || t[73] !== u || t[74] !== i || t[75] !== b || t[76] !== w || t[77] !== Ge || t[78] !== He || t[79] !== De || t[80] !== Le || t[81] !== Ie || t[82] !== Ye || t[83] !== p || t[84] !== je || t[85] !== Pe || t[86] !== Fe || t[87] !== s || t[88] !== l || t[89] !== Ve || t[90] !== ze || t[91] !== Be || t[92] !== We || t[93] !== oe || t[94] !== Xe || t[95] !== a ? (Ce = {
-    setContainerRef: je,
-    style: l,
-    className: i,
-    onContainerMouseLeave: Ie,
-    onContainerTouchCancel: Ve,
-    onContainerMouseMove: Ye,
-    allowTouch: T,
-    setImageRef: Pe,
-    src: s,
-    alt: U,
-    annotations: u,
-    shouldAnnotationBeActive: Fe,
-    topAnnotationAtMouse: Xe,
-    disableSelector: ze,
-    value: a,
-    setTargetRef: Mt,
-    onInteractionTargetClick: He,
-    onInteractionTargetMouseUp: Le,
-    onInteractionTargetMouseDown: De,
-    disableOverlay: Be,
-    effectiveType: w,
-    editModeAnnotationIds: b,
-    disableEditor: We,
-    onChange: p,
-    onEditorSubmit: Ge,
-    renderSlots: oe
-  }, t[71] = T, t[72] = U, t[73] = u, t[74] = i, t[75] = b, t[76] = w, t[77] = Ge, t[78] = He, t[79] = De, t[80] = Le, t[81] = Ie, t[82] = Ye, t[83] = p, t[84] = je, t[85] = Pe, t[86] = Fe, t[87] = s, t[88] = l, t[89] = Ve, t[90] = ze, t[91] = Be, t[92] = We, t[93] = oe, t[94] = Xe, t[95] = a, t[96] = Ce) : Ce = t[96], Ce;
-}
-const Vt = H.div`
+//#endregion
+//#region node_modules/react/cjs/react-jsx-runtime.production.js
+var C = /* @__PURE__ */ c(((e) => {
+	var t = Symbol.for("react.transitional.element"), n = Symbol.for("react.fragment");
+	function r(e, n, r) {
+		var i = null;
+		if (r !== void 0 && (i = "" + r), n.key !== void 0 && (i = "" + n.key), "key" in n) for (var a in r = {}, n) a !== "key" && (r[a] = n[a]);
+		else r = n;
+		return n = r.ref, {
+			$$typeof: t,
+			type: e,
+			key: i,
+			ref: n === void 0 ? null : n,
+			props: r
+		};
+	}
+	e.Fragment = n, e.jsx = r, e.jsxs = r;
+})), w = /* @__PURE__ */ c(((e) => {
+	process.env.NODE_ENV !== "production" && (function() {
+		function t(e) {
+			if (e == null) return null;
+			if (typeof e == "function") return e.$$typeof === k ? null : e.displayName || e.name || null;
+			if (typeof e == "string") return e;
+			switch (e) {
+				case v: return "Fragment";
+				case b: return "Profiler";
+				case y: return "StrictMode";
+				case w: return "Suspense";
+				case T: return "SuspenseList";
+				case O: return "Activity";
+			}
+			if (typeof e == "object") switch (typeof e.tag == "number" && console.error("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), e.$$typeof) {
+				case _: return "Portal";
+				case S: return e.displayName || "Context";
+				case x: return (e._context.displayName || "Context") + ".Consumer";
+				case C:
+					var n = e.render;
+					return e = e.displayName, e ||= (e = n.displayName || n.name || "", e === "" ? "ForwardRef" : "ForwardRef(" + e + ")"), e;
+				case E: return n = e.displayName || null, n === null ? t(e.type) || "Memo" : n;
+				case D:
+					n = e._payload, e = e._init;
+					try {
+						return t(e(n));
+					} catch {}
+			}
+			return null;
+		}
+		function n(e) {
+			return "" + e;
+		}
+		function r(e) {
+			try {
+				n(e);
+				var t = !1;
+			} catch {
+				t = !0;
+			}
+			if (t) {
+				t = console;
+				var r = t.error, i = typeof Symbol == "function" && Symbol.toStringTag && e[Symbol.toStringTag] || e.constructor.name || "Object";
+				return r.call(t, "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.", i), n(e);
+			}
+		}
+		function i(e) {
+			if (e === v) return "<>";
+			if (typeof e == "object" && e && e.$$typeof === D) return "<...>";
+			try {
+				var n = t(e);
+				return n ? "<" + n + ">" : "<...>";
+			} catch {
+				return "<...>";
+			}
+		}
+		function a() {
+			var e = A.A;
+			return e === null ? null : e.getOwner();
+		}
+		function o() {
+			return Error("react-stack-top-frame");
+		}
+		function s(e) {
+			if (j.call(e, "key")) {
+				var t = Object.getOwnPropertyDescriptor(e, "key").get;
+				if (t && t.isReactWarning) return !1;
+			}
+			return e.key !== void 0;
+		}
+		function c(e, t) {
+			function n() {
+				P || (P = !0, console.error("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)", t));
+			}
+			n.isReactWarning = !0, Object.defineProperty(e, "key", {
+				get: n,
+				configurable: !0
+			});
+		}
+		function u() {
+			var e = t(this.type);
+			return F[e] || (F[e] = !0, console.error("Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release.")), e = this.props.ref, e === void 0 ? null : e;
+		}
+		function d(e, t, n, r, i, a) {
+			var o = n.ref;
+			return e = {
+				$$typeof: g,
+				type: e,
+				key: t,
+				props: n,
+				_owner: r
+			}, (o === void 0 ? null : o) === null ? Object.defineProperty(e, "ref", {
+				enumerable: !1,
+				value: null
+			}) : Object.defineProperty(e, "ref", {
+				enumerable: !1,
+				get: u
+			}), e._store = {}, Object.defineProperty(e._store, "validated", {
+				configurable: !1,
+				enumerable: !1,
+				writable: !0,
+				value: 0
+			}), Object.defineProperty(e, "_debugInfo", {
+				configurable: !1,
+				enumerable: !1,
+				writable: !0,
+				value: null
+			}), Object.defineProperty(e, "_debugStack", {
+				configurable: !1,
+				enumerable: !1,
+				writable: !0,
+				value: i
+			}), Object.defineProperty(e, "_debugTask", {
+				configurable: !1,
+				enumerable: !1,
+				writable: !0,
+				value: a
+			}), Object.freeze && (Object.freeze(e.props), Object.freeze(e)), e;
+		}
+		function f(e, n, i, o, l, u) {
+			var f = n.children;
+			if (f !== void 0) if (o) if (M(f)) {
+				for (o = 0; o < f.length; o++) p(f[o]);
+				Object.freeze && Object.freeze(f);
+			} else console.error("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
+			else p(f);
+			if (j.call(n, "key")) {
+				f = t(e);
+				var m = Object.keys(n).filter(function(e) {
+					return e !== "key";
+				});
+				o = 0 < m.length ? "{key: someKey, " + m.join(": ..., ") + ": ...}" : "{key: someKey}", R[f + o] || (m = 0 < m.length ? "{" + m.join(": ..., ") + ": ...}" : "{}", console.error("A props object containing a \"key\" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />", o, f, m, f), R[f + o] = !0);
+			}
+			if (f = null, i !== void 0 && (r(i), f = "" + i), s(n) && (r(n.key), f = "" + n.key), "key" in n) for (var h in i = {}, n) h !== "key" && (i[h] = n[h]);
+			else i = n;
+			return f && c(i, typeof e == "function" ? e.displayName || e.name || "Unknown" : e), d(e, f, i, a(), l, u);
+		}
+		function p(e) {
+			m(e) ? e._store && (e._store.validated = 1) : typeof e == "object" && e && e.$$typeof === D && (e._payload.status === "fulfilled" ? m(e._payload.value) && e._payload.value._store && (e._payload.value._store.validated = 1) : e._store && (e._store.validated = 1));
+		}
+		function m(e) {
+			return typeof e == "object" && !!e && e.$$typeof === g;
+		}
+		var h = l("react"), g = Symbol.for("react.transitional.element"), _ = Symbol.for("react.portal"), v = Symbol.for("react.fragment"), y = Symbol.for("react.strict_mode"), b = Symbol.for("react.profiler"), x = Symbol.for("react.consumer"), S = Symbol.for("react.context"), C = Symbol.for("react.forward_ref"), w = Symbol.for("react.suspense"), T = Symbol.for("react.suspense_list"), E = Symbol.for("react.memo"), D = Symbol.for("react.lazy"), O = Symbol.for("react.activity"), k = Symbol.for("react.client.reference"), A = h.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, j = Object.prototype.hasOwnProperty, M = Array.isArray, N = console.createTask ? console.createTask : function() {
+			return null;
+		};
+		h = { react_stack_bottom_frame: function(e) {
+			return e();
+		} };
+		var P, F = {}, I = h.react_stack_bottom_frame.bind(h, o)(), L = N(i(o)), R = {};
+		e.Fragment = v, e.jsx = function(e, t, n) {
+			var r = 1e4 > A.recentlyCreatedOwnerStacks++;
+			return f(e, t, n, !1, r ? Error("react-stack-top-frame") : I, r ? N(i(e)) : L);
+		}, e.jsxs = function(e, t, n) {
+			var r = 1e4 > A.recentlyCreatedOwnerStacks++;
+			return f(e, t, n, !0, r ? Error("react-stack-top-frame") : I, r ? N(i(e)) : L);
+		};
+	})();
+})), T = (/* @__PURE__ */ c(((e, t) => {
+	process.env.NODE_ENV === "production" ? t.exports = C() : t.exports = w();
+})))(), E = o.div`
   border: solid 3px white;
   border-radius: 50%;
   box-sizing: border-box;
@@ -785,20 +498,16 @@ const Vt = H.div`
   transform: translate3d(-50%, -50%, 0);
   width: 16px;
 `;
-function mt(n) {
-  const e = W.c(3), {
-    geometry: t
-  } = n.annotation;
-  if (!t)
-    return null;
-  const s = `${t.y}%`, c = `${t.x}%`;
-  let l;
-  return e[0] !== s || e[1] !== c ? (l = /* @__PURE__ */ M.jsx(Vt, { style: {
-    top: s,
-    left: c
-  } }), e[0] = s, e[1] = c, e[2] = l) : l = e[2], l;
+function D(e) {
+	let { geometry: t } = e.annotation;
+	return t ? /* @__PURE__ */ (0, T.jsx)(E, { style: {
+		top: `${t.y}%`,
+		left: `${t.x}%`
+	} }) : null;
 }
-const zt = H.div`
+//#endregion
+//#region src/components/TextEditor/index.tsx
+var O = o.div`
   padding: 8px 16px;
 
   textarea {
@@ -808,7 +517,7 @@ const zt = H.div`
     min-height: 60px;
     outline: 0;
   }
-`, Bt = H.div`
+`, k = o.div`
   background: whitesmoke;
   border: 0;
   box-sizing: border-box;
@@ -827,24 +536,16 @@ const zt = H.div`
   &:focus, &:hover {
     background: #eeeeee;
   }
-`, Wt = (n) => {
-  const e = W.c(11), {
-    onChange: t,
-    onSubmit: s,
-    onFocus: c,
-    onBlur: l,
-    value: i
-  } = n;
-  let r;
-  e[0] !== l || e[1] !== t || e[2] !== c || e[3] !== i ? (r = /* @__PURE__ */ M.jsx(zt, { children: /* @__PURE__ */ M.jsx("textarea", { placeholder: "Write description", onFocus: c, onBlur: l, onChange: t, value: i }) }), e[0] = l, e[1] = t, e[2] = c, e[3] = i, e[4] = r) : r = e[4];
-  let d;
-  e[5] !== s || e[6] !== i ? (d = i && /* @__PURE__ */ M.jsx(Bt, { onClick: s, children: "Submit" }), e[5] = s, e[6] = i, e[7] = d) : d = e[7];
-  let u;
-  return e[8] !== r || e[9] !== d ? (u = /* @__PURE__ */ M.jsxs(re.Fragment, { children: [
-    r,
-    d
-  ] }), e[8] = r, e[9] = d, e[10] = u) : u = e[10], u;
-}, ue = {}, qt = {}, Jt = Ct`
+`, A = ({ onChange: t, onSubmit: n, onFocus: r, onBlur: i, value: a }) => /* @__PURE__ */ (0, T.jsxs)(e.Fragment, { children: [/* @__PURE__ */ (0, T.jsx)(O, { children: /* @__PURE__ */ (0, T.jsx)("textarea", {
+	placeholder: "Write description",
+	onFocus: r,
+	onBlur: i,
+	onChange: t,
+	value: a
+}) }), a && /* @__PURE__ */ (0, T.jsx)(k, {
+	onClick: n,
+	children: "Submit"
+})] }), j = {}, M = {}, N = s`
   from {
     opacity: 0;
     transform: scale(0);
@@ -854,7 +555,7 @@ const zt = H.div`
     opacity: 1;
     transform: scale(1);
   }
-`, Zt = H.div`
+`, P = o.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -864,162 +565,119 @@ const zt = H.div`
   margin-top: 16px;
   transform-origin: top left;
 
-  animation: ${Jt} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: ${N} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-`, Qt = (n) => {
-  var b;
-  const e = W.c(15), {
-    annotation: t,
-    onChange: s,
-    onSubmit: c,
-    className: l,
-    style: i
-  } = n, r = l === void 0 ? "" : l, d = i === void 0 ? ue : i, {
-    geometry: u
-  } = t;
-  if (!u)
-    return null;
-  const m = `${u.x}%`, v = `${u.y + u.height}%`;
-  let a;
-  e[0] !== d || e[1] !== m || e[2] !== v ? (a = {
-    position: "absolute",
-    left: m,
-    top: v,
-    ...d
-  }, e[0] = d, e[1] = m, e[2] = v, e[3] = a) : a = e[3];
-  let p;
-  e[4] !== t || e[5] !== s ? (p = (C) => s({
-    ...t,
-    data: {
-      ...t.data,
-      text: C.target.value
-    }
-  }), e[4] = t, e[5] = s, e[6] = p) : p = e[6];
-  const x = (b = t.data) == null ? void 0 : b.text;
-  let f;
-  e[7] !== c || e[8] !== p || e[9] !== x ? (f = /* @__PURE__ */ M.jsx(Wt, { onChange: p, onSubmit: c, value: x }), e[7] = c, e[8] = p, e[9] = x, e[10] = f) : f = e[10];
-  let E;
-  return e[11] !== r || e[12] !== a || e[13] !== f ? (E = /* @__PURE__ */ M.jsx(Zt, { className: r, style: a, children: f }), e[11] = r, e[12] = a, e[13] = f, e[14] = E) : E = e[14], E;
-}, Ne = H.div`
+`, F = ({ annotation: e, onChange: t, onSubmit: n, className: r = "", style: i = j }) => {
+	let { geometry: a } = e;
+	return a ? /* @__PURE__ */ (0, T.jsx)(P, {
+		className: r,
+		style: {
+			position: "absolute",
+			left: `${a.x}%`,
+			top: `${a.y + a.height}%`,
+			...i
+		},
+		children: /* @__PURE__ */ (0, T.jsx)(A, {
+			onChange: (n) => t({
+				...e,
+				data: {
+					...e.data,
+					text: n.target.value
+				}
+			}),
+			onSubmit: n,
+			value: e.data?.text
+		})
+	}) : null;
+}, I = o.div`
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
-`, Kt = H.div`
+`, L = o.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
 `;
-function en(n) {
-  const e = W.c(21), {
-    annotation: t,
-    className: s,
-    style: c
-  } = n, l = s === void 0 ? "" : s, i = c === void 0 ? ue : c, {
-    geometry: r
-  } = t;
-  if (!r)
-    return null;
-  const d = `${r.y}%`;
-  let u;
-  e[0] !== d ? (u = /* @__PURE__ */ M.jsx(Ne, { style: {
-    height: d,
-    width: "100%"
-  } }), e[0] = d, e[1] = u) : u = e[1];
-  const m = `${r.y}%`, v = `${r.height}%`, a = `${r.x}%`;
-  let p;
-  e[2] !== m || e[3] !== v || e[4] !== a ? (p = /* @__PURE__ */ M.jsx(Ne, { style: {
-    top: m,
-    height: v,
-    width: a
-  } }), e[2] = m, e[3] = v, e[4] = a, e[5] = p) : p = e[5];
-  const x = `${r.y}%`, f = `${r.x + r.width}%`, E = `${r.height}%`, b = `${100 - (r.x + r.width)}%`;
-  let C;
-  e[6] !== f || e[7] !== E || e[8] !== b || e[9] !== x ? (C = /* @__PURE__ */ M.jsx(Ne, { style: {
-    top: x,
-    left: f,
-    height: E,
-    width: b
-  } }), e[6] = f, e[7] = E, e[8] = b, e[9] = x, e[10] = C) : C = e[10];
-  const $ = `${r.y + r.height}%`, S = `${100 - (r.y + r.height)}%`;
-  let y;
-  e[11] !== $ || e[12] !== S ? (y = /* @__PURE__ */ M.jsx(Ne, { style: {
-    top: $,
-    height: S,
-    width: "100%"
-  } }), e[11] = $, e[12] = S, e[13] = y) : y = e[13];
-  let T;
-  return e[14] !== l || e[15] !== i || e[16] !== C || e[17] !== y || e[18] !== u || e[19] !== p ? (T = /* @__PURE__ */ M.jsxs(Kt, { className: l, style: i, children: [
-    u,
-    p,
-    C,
-    y
-  ] }), e[14] = l, e[15] = i, e[16] = C, e[17] = y, e[18] = u, e[19] = p, e[20] = T) : T = e[20], T;
+function R({ annotation: e, className: t = "", style: n = j }) {
+	let { geometry: r } = e;
+	return r ? /* @__PURE__ */ (0, T.jsxs)(L, {
+		className: t,
+		style: n,
+		children: [
+			/* @__PURE__ */ (0, T.jsx)(I, { style: {
+				height: `${r.y}%`,
+				width: "100%"
+			} }),
+			/* @__PURE__ */ (0, T.jsx)(I, { style: {
+				top: `${r.y}%`,
+				height: `${r.height}%`,
+				width: `${r.x}%`
+			} }),
+			/* @__PURE__ */ (0, T.jsx)(I, { style: {
+				top: `${r.y}%`,
+				left: `${r.x + r.width}%`,
+				height: `${r.height}%`,
+				width: `${100 - (r.x + r.width)}%`
+			} }),
+			/* @__PURE__ */ (0, T.jsx)(I, { style: {
+				top: `${r.y + r.height}%`,
+				height: `${100 - (r.y + r.height)}%`,
+				width: "100%"
+			} })
+		]
+	}) : null;
 }
-const tn = H.div`
+//#endregion
+//#region src/components/Rectangle/index.tsx
+var ee = o.div`
   border: dashed 2px black;
   box-shadow: 0px 0px 1px 1px white inset;
   box-sizing: border-box;
   transition: box-shadow 0.21s ease-in-out;
 `;
-function nn(n) {
-  const e = W.c(10), {
-    annotation: t,
-    className: s,
-    style: c,
-    active: l
-  } = n, i = s === void 0 ? "" : s, r = c === void 0 ? ue : c, {
-    geometry: d
-  } = t;
-  if (!d)
-    return null;
-  const u = `${d.x}%`, m = `${d.y}%`, v = `${d.height}%`, a = `${d.width}%`, p = l ? "0 0 1px 1px yellow inset" : void 0;
-  let x;
-  e[0] !== r || e[1] !== u || e[2] !== m || e[3] !== v || e[4] !== a || e[5] !== p ? (x = {
-    position: "absolute",
-    left: u,
-    top: m,
-    height: v,
-    width: a,
-    boxShadow: p,
-    ...r
-  }, e[0] = r, e[1] = u, e[2] = m, e[3] = v, e[4] = a, e[5] = p, e[6] = x) : x = e[6];
-  let f;
-  return e[7] !== i || e[8] !== x ? (f = /* @__PURE__ */ M.jsx(tn, { className: i, style: x }), e[7] = i, e[8] = x, e[9] = f) : f = e[9], f;
+function z({ annotation: e, className: t = "", style: n = j, active: r }) {
+	let { geometry: i } = e;
+	return i ? /* @__PURE__ */ (0, T.jsx)(ee, {
+		className: t,
+		style: {
+			position: "absolute",
+			left: `${i.x}%`,
+			top: `${i.y}%`,
+			height: `${i.height}%`,
+			width: `${i.width}%`,
+			boxShadow: r ? "0 0 1px 1px yellow inset" : void 0,
+			...n
+		}
+	}) : null;
 }
-const on = H.div`
+//#endregion
+//#region src/components/Oval/index.tsx
+var te = o.div`
   border: dashed 2px black;
   border-radius: 100%;
   box-shadow: 0px 0px 1px 1px white inset;
   box-sizing: border-box;
   transition: box-shadow 0.21s ease-in-out;
 `;
-function xt(n) {
-  const e = W.c(10), {
-    annotation: t,
-    className: s,
-    style: c,
-    active: l
-  } = n, i = s === void 0 ? "" : s, r = c === void 0 ? ue : c, {
-    geometry: d
-  } = t;
-  if (!d)
-    return null;
-  const u = `${d.x}%`, m = `${d.y}%`, v = `${d.height}%`, a = `${d.width}%`, p = l ? "0 0 1px 1px yellow inset" : void 0;
-  let x;
-  e[0] !== r || e[1] !== u || e[2] !== m || e[3] !== v || e[4] !== a || e[5] !== p ? (x = {
-    position: "absolute",
-    left: u,
-    top: m,
-    height: v,
-    width: a,
-    boxShadow: p,
-    ...r
-  }, e[0] = r, e[1] = u, e[2] = m, e[3] = v, e[4] = a, e[5] = p, e[6] = x) : x = e[6];
-  let f;
-  return e[7] !== i || e[8] !== x ? (f = /* @__PURE__ */ M.jsx(on, { className: i, style: x }), e[7] = i, e[8] = x, e[9] = f) : f = e[9], f;
+function B({ annotation: e, className: t = "", style: n = j, active: r }) {
+	let { geometry: i } = e;
+	return i ? /* @__PURE__ */ (0, T.jsx)(te, {
+		className: t,
+		style: {
+			position: "absolute",
+			left: `${i.x}%`,
+			top: `${i.y}%`,
+			height: `${i.height}%`,
+			width: `${i.width}%`,
+			boxShadow: r ? "0 0 1px 1px yellow inset" : void 0,
+			...n
+		}
+	}) : null;
 }
-const rn = H.div`
+//#endregion
+//#region src/components/Content/index.tsx
+var V = o.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -1030,29 +688,22 @@ const rn = H.div`
   margin-top: 8px;
   margin-left: 8px;
 `;
-function sn(n) {
-  const e = W.c(8), {
-    annotation: t,
-    style: s,
-    className: c
-  } = n, l = s === void 0 ? ue : s, i = c === void 0 ? "" : c, {
-    geometry: r
-  } = t;
-  if (!r || typeof r.x > "u" || typeof r.y > "u" || typeof r.width > "u" || typeof r.height > "u")
-    return null;
-  const d = `${r.x}%`, u = `${r.y + r.height}%`;
-  let m;
-  e[0] !== l || e[1] !== d || e[2] !== u ? (m = {
-    position: "absolute",
-    left: d,
-    top: u,
-    ...l
-  }, e[0] = l, e[1] = d, e[2] = u, e[3] = m) : m = e[3];
-  const v = t.data && t.data.text;
-  let a;
-  return e[4] !== i || e[5] !== m || e[6] !== v ? (a = /* @__PURE__ */ M.jsx(rn, { style: m, className: i, children: v }), e[4] = i, e[5] = m, e[6] = v, e[7] = a) : a = e[7], a;
+function H({ annotation: e, style: t = j, className: n = "" }) {
+	let { geometry: r } = e;
+	return !r || r.x === void 0 || r.y === void 0 || r.width === void 0 || r.height === void 0 ? null : /* @__PURE__ */ (0, T.jsx)(V, {
+		style: {
+			position: "absolute",
+			left: `${r.x}%`,
+			top: `${r.y + r.height}%`,
+			...t
+		},
+		className: n,
+		children: e.data && e.data.text
+	});
 }
-const Ke = H.div`
+//#endregion
+//#region src/components/Overlay/index.tsx
+var U = o.div`
   background: rgba(0, 0, 0, .4);
   border-radius: 5px;
   bottom: 4px;
@@ -1066,581 +717,435 @@ const Ke = H.div`
   right: 4px;
   transition: opacity 0.21s ease-in-out;
   user-select: none;
-`, wt = "RECTANGLE";
-function cn({
-  x: n,
-  y: e
-}, t, s) {
-  if (!t) return !1;
-  const c = Math.min(t.x, t.x + t.width), l = Math.max(t.x, t.x + t.width), i = Math.min(t.y, t.y + t.height), r = Math.max(t.y, t.y + t.height);
-  return !(n < c || e < i || n > l || e > r);
+`, W = "RECTANGLE";
+function ne({ x: e, y: t }, n, r) {
+	if (!n) return !1;
+	let i = Math.min(n.x, n.x + n.width), a = Math.max(n.x, n.x + n.width), o = Math.min(n.y, n.y + n.height), s = Math.max(n.y, n.y + n.height);
+	return !(e < i || t < o || e > a || t > s);
 }
-function ln(n, e) {
-  if (!n || n.width <= 0 || n.height <= 0) return 0;
-  const t = Math.abs(n.width), s = Math.abs(n.height);
-  return t * s;
+function re(e, t) {
+	return !e || e.width <= 0 || e.height <= 0 ? 0 : Math.abs(e.width) * Math.abs(e.height);
 }
-const an = {
-  onTouchStart(n, e) {
-    return vt(n, e);
-  },
-  onTouchEnd(n, e) {
-    return Et(n);
-  },
-  onTouchMove(n, e) {
-    return bt(n, e);
-  },
-  onMouseDown(n, e) {
-    return vt(n, e);
-  },
-  onMouseUp(n, e) {
-    return Et(n);
-  },
-  onMouseMove(n, e) {
-    return bt(n, e);
-  }
+var ie = {
+	onTouchStart(e, t) {
+		return G(e, t);
+	},
+	onTouchEnd(e, t) {
+		return K(e, t);
+	},
+	onTouchMove(e, t) {
+		return q(e, t);
+	},
+	onMouseDown(e, t) {
+		return G(e, t);
+	},
+	onMouseUp(e, t) {
+		return K(e, t);
+	},
+	onMouseMove(e, t) {
+		return q(e, t);
+	}
 };
-function vt(n, e) {
-  if (n.selection)
-    return {};
-  {
-    const {
-      x: t,
-      y: s
-    } = ne(e);
-    return {
-      ...n,
-      selection: {
-        ...n.selection,
-        mode: "SELECTING",
-        anchorX: t,
-        anchorY: s
-      }
-    };
-  }
+function G(e, t) {
+	if (e.selection) return {};
+	{
+		let { x: n, y: r } = p(t);
+		return {
+			...e,
+			selection: {
+				...e.selection,
+				mode: "SELECTING",
+				anchorX: n,
+				anchorY: r
+			}
+		};
+	}
 }
-function Et(n, e) {
-  if (n.selection) {
-    const {
-      selection: t,
-      geometry: s
-    } = n;
-    if (!s)
-      return {};
-    switch (n.selection.mode) {
-      case "SELECTING":
-        return {
-          ...n,
-          selection: {
-            ...n.selection,
-            showEditor: !0,
-            mode: "EDITING"
-          }
-        };
-    }
-  }
-  return n;
+function K(e, t) {
+	if (e.selection) {
+		let { selection: t, geometry: n } = e;
+		if (!n) return {};
+		switch (e.selection.mode) {
+			case "SELECTING": return {
+				...e,
+				selection: {
+					...e.selection,
+					showEditor: !0,
+					mode: "EDITING"
+				}
+			};
+			default: break;
+		}
+	}
+	return e;
 }
-function bt(n, e) {
-  if (n.selection && n.selection.mode === "SELECTING") {
-    const {
-      anchorX: t,
-      anchorY: s
-    } = n.selection, {
-      x: c,
-      y: l
-    } = ne(e), i = c - t, r = l - s;
-    return {
-      ...n,
-      geometry: {
-        ...n.geometry,
-        type: wt,
-        x: i > 0 ? t : c,
-        y: r > 0 ? s : l,
-        width: Math.abs(i),
-        height: Math.abs(r)
-      }
-    };
-  }
-  return n;
+function q(e, t) {
+	if (e.selection && e.selection.mode === "SELECTING") {
+		let { anchorX: n, anchorY: r } = e.selection, { x: i, y: a } = p(t), o = i - n, s = a - r;
+		return {
+			...e,
+			geometry: {
+				...e.geometry,
+				type: W,
+				x: o > 0 ? n : i,
+				y: s > 0 ? r : a,
+				width: Math.abs(o),
+				height: Math.abs(s)
+			}
+		};
+	}
+	return e;
 }
-const Oe = {
-  TYPE: wt,
-  intersects: cn,
-  area: ln,
-  methods: an
-}, yt = 6, un = (n = {
-  width: 100,
-  height: 100
+var J = {
+	TYPE: W,
+	intersects: ne,
+	area: re,
+	methods: ie
+}, ae = 6, oe = (e = {
+	width: 100,
+	height: 100
 }) => ({
-  marginX: yt / n.width * 100,
-  marginY: yt / n.height * 100
-}), Rt = "POINT";
-function dn({
-  x: n,
-  y: e
-}, t, s) {
-  if (!t) return !1;
-  const {
-    marginX: c,
-    marginY: l
-  } = un(s), i = Math.min(c, l) / 2, r = Math.abs(n - t.x), d = Math.abs(e - t.y);
-  return r <= i && d <= i;
+	marginX: ae / e.width * 100,
+	marginY: ae / e.height * 100
+}), Y = "POINT";
+function se({ x: e, y: t }, n, r) {
+	if (!n) return !1;
+	let { marginX: i, marginY: a } = oe(r), o = Math.min(i, a) / 2, s = Math.abs(e - n.x), c = Math.abs(t - n.y);
+	return s <= o && c <= o;
 }
-function fn(n, e) {
-  return 0;
+function ce(e, t) {
+	return 0;
 }
-const hn = {
-  onClick(n, e) {
-    return n.geometry ? {} : {
-      ...n,
-      selection: {
-        ...n.selection,
-        showEditor: !0,
-        mode: "EDITING"
-      },
-      geometry: {
-        ...n.geometry,
-        ...ne(e),
-        width: 0,
-        height: 0,
-        type: Rt
-      }
-    };
-  }
-}, ke = {
-  TYPE: Rt,
-  intersects: dn,
-  area: fn,
-  methods: hn
-}, $e = (n) => Math.pow(n, 2), tt = "OVAL";
-function pn({
-  x: n,
-  y: e
-}, t, s) {
-  if (!t || !t.width || !t.height) return !1;
-  const c = Math.abs(t.width), l = Math.abs(t.height), i = {
-    x: t.x + c / 2,
-    y: t.y + l / 2
-  }, r = c / 2, d = l / 2;
-  if (r === 0 || d === 0) return !1;
-  const u = n - i.x, m = e - i.y;
-  return $e(u) / $e(r) + $e(m) / $e(d) <= 1;
+var X = {
+	TYPE: Y,
+	intersects: se,
+	area: ce,
+	methods: { onClick(e, t) {
+		return e.geometry ? {} : {
+			...e,
+			selection: {
+				...e.selection,
+				showEditor: !0,
+				mode: "EDITING"
+			},
+			geometry: {
+				...e.geometry,
+				...p(t),
+				width: 0,
+				height: 0,
+				type: Y
+			}
+		};
+	} }
+}, Z = (e) => e ** 2, le = "OVAL";
+function ue({ x: e, y: t }, n, r) {
+	if (!n || !n.width || !n.height) return !1;
+	let i = Math.abs(n.width), a = Math.abs(n.height), o = {
+		x: n.x + i / 2,
+		y: n.y + a / 2
+	}, s = i / 2, c = a / 2;
+	if (s === 0 || c === 0) return !1;
+	let l = e - o.x, u = t - o.y;
+	return Z(l) / Z(s) + Z(u) / Z(c) <= 1;
 }
-function gn(n, e) {
-  if (!n || n.width <= 0 || n.height <= 0) return 0;
-  const t = Math.abs(n.width), s = Math.abs(n.height);
-  return Math.PI * (t / 2) * (s / 2);
+function de(e, t) {
+	if (!e || e.width <= 0 || e.height <= 0) return 0;
+	let n = Math.abs(e.width), r = Math.abs(e.height);
+	return n / 2 * Math.PI * (r / 2);
 }
-const mn = {
-  onTouchStart(n, e) {
-    return xn(n, e);
-  },
-  onTouchEnd(n, e) {
-    return vn(n);
-  },
-  onTouchMove(n, e) {
-    return En(n, e);
-  },
-  onMouseDown(n, e) {
-    if (!n.geometry) {
-      const {
-        x: t,
-        y: s
-      } = ne(e);
-      return {
-        ...n,
-        selection: {
-          ...n.selection,
-          mode: "SELECTING",
-          anchorX: t,
-          anchorY: s
-        }
-      };
-    }
-    return n;
-  },
-  onMouseUp(n, e) {
-    if (n.selection && n.selection.mode === "SELECTING")
-      return {
-        ...n,
-        selection: {
-          ...n.selection,
-          showEditor: !0,
-          mode: "EDITING"
-        }
-      };
-  },
-  onMouseMove(n, e) {
-    if (n.selection && n.selection.mode === "SELECTING") {
-      const {
-        anchorX: t,
-        anchorY: s
-      } = n.selection, {
-        x: c,
-        y: l
-      } = ne(e);
-      return {
-        ...n,
-        geometry: {
-          ...n.geometry,
-          type: tt,
-          x: Math.min(t, c),
-          y: Math.min(s, l),
-          width: Math.abs(c - t),
-          height: Math.abs(l - s)
-        }
-      };
-    }
-    return n;
-  }
+var fe = {
+	onTouchStart(e, t) {
+		return pe(e, t);
+	},
+	onTouchEnd(e, t) {
+		return me(e, t);
+	},
+	onTouchMove(e, t) {
+		return he(e, t);
+	},
+	onMouseDown(e, t) {
+		if (!e.geometry) {
+			let { x: n, y: r } = p(t);
+			return {
+				...e,
+				selection: {
+					...e.selection,
+					mode: "SELECTING",
+					anchorX: n,
+					anchorY: r
+				}
+			};
+		}
+		return e;
+	},
+	onMouseUp(e, t) {
+		if (e.selection && e.selection.mode === "SELECTING") return {
+			...e,
+			selection: {
+				...e.selection,
+				showEditor: !0,
+				mode: "EDITING"
+			}
+		};
+	},
+	onMouseMove(e, t) {
+		if (e.selection && e.selection.mode === "SELECTING") {
+			let { anchorX: n, anchorY: r } = e.selection, { x: i, y: a } = p(t);
+			return {
+				...e,
+				geometry: {
+					...e.geometry,
+					type: le,
+					x: Math.min(n, i),
+					y: Math.min(r, a),
+					width: Math.abs(i - n),
+					height: Math.abs(a - r)
+				}
+			};
+		}
+		return e;
+	}
 };
-function xn(n, e) {
-  if (n.selection)
-    return {};
-  {
-    const {
-      x: t,
-      y: s
-    } = ne(e);
-    return {
-      ...n,
-      selection: {
-        ...n.selection,
-        mode: "SELECTING",
-        anchorX: t,
-        anchorY: s
-      }
-    };
-  }
+function pe(e, t) {
+	if (e.selection) return {};
+	{
+		let { x: n, y: r } = p(t);
+		return {
+			...e,
+			selection: {
+				...e.selection,
+				mode: "SELECTING",
+				anchorX: n,
+				anchorY: r
+			}
+		};
+	}
+	return e;
 }
-function vn(n, e) {
-  if (n.selection) {
-    const {
-      selection: t,
-      geometry: s
-    } = n;
-    if (!s)
-      return {};
-    switch (n.selection.mode) {
-      case "SELECTING":
-        return {
-          ...n,
-          selection: {
-            ...n.selection,
-            showEditor: !0,
-            mode: "EDITING"
-          }
-        };
-    }
-  }
-  return n;
+function me(e, t) {
+	if (e.selection) {
+		let { selection: t, geometry: n } = e;
+		if (!n) return {};
+		switch (e.selection.mode) {
+			case "SELECTING": return {
+				...e,
+				selection: {
+					...e.selection,
+					showEditor: !0,
+					mode: "EDITING"
+				}
+			};
+			default: break;
+		}
+	}
+	return e;
 }
-function En(n, e) {
-  if (n.selection && n.selection.mode === "SELECTING") {
-    const {
-      anchorX: t,
-      anchorY: s
-    } = n.selection, {
-      x: c,
-      y: l
-    } = ne(e), i = c - t, r = l - s;
-    return {
-      ...n,
-      geometry: {
-        ...n.geometry,
-        type: tt,
-        x: i > 0 ? t : c,
-        y: r > 0 ? s : l,
-        width: Math.abs(i),
-        height: Math.abs(r)
-      }
-    };
-  }
-  return n;
+function he(e, t) {
+	if (e.selection && e.selection.mode === "SELECTING") {
+		let { anchorX: n, anchorY: r } = e.selection, { x: i, y: a } = p(t), o = i - n, s = a - r;
+		return {
+			...e,
+			geometry: {
+				...e.geometry,
+				type: le,
+				x: o > 0 ? n : i,
+				y: s > 0 ? r : a,
+				width: Math.abs(o),
+				height: Math.abs(s)
+			}
+		};
+	}
+	return e;
 }
-const Qe = {
-  TYPE: tt,
-  intersects: pn,
-  area: gn,
-  methods: mn
-}, Q = {
-  // Basic settings
-  disableAnnotation: !1,
-  disableSelector: !1,
-  disableEditor: !1,
-  disableOverlay: !1,
-  allowTouch: !1,
-  // Selectors configuration
-  type: Oe.TYPE,
-  selectors: [Oe, ke, Qe],
-  // Comparator for active annotations
-  activeAnnotationComparator: (n, e) => n === e,
-  // Editing functionality defaults
-  enableEditing: !1,
-  onAnnotationsChange: () => {
-    process.env.NODE_ENV !== "production" && console.warn("onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.");
-  },
-  // Render functions with improved typing
-  renderSelector: ({
-    annotation: n
-  }) => {
-    var e;
-    switch ((e = n.geometry) == null ? void 0 : e.type) {
-      case Oe.TYPE:
-        return /* @__PURE__ */ M.jsx(en, { annotation: n });
-      case ke.TYPE:
-        return /* @__PURE__ */ M.jsx(mt, { annotation: n });
-      case Qe.TYPE:
-        return /* @__PURE__ */ M.jsx(xt, { annotation: n });
-      default:
-        return null;
-    }
-  },
-  renderEditor: ({
-    annotation: n,
-    onChange: e,
-    onSubmit: t
-  }) => /* @__PURE__ */ M.jsx(Qt, { annotation: n, onChange: e, onSubmit: t }),
-  renderHighlight: ({
-    key: n,
-    annotation: e,
-    active: t
-  }) => {
-    switch (e.geometry.type) {
-      case Oe.TYPE:
-        return /* @__PURE__ */ M.jsx(nn, { annotation: e, active: t }, n);
-      case ke.TYPE:
-        return /* @__PURE__ */ M.jsx(mt, { annotation: e }, n);
-      case Qe.TYPE:
-        return /* @__PURE__ */ M.jsx(xt, { annotation: e, active: t }, n);
-      default:
-        return null;
-    }
-  },
-  renderContent: ({
-    key: n,
-    annotation: e
-  }) => /* @__PURE__ */ M.jsx(sn, { annotation: e }, n),
-  renderOverlay: ({
-    type: n,
-    annotation: e
-  } = qt) => {
-    switch (n) {
-      case ke.TYPE:
-        return /* @__PURE__ */ M.jsx(Ke, { children: "Click to Annotate" });
-      default:
-        return /* @__PURE__ */ M.jsx(Ke, { children: "Click and Drag to Annotate" });
-    }
-  }
-}, bn = H.div`
+var Q = {
+	TYPE: le,
+	intersects: ue,
+	area: de,
+	methods: fe
+}, $ = {
+	disableAnnotation: !1,
+	disableSelector: !1,
+	disableEditor: !1,
+	disableOverlay: !1,
+	allowTouch: !1,
+	type: J.TYPE,
+	selectors: [
+		J,
+		X,
+		Q
+	],
+	activeAnnotationComparator: (e, t) => e === t,
+	enableEditing: !1,
+	onAnnotationsChange: () => {
+		process.env.NODE_ENV !== "production" && console.warn("onAnnotationsChange not provided. Annotation editing will not persist changes. Please provide an onAnnotationsChange prop to handle annotation updates.");
+	},
+	renderSelector: ({ annotation: e }) => {
+		switch (e.geometry?.type) {
+			case J.TYPE: return /* @__PURE__ */ (0, T.jsx)(R, { annotation: e });
+			case X.TYPE: return /* @__PURE__ */ (0, T.jsx)(D, { annotation: e });
+			case Q.TYPE: return /* @__PURE__ */ (0, T.jsx)(B, { annotation: e });
+			default: return null;
+		}
+	},
+	renderEditor: ({ annotation: e, onChange: t, onSubmit: n }) => /* @__PURE__ */ (0, T.jsx)(F, {
+		annotation: e,
+		onChange: t,
+		onSubmit: n
+	}),
+	renderHighlight: ({ key: e, annotation: t, active: n }) => {
+		switch (t.geometry.type) {
+			case J.TYPE: return /* @__PURE__ */ (0, T.jsx)(z, {
+				annotation: t,
+				active: n
+			}, e);
+			case X.TYPE: return /* @__PURE__ */ (0, T.jsx)(D, { annotation: t }, e);
+			case Q.TYPE: return /* @__PURE__ */ (0, T.jsx)(B, {
+				annotation: t,
+				active: n
+			}, e);
+			default: return null;
+		}
+	},
+	renderContent: ({ key: e, annotation: t }) => /* @__PURE__ */ (0, T.jsx)(H, { annotation: t }, e),
+	renderOverlay: ({ type: e, annotation: t } = M) => {
+		switch (e) {
+			case X.TYPE: return /* @__PURE__ */ (0, T.jsx)(U, { children: "Click to Annotate" });
+			default: return /* @__PURE__ */ (0, T.jsx)(U, { children: "Click and Drag to Annotate" });
+		}
+	}
+}, ge = o.div`
   clear: both;
   position: relative;
   width: 100%;
 
-  &:hover ${Ke} {
+  &:hover ${U} {
     opacity: 1;
   }
 
-  touch-action: ${(n) => n.$allowTouch ? "pinch-zoom" : "auto"};
-`, yn = H.img`
+  touch-action: ${(e) => e.$allowTouch ? "pinch-zoom" : "auto"};
+`, _e = o.img`
   display: block;
   width: 100%;
   user-select: none;
-`, Tn = H.div`
+`, ve = o.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   pointer-events: none;
-`, wn = H.div`
+`, ye = o.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
 `;
-function Rn(n) {
-  var A;
-  const e = W.c(62), {
-    setContainerRef: t,
-    style: s,
-    className: c,
-    onContainerMouseLeave: l,
-    onContainerTouchCancel: i,
-    onContainerMouseMove: r,
-    allowTouch: d,
-    setImageRef: u,
-    src: m,
-    alt: v,
-    annotations: a,
-    renderSlots: p,
-    shouldAnnotationBeActive: x,
-    topAnnotationAtMouse: f,
-    disableSelector: E,
-    value: b,
-    setTargetRef: C,
-    onInteractionTargetClick: $,
-    onInteractionTargetMouseUp: S,
-    onInteractionTargetMouseDown: y,
-    disableOverlay: T,
-    effectiveType: N,
-    editModeAnnotationIds: j,
-    disableEditor: G,
-    onChange: z,
-    onEditorSubmit: I,
-    children: Y
-  } = n, {
-    renderHighlight: P,
-    renderSelector: B,
-    renderOverlay: L,
-    renderContent: U,
-    renderEditor: q
-  } = p;
-  let X;
-  e[0] !== v || e[1] !== u || e[2] !== m ? (X = /* @__PURE__ */ M.jsx(yn, { ref: u, src: m, alt: v }), e[0] = v, e[1] = u, e[2] = m, e[3] = X) : X = e[3];
-  let F;
-  if (e[4] !== a || e[5] !== P || e[6] !== x || e[7] !== f) {
-    let O;
-    e[9] !== P || e[10] !== x || e[11] !== f ? (O = (k) => {
-      var Z;
-      if (!((Z = k.data) != null && Z.id))
-        return null;
-      const J = x(k, f);
-      return P ? /* @__PURE__ */ M.jsx(re.Fragment, { children: P({
-        key: k.data.id,
-        annotation: k,
-        active: J
-      }) }, k.data.id) : null;
-    }, e[9] = P, e[10] = x, e[11] = f, e[12] = O) : O = e[12], F = a.map(O), e[4] = a, e[5] = P, e[6] = x, e[7] = f, e[8] = F;
-  } else
-    F = e[8];
-  let D;
-  e[13] !== E || e[14] !== B || e[15] !== b ? (D = !E && (b == null ? void 0 : b.geometry) && B && B({
-    annotation: b
-  }), e[13] = E, e[14] = B, e[15] = b, e[16] = D) : D = e[16];
-  let o;
-  e[17] !== F || e[18] !== D ? (o = /* @__PURE__ */ M.jsxs(Tn, { children: [
-    F,
-    D
-  ] }), e[17] = F, e[18] = D, e[19] = o) : o = e[19];
-  let h;
-  e[20] !== $ || e[21] !== y || e[22] !== S || e[23] !== C ? (h = /* @__PURE__ */ M.jsx(wn, { ref: C, "data-testid": "annotation-target", onClick: $, onMouseUp: S, onMouseDown: y }), e[20] = $, e[21] = y, e[22] = S, e[23] = C, e[24] = h) : h = e[24];
-  let w;
-  e[25] !== T || e[26] !== N || e[27] !== L || e[28] !== b ? (w = !T && L && L({
-    type: N,
-    annotation: b
-  }), e[25] = T, e[26] = N, e[27] = L, e[28] = b, e[29] = w) : w = e[29];
-  let _;
-  if (e[30] !== a || e[31] !== j || e[32] !== U || e[33] !== x || e[34] !== f) {
-    let O;
-    e[36] !== j || e[37] !== U || e[38] !== x || e[39] !== f ? (O = (k) => {
-      var Z;
-      if (!((Z = k.data) != null && Z.id))
-        return null;
-      const J = (j == null ? void 0 : j.includes(k.data.id)) || !1;
-      return (x(k, f) || J) && U != null ? /* @__PURE__ */ M.jsx(re.Fragment, { children: U({
-        key: k.data.id,
-        annotation: k
-      }) }, k.data.id) : null;
-    }, e[36] = j, e[37] = U, e[38] = x, e[39] = f, e[40] = O) : O = e[40], _ = a.map(O), e[30] = a, e[31] = j, e[32] = U, e[33] = x, e[34] = f, e[35] = _;
-  } else
-    _ = e[35];
-  let R;
-  e[41] !== G || e[42] !== z || e[43] !== I || e[44] !== q || e[45] !== b ? (R = !G && ((A = b == null ? void 0 : b.selection) == null ? void 0 : A.showEditor) && q && z && q({
-    annotation: b,
-    onChange: z,
-    onSubmit: I
-  }), e[41] = G, e[42] = z, e[43] = I, e[44] = q, e[45] = b, e[46] = R) : R = e[46];
-  let V;
-  return e[47] !== d || e[48] !== Y || e[49] !== c || e[50] !== l || e[51] !== r || e[52] !== i || e[53] !== t || e[54] !== s || e[55] !== X || e[56] !== o || e[57] !== h || e[58] !== w || e[59] !== _ || e[60] !== R ? (V = /* @__PURE__ */ M.jsxs(bn, { ref: t, style: s, className: c, onMouseLeave: l, onTouchCancel: i, onMouseMove: r, $allowTouch: d, children: [
-    X,
-    o,
-    h,
-    w,
-    _,
-    R,
-    Y
-  ] }), e[47] = d, e[48] = Y, e[49] = c, e[50] = l, e[51] = r, e[52] = i, e[53] = t, e[54] = s, e[55] = X, e[56] = o, e[57] = h, e[58] = w, e[59] = _, e[60] = R, e[61] = V) : V = e[61], V;
+function be({ setContainerRef: t, style: n, className: r, onContainerMouseLeave: i, onContainerTouchCancel: a, onContainerMouseMove: o, allowTouch: s, setImageRef: c, src: l, alt: u, annotations: d, renderSlots: f, shouldAnnotationBeActive: p, topAnnotationAtMouse: m, disableSelector: h, value: g, setTargetRef: _, onInteractionTargetClick: v, onInteractionTargetMouseUp: y, onInteractionTargetMouseDown: b, disableOverlay: x, effectiveType: S, editModeAnnotationIds: C, disableEditor: w, onChange: E, onEditorSubmit: D, children: O }) {
+	let { renderHighlight: k, renderSelector: A, renderOverlay: j, renderContent: M, renderEditor: N } = f;
+	return /* @__PURE__ */ (0, T.jsxs)(ge, {
+		ref: t,
+		style: n,
+		className: r,
+		onMouseLeave: i,
+		onTouchCancel: a,
+		onMouseMove: o,
+		$allowTouch: s,
+		children: [
+			/* @__PURE__ */ (0, T.jsx)(_e, {
+				ref: c,
+				src: l,
+				alt: u
+			}),
+			/* @__PURE__ */ (0, T.jsxs)(ve, { children: [d.map((t) => {
+				if (!t.data?.id) return null;
+				let n = p(t, m);
+				return k ? /* @__PURE__ */ (0, T.jsx)(e.Fragment, { children: k({
+					key: t.data.id,
+					annotation: t,
+					active: n
+				}) }, t.data.id) : null;
+			}), !h && g?.geometry && A && A({ annotation: g })] }),
+			/* @__PURE__ */ (0, T.jsx)(ye, {
+				ref: _,
+				"data-testid": "annotation-target",
+				onClick: v,
+				onMouseUp: y,
+				onMouseDown: b
+			}),
+			!x && j && j({
+				type: S,
+				annotation: g
+			}),
+			d.map((t) => {
+				if (!t.data?.id) return null;
+				let n = C?.includes(t.data.id) || !1;
+				return (p(t, m) || n) && M != null ? /* @__PURE__ */ (0, T.jsx)(e.Fragment, { children: M({
+					key: t.data.id,
+					annotation: t
+				}) }, t.data.id) : null;
+			}),
+			!w && g?.selection?.showEditor && N && E && N({
+				annotation: g,
+				onChange: E,
+				onSubmit: D
+			}),
+			O
+		]
+	});
 }
-function Mn({
-  ref: n,
-  ...e
-}) {
-  const t = _t(() => {
-    const {
-      renderSlots: i,
-      ...r
-    } = e;
-    return {
-      ...Q,
-      ...r,
-      selectors: r.selectors ?? Q.selectors,
-      renderSelector: r.renderSelector ?? (i == null ? void 0 : i.renderSelector) ?? Q.renderSelector,
-      renderEditor: r.renderEditor ?? (i == null ? void 0 : i.renderEditor) ?? Q.renderEditor,
-      renderHighlight: r.renderHighlight ?? (i == null ? void 0 : i.renderHighlight) ?? Q.renderHighlight,
-      renderContent: r.renderContent ?? (i == null ? void 0 : i.renderContent) ?? Q.renderContent,
-      renderOverlay: r.renderOverlay ?? (i == null ? void 0 : i.renderOverlay) ?? Q.renderOverlay,
-      renderDraggableHighlight: r.renderDraggableHighlight ?? (i == null ? void 0 : i.renderDraggableHighlight) ?? Q.renderDraggableHighlight
-    };
-  }, [e]), {
-    children: s,
-    ...c
-  } = t, l = Ft(c, n);
-  return /* @__PURE__ */ M.jsx(Rn, { ...l, children: s });
+//#endregion
+//#region src/components/Annotation.tsx
+function xe({ ref: e, ...t }) {
+	let { children: n, ...i } = r(() => {
+		let { renderSlots: e, ...n } = t;
+		return {
+			...$,
+			...n,
+			selectors: n.selectors ?? $.selectors,
+			renderSelector: n.renderSelector ?? e?.renderSelector ?? $.renderSelector,
+			renderEditor: n.renderEditor ?? e?.renderEditor ?? $.renderEditor,
+			renderHighlight: n.renderHighlight ?? e?.renderHighlight ?? $.renderHighlight,
+			renderContent: n.renderContent ?? e?.renderContent ?? $.renderContent,
+			renderOverlay: n.renderOverlay ?? e?.renderOverlay ?? $.renderOverlay,
+			renderDraggableHighlight: n.renderDraggableHighlight ?? e?.renderDraggableHighlight ?? $.renderDraggableHighlight
+		};
+	}, [t]);
+	return /* @__PURE__ */ (0, T.jsx)(be, {
+		...S(i, e),
+		children: n
+	});
 }
-Mn.displayName = "Annotation";
-function _n(n, e) {
-  if (!n || typeof n.getBoundingClientRect != "function")
-    return !1;
-  const {
-    pageX: t,
-    pageY: s
-  } = e, {
-    left: c,
-    right: l,
-    bottom: i,
-    top: r
-  } = n.getBoundingClientRect();
-  return t > c && t < l && s > r && s < i;
+xe.displayName = "Annotation";
+//#endregion
+//#region src/hooks/useMouseHover.ts
+function Se(e, t) {
+	if (!e || typeof e.getBoundingClientRect != "function") return !1;
+	let { pageX: n, pageY: r } = t, { left: i, right: a, bottom: o, top: s } = e.getBoundingClientRect();
+	return n > i && n < a && r > s && r < o;
 }
-function Nn() {
-  const n = W.c(5), [e, t] = et(!1), s = ee(null);
-  let c, l;
-  n[0] === Symbol.for("react.memo_cache_sentinel") ? (c = () => {
-    const u = (m) => {
-      const v = s.current, a = {
-        pageX: m.pageX,
-        pageY: m.pageY
-      }, p = _n(v, a);
-      t(p);
-    };
-    return document.addEventListener("mousemove", u, {
-      passive: !0
-    }), () => {
-      document.removeEventListener("mousemove", u);
-    };
-  }, l = [], n[0] = c, n[1] = l) : (c = n[0], l = n[1]), ae(c, l);
-  let i;
-  n[2] === Symbol.for("react.memo_cache_sentinel") ? (i = (u) => {
-    s.current = u;
-  }, n[2] = i) : i = n[2];
-  const r = i;
-  let d;
-  return n[3] !== e ? (d = {
-    isHoveringOver: e,
-    setRef: r
-  }, n[3] = e, n[4] = d) : d = n[4], d;
+function Ce() {
+	let [e, r] = a(!1), o = i(null);
+	return n(() => {
+		let e = (e) => {
+			let t = o.current;
+			r(Se(t, {
+				pageX: e.pageX,
+				pageY: e.pageY
+			}));
+		};
+		return document.addEventListener("mousemove", e, { passive: !0 }), () => {
+			document.removeEventListener("mousemove", e);
+		};
+	}, []), {
+		isHoveringOver: e,
+		setRef: t((e) => {
+			o.current = e;
+		}, [])
+	};
 }
-export {
-  Mn as Annotation,
-  Qe as OvalSelector,
-  ke as PointSelector,
-  Oe as RectangleSelector,
-  Mn as default,
-  Dt as useAnnotationHitDetection,
-  Nn as useMouseHover,
-  Lt as useRelativeMousePosition,
-  Xt as useSelectorMethods
-};
+//#endregion
+//#region src/index.ts
+var we = xe;
+//#endregion
+export { xe as Annotation, Q as OvalSelector, X as PointSelector, J as RectangleSelector, we as default, v as useAnnotationHitDetection, Ce as useMouseHover, _ as useRelativeMousePosition, b as useSelectorMethods };
