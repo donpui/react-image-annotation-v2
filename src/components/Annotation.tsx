@@ -99,6 +99,9 @@ export const Annotation = forwardRef<HTMLImageElement, AnnotationProps>((incomin
     activeAnnotationComparator,
     activeAnnotations,
 
+    // Edit mode handling
+    editModeAnnotationIds,
+
     // Feature toggles
     disableAnnotation,
     disableSelector,
@@ -461,8 +464,15 @@ export const Annotation = forwardRef<HTMLImageElement, AnnotationProps>((incomin
 
       {annotations.map((annotation) => {
         if (!annotation.data?.id) return null;
+        
+        // return renderContent ? renderContent({
+        //   key: annotation.data.id,
+        //   annotation,
+        // }) : null;
 
-        return shouldAnnotationBeActive(annotation, topAnnotationAtMouse) &&
+        const isInEditMode = editModeAnnotationIds?.includes(annotation.data.id) || false;
+        
+        return (shouldAnnotationBeActive(annotation, topAnnotationAtMouse) || isInEditMode) &&
           renderContent != null
           ? renderContent({
               key: annotation.data.id,

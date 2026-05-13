@@ -137,6 +137,9 @@ export interface AnnotationBaseProps {
   activeAnnotationComparator?: (annotation: Annotation, activeIdentifier: unknown) => boolean;
   activeAnnotations?: unknown[];
 
+  // Edit mode handling
+  editModeAnnotationIds?: (string | number)[];
+
   // Feature toggles
   disableAnnotation?: boolean;
   disableSelector?: boolean;

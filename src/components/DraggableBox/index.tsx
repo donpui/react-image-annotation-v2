@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { DraggableDot, MoveButton, DeleteButton, ConfirmResetButtons } from '../DraggableComponents';
-import { Annotation } from '../Annotation';
+import { Annotation } from '../../types/core';
 
 interface DraggableBoxProps {
   annotation: Annotation;
-  onDotDragStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
-  onDotDrag: (event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => void;
+  onDragging: () => void;
+  onDraggingEnd: () => void;
   onMoveStart: (annotationId: string, initialCursorPosition: { x: number; y: number }) => void;
   onMove: (event: React.MouseEvent, initialCursorPosition: { x: number; y: number }) => void;
-  onDragEnd: () => void;
   isDragging?: boolean;
   enableRemoval?: boolean;
   onRemoveAnnotation?: (annotationId: string | number) => void;
   onConfirm?: (annotationId: string | number) => void;
   onReset?: (annotationId: string | number) => void;
+  onAnnotationUpdate?: (annotationId: string, newGeometry: any) => void;
 }
 
 interface BoxContainerProps {
@@ -50,21 +50,97 @@ const BoxContainer = styled.div<BoxContainerProps>`
 
 export const DraggableBox: React.FC<DraggableBoxProps> = ({
   annotation,
-  onDotDragStart,
-  onDotDrag,
+  onDragging,
+  onDraggingEnd,
   onMoveStart,
   onMove,
-  onDragEnd,
   isDragging,
   enableRemoval,
   onRemoveAnnotation,
   onConfirm,
   onReset,
+  onAnnotationUpdate,
 }) => {
   const { geometry } = annotation;
-  if (!geometry || !geometry.type || typeof geometry.x !== 'number' || typeof geometry.y !== 'number') {
-    return null;
-  }
+  const [localGeometry, setLocalGeometry] = useState(geometry);
+  const [isDraggingDot, setIsDraggingDot] = useState(false);
+  const isDraggingRef = useRef(false);
+  const localGeometryRef = useRef(geometry);
+
+  // Handle dot drag operations with local geometry updates
+  const handleDotDragStart = useCallback((annotationId: string, initialCursorPosition: { x: number; y: number }) => {
+    localGeometryRef.current = geometry;
+    setLocalGeometry(geometry);
+    setIsDraggingDot(true);
+    isDraggingRef.current = true;
+    onDragging();
+  }, [geometry, onDragging]);
+
+  const handleDotDrag = useCallback((event: React.MouseEvent, position: string, initialCursorPosition: { x: number; y: number }) => {
+    // console.log('handleDotDrag called', position, 'isDraggingRef:', isDraggingRef.current);
+    if (!isDraggingRef.current) return;
+    
+    // Find the image element using document query since we can't rely on event.currentTarget
+    const imageElement = document.querySelector('img');
+    
+    let rect: DOMRect;
+    let relativeX: number;
+    let relativeY: number;
+    
+    if (imageElement) {
+      rect = imageElement.getBoundingClientRect();
+      relativeX = ((event.clientX - rect.left) / rect.width) * 100;
+      relativeY = ((event.clientY - rect.top) / rect.height) * 100;
+    } else {
+      console.error('No image element found!');
+      return;
+    }
+    
+    // console.log('Mouse position:', event.clientX, event.clientY);
+    // console.log('Rect:', rect);
+    // console.log('Relative position:', relativeX, relativeY);
+    
+    const currentGeometry = localGeometryRef.current || geometry;
+    let newGeometry = { ...currentGeometry };
+    
+    // Update geometry based on which dot is being dragged
+    switch (position) {
+      case 'top':
+        const heightDiff = relativeY - (currentGeometry.y || 0);
+        newGeometry.y = Math.max(0, Math.min(relativeY, (currentGeometry.y || 0) + (currentGeometry.height || 0) - 1));
+        newGeometry.height = Math.max(1, (currentGeometry.height || 0) - heightDiff);
+        break;
+      case 'right':
+        newGeometry.width = Math.max(1, Math.min(100 - (currentGeometry.x || 0), relativeX - (currentGeometry.x || 0)));
+        break;
+      case 'bottom':
+        newGeometry.height = Math.max(1, Math.min(100 - (currentGeometry.y || 0), relativeY - (currentGeometry.y || 0)));
+        break;
+      case 'left':
+        const widthDiff = relativeX - (currentGeometry.x || 0);
+        newGeometry.x = Math.max(0, Math.min(relativeX, (currentGeometry.x || 0) + (currentGeometry.width || 0) - 1));
+        newGeometry.width = Math.max(1, (currentGeometry.width || 0) - widthDiff);
+        break;
+    }
+    
+    localGeometryRef.current = newGeometry;
+    setLocalGeometry(newGeometry);
+  }, [geometry]);
+
+  const handleDotDragEnd = useCallback(() => {
+    setIsDraggingDot(false);
+    isDraggingRef.current = false;
+
+    // Update the annotation with the final geometry
+    if (localGeometryRef.current && onAnnotationUpdate && annotation.data?.id) {
+      onAnnotationUpdate(annotation.data.id as string, localGeometryRef.current);
+    }
+    onDraggingEnd();
+  }, [onDraggingEnd, onAnnotationUpdate, annotation.data?.id]);
+
+  const handleMoveEnd = useCallback(() => {
+    onDraggingEnd();
+  }, [onDraggingEnd]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     // Check if the click is on a dot or move button - if so, don't handle move here
@@ -94,6 +170,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       event.stopPropagation();
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      onDraggingEnd();
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -105,26 +182,37 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     e.stopPropagation();
   };
 
-  console.log('DraggableBox', annotation.data?.id, 'geometry', geometry);
+  // Use local geometry during dragging for smooth visual updates
+  const displayGeometry = isDraggingDot ? localGeometry : geometry;
+  if (
+    !displayGeometry ||
+    !displayGeometry.type ||
+    typeof displayGeometry.x !== 'number' ||
+    typeof displayGeometry.y !== 'number' ||
+    typeof displayGeometry.width !== 'number' ||
+    typeof displayGeometry.height !== 'number'
+  ) {
+    return null;
+  }
 
   return (
     <BoxContainer
       style={{
-        left: `${geometry.x}%`,
-        top: `${geometry.y}%`,
-        width: `${geometry.width}%`,
-        height: `${geometry.height}%`,
+        left: `${displayGeometry.x}%`,
+        top: `${displayGeometry.y}%`,
+        width: `${displayGeometry.width}%`,
+        height: `${displayGeometry.height}%`,
         boxSizing: 'border-box',
       }}
       $isDragging={isDragging}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
     >
-      <DraggableDot position="top" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
-      <DraggableDot position="right" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
-      <DraggableDot position="bottom" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
-      <DraggableDot position="left" onDragStart={onDotDragStart} onDrag={onDotDrag} onDragEnd={onDragEnd} annotationId={annotation.data?.id as string} />
-      <MoveButton onMoveStart={onMoveStart} onMove={onMove} onMoveEnd={onDragEnd} annotationId={annotation.data?.id as string} />
+      <DraggableDot position="top" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />
+      <DraggableDot position="right" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />
+      <DraggableDot position="bottom" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />
+      <DraggableDot position="left" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />
+      <MoveButton onMoveStart={onMoveStart} onMove={onMove} onMoveEnd={handleMoveEnd} annotationId={annotation.data?.id as string} />
       {enableRemoval && onRemoveAnnotation && (
         <DeleteButton annotationId={annotation.data?.id as string} onRemove={onRemoveAnnotation} />
       )}

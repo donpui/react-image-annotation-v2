@@ -8,6 +8,6 @@ const Footer = styled.footer`
 
 export default (props: any) => (
   <Footer>
-    made with love by NTI Compass
+    made with love by NTI Compass, improved by DONPUI
   </Footer>
 ) 

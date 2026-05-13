@@ -22,7 +22,7 @@ const App = () => {
     <BrowserRouter basename={basename} future={future}>
       <Root>
         <NavBar
-          title='react-image-annotation'
+          title='react-image-annotation v2'
         />
         <Main>
           <Routes>

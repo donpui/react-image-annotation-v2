@@ -28,10 +28,10 @@ export function intersects({ x, y }, geometry, container) {
 
 export function area(geometry, container) {
   if (!geometry) return 0
-  if (!geometry.width || !geometry.height) return 0
+  if (geometry.width <= 0 || geometry.height <= 0) return 0
+
   const width = Math.abs(geometry.width)
   const height = Math.abs(geometry.height)
-  if (width <= 0 || height <= 0) return 0
   return Math.PI * (width / 2) * (height / 2)
 }
 
