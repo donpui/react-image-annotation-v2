@@ -15,6 +15,26 @@ interface HighlightProps {
   children?: React.ReactNode;
 }
 
+type TokenLine = RenderProps['tokens'][number];
+
+const getLineText = (line: TokenLine) =>
+  line.map((token) => token.content).join('');
+
+const getKeyedLines = (tokens: TokenLine[]) => {
+  const lineCounts = new Map<string, number>();
+
+  return tokens.map((line) => {
+    const lineText = getLineText(line);
+    const lineCount = (lineCounts.get(lineText) ?? 0) + 1;
+    lineCounts.set(lineText, lineCount);
+
+    return {
+      id: `${lineText}-${lineCount}`,
+      line,
+    };
+  });
+};
+
 const HighlightComponent: React.FC<HighlightProps> = ({
   language = 'tsx',
   value,
@@ -45,8 +65,8 @@ const HighlightComponent: React.FC<HighlightProps> = ({
           getTokenProps,
         }: RenderProps) => (
           <pre style={style}>
-            {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line })}>
+            {getKeyedLines(tokens).map(({ id, line }) => (
+              <div key={id} {...getLineProps({ line })}>
                 {line.map((token, key) => (
                   <span key={key} {...getTokenProps({ token })} />
                 ))}

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import TextEditor from '../TextEditor'
-import { AnnotationValue } from '../Annotation'
+import type { AnnotationValue } from '../../types/core'
 import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const fadeInScale = keyframes`

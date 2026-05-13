@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import styled from 'styled-components';
 import Annotation from '../../../../../src/components/Annotation';
 import {
   Annotation as AnnotationType,
@@ -20,6 +21,20 @@ import Point from '../../../../../src/components/Point';
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
+
+const CoordinateTooltip = styled.div<{ $top: number; $left: number }>`
+  position: absolute;
+  top: ${(props) => props.$top}px;
+  left: ${(props) => props.$left}px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  pointer-events: none;
+  z-index: 20;
+`;
 
 const Drag: React.FC = () => {
   const [annotations, setAnnotations] = useState<AnnotationType[]>([
@@ -160,24 +175,13 @@ const Drag: React.FC = () => {
               );
             }}
           />
-          <div
-            style={{
-              position: 'absolute',
-              top: geometry.y + geometry.height + 5,
-              left: geometry.x,
-              background: 'rgba(0,0,0,0.8)',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontFamily: 'monospace',
-              pointerEvents: 'none',
-              zIndex: 1000,
-            }}
+          <CoordinateTooltip
+            $top={geometry.y + geometry.height + 5}
+            $left={geometry.x}
           >
             x: {Math.round(geometry.x)}, y: {Math.round(geometry.y)}, w:{' '}
             {Math.round(geometry.width)}, h: {Math.round(geometry.height)}
-          </div>
+          </CoordinateTooltip>
         </div>
       );
     },

@@ -106,7 +106,7 @@ describe('Annotation Component', () => {
     const textarea = await screen.findByPlaceholderText('Write description');
     await user.type(textarea, 'Test comment');
 
-    const submitButton = screen.getByText('Submit');
+    const submitButton = screen.getByText('Save description');
     await user.click(submitButton);
     
     expect(initialDefaultProps.onSubmit).toHaveBeenCalled();

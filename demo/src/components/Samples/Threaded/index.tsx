@@ -49,6 +49,12 @@ interface ThreadedState {
   annotation: Partial<AnnotationType>; 
 }
 
+let nextThreadedAnnotationId = 1;
+let nextThreadedCommentId = 1;
+
+const createThreadedAnnotationId = () => `threaded-annotation-${nextThreadedAnnotationId++}`;
+const createThreadedCommentId = () => nextThreadedCommentId++;
+
 // Styled Components (remain the same)
 const Content = styled.div`
   background: white;
@@ -143,7 +149,7 @@ const ThreadedEditor: React.FC<ThreadedEditorProps> = ({ annotation, onChange, o
                 text: e.target.value
               }
             : {
-                id: Math.random(),
+                id: createThreadedCommentId(),
                 text: e.target.value
               }
         ]
@@ -216,7 +222,7 @@ const ThreadedContent: React.FC<ThreadedContentProps> = ({ annotation, annotatio
                       ...ann.data,
                       comments: [
                         ...(ann.data.comments || []),
-                        { id: Math.random(), text: editorText }
+                        { id: createThreadedCommentId(), text: editorText }
                       ]
                     }
                   }
@@ -249,7 +255,7 @@ const Threaded: React.FC = () => {
           geometry: geometry as AnnotationType['geometry'],
           data: {
             ...(data as Partial<BaseAnnotationData>),
-            id: data.id || Math.random(),
+            id: data.id || createThreadedAnnotationId(),
             comments: []
           } as AnnotationDataWithComments
         } as AnnotationWithComments

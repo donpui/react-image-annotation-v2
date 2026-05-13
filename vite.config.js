@@ -5,6 +5,7 @@ import path from 'path'
 const ReactCompilerConfig = { /* ... */ };
 
 export default defineConfig({
+  publicDir: false,
   plugins: [react({
     babel: {
       plugins: [
@@ -16,16 +17,21 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'ReactImageAnnotation',
-      fileName: (format) => `react-image-annotation-v2.${format}.js`,
+      formats: ['es', 'cjs'],
+      fileName: (format) => {
+        if (format === 'es') return 'react-image-annotation-v2.mjs'
+        if (format === 'cjs') return 'react-image-annotation-v2.cjs'
+        return 'react-image-annotation-v2.js'
+      },
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'styled-components'],
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        'styled-components',
+      ],
       output: {
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          'styled-components': 'styled',
-        },
         exports: 'named',
       },
     },

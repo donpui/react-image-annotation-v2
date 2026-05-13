@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { AnnotationValue } from '../Annotation' // Assuming AnnotationValue is the correct type
+import type { Annotation } from '../../types/core'
 import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const Container = styled.div`
@@ -16,7 +16,7 @@ const Container = styled.div`
 `
 
 interface ContentProps {
-  annotation: AnnotationValue;
+  annotation: Annotation;
   style?: React.CSSProperties;
   className?: string;
 }

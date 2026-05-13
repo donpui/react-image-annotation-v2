@@ -49,6 +49,10 @@ interface RenderEditorProps {
   onSubmit: () => void;
 }
 
+let nextCustomAnnotationId = 1;
+
+const createCustomAnnotationId = () => `custom-annotation-${nextCustomAnnotationId++}`;
+
 function renderSelector({ annotation }: RenderSelectorProps) {
   const { geometry } = annotation;
   if (!geometry || typeof geometry.x === 'undefined' || typeof geometry.y === 'undefined' || typeof geometry.width === 'undefined' || typeof geometry.height === 'undefined') return null;
@@ -130,7 +134,7 @@ function renderEditor(props: RenderEditorProps) {
           ...annotation,
           data: {
             ...(data || {}),
-            id: data?.id || Math.random(), // Ensure id exists
+            id: data?.id || createCustomAnnotationId(), // Ensure id exists
             text: e.target.value
           }
         })}
@@ -176,7 +180,7 @@ const Custom: React.FC = () => {
         geometry: geometry as AnnotationType['geometry'],
         data: {
           ...(data as Partial<AnnotationType['data']>),
-          id: data.id || Math.random()
+          id: data.id || createCustomAnnotationId()
         }
       } as AnnotationType));
       setAnnotation({});

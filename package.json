@@ -6,8 +6,17 @@
     "type": "git",
     "url": "https://github.com/donpui/react-image-annotation-v2"
   },
-  "main": "dist/react-image-annotation-v2.umd.js",
-  "module": "dist/react-image-annotation-v2.es.js",
+  "main": "./dist/react-image-annotation-v2.cjs",
+  "module": "./dist/react-image-annotation-v2.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react-image-annotation-v2.mjs",
+      "require": "./dist/react-image-annotation-v2.cjs",
+      "default": "./dist/react-image-annotation-v2.mjs"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.5",
@@ -35,12 +44,11 @@
   },
   "peerDependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "styled-components": "^6.0.0"
   },
   "description": "react-image-annotation React component",
   "engines": {
-    "node": ">=20.0.0",
+    "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "files": [
@@ -51,7 +59,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "build": "vite build",
+    "build": "npm run clean && vite build && node scripts/prepare-package.mjs",
     "deploy": "gh-pages -d demo/dist",
     "clean": "rm -rf dist es lib umd demo/dist",
     "start": "bun run build && vite --config vite.demo.config.js",

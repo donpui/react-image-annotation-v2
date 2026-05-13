@@ -46,6 +46,51 @@ const InteractionTarget = styled.div`
   right: 0;
 `;
 
+interface AnnotationHighlightItemProps {
+  annotationId: string | number;
+  annotation: AnnotationType;
+  active: boolean;
+  slot: (props: RenderHighlightProps) => React.ReactNode;
+}
+
+function AnnotationHighlightItem({
+  annotationId,
+  annotation,
+  active,
+  slot,
+}: AnnotationHighlightItemProps) {
+  return (
+    <>
+      {slot({
+        key: annotationId,
+        annotation,
+        active,
+      })}
+    </>
+  );
+}
+
+interface AnnotationContentItemProps {
+  annotationId: string | number;
+  annotation: AnnotationType;
+  slot: (props: RenderContentProps) => React.ReactNode;
+}
+
+function AnnotationContentItem({
+  annotationId,
+  annotation,
+  slot,
+}: AnnotationContentItemProps) {
+  return (
+    <>
+      {slot({
+        key: annotationId,
+        annotation,
+      })}
+    </>
+  );
+}
+
 /** One prop on the layout tree instead of many `render*` props (react-doctor / readability). */
 export interface AnnotationLayoutRenderSlots {
   renderHighlight?: (props: RenderHighlightProps) => React.ReactNode;
@@ -55,6 +100,22 @@ export interface AnnotationLayoutRenderSlots {
   renderEditor?: (props: RenderEditorProps) => React.ReactNode;
 }
 
+export interface AnnotationLayoutOptions {
+  touchEnabled?: boolean;
+  selectorDisabled: boolean;
+  overlayDisabled: boolean;
+  editorDisabled: boolean;
+}
+
+export interface AnnotationLayoutAnnotationState {
+  getIsActive: (
+    annotation: AnnotationType,
+    topAnnotation?: AnnotationType
+  ) => boolean;
+  topAnnotation: AnnotationType | undefined;
+  editModeIds?: (string | number)[];
+}
+
 export interface AnnotationLayoutProps {
   setContainerRef: React.RefCallback<HTMLDivElement>;
   style?: React.CSSProperties;
@@ -62,27 +123,19 @@ export interface AnnotationLayoutProps {
   onContainerMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => void;
   onContainerTouchCancel: React.TouchEventHandler<HTMLDivElement>;
   onContainerMouseMove: (e: React.MouseEvent<HTMLDivElement>) => void;
-  allowTouch?: boolean;
   setImageRef: React.RefCallback<HTMLImageElement>;
   src: string;
   alt: string;
   annotations: AnnotationType[];
   renderSlots: AnnotationLayoutRenderSlots;
-  shouldAnnotationBeActive: (
-    annotation: AnnotationType,
-    topAnnotation?: AnnotationType
-  ) => boolean;
-  topAnnotationAtMouse: AnnotationType | undefined;
-  disableSelector: boolean;
+  layoutOptions: AnnotationLayoutOptions;
+  annotationState: AnnotationLayoutAnnotationState;
   value: AnnotationValue | undefined;
   setTargetRef: React.RefCallback<HTMLDivElement>;
   onInteractionTargetClick: (e: React.MouseEvent<HTMLElement>) => void;
   onInteractionTargetMouseUp: (e: React.MouseEvent<HTMLElement>) => void;
   onInteractionTargetMouseDown: (e: React.MouseEvent<HTMLElement>) => void;
-  disableOverlay: boolean;
   effectiveType: string | undefined;
-  editModeAnnotationIds?: (string | number)[];
-  disableEditor: boolean;
   onChange?: (value: AnnotationValue) => void;
   onEditorSubmit: () => void;
   children?: React.ReactNode;
@@ -95,35 +148,41 @@ export function AnnotationLayout({
   onContainerMouseLeave,
   onContainerTouchCancel,
   onContainerMouseMove,
-  allowTouch,
   setImageRef,
   src,
   alt,
   annotations,
   renderSlots,
-  shouldAnnotationBeActive,
-  topAnnotationAtMouse,
-  disableSelector,
+  layoutOptions,
+  annotationState,
   value,
   setTargetRef,
   onInteractionTargetClick,
   onInteractionTargetMouseUp,
   onInteractionTargetMouseDown,
-  disableOverlay,
   effectiveType,
-  editModeAnnotationIds,
-  disableEditor,
   onChange,
   onEditorSubmit,
   children,
 }: AnnotationLayoutProps) {
   const {
-    renderHighlight,
+    renderHighlight: highlightSlot,
     renderSelector,
     renderOverlay,
-    renderContent,
+    renderContent: contentSlot,
     renderEditor,
   } = renderSlots;
+  const {
+    touchEnabled,
+    selectorDisabled,
+    overlayDisabled,
+    editorDisabled,
+  } = layoutOptions;
+  const {
+    getIsActive,
+    topAnnotation,
+    editModeIds,
+  } = annotationState;
 
   return (
     <AnnotationContainer
@@ -133,33 +192,35 @@ export function AnnotationLayout({
       onMouseLeave={onContainerMouseLeave}
       onTouchCancel={onContainerTouchCancel}
       onMouseMove={onContainerMouseMove}
-      $allowTouch={allowTouch}
+      $allowTouch={touchEnabled}
     >
       <AnnotationImage ref={setImageRef} src={src} alt={alt} />
 
       <AnnotationItems>
         {annotations.map((annotation) => {
-          if (!annotation.data?.id) {
+          const annotationId = annotation.data?.id;
+
+          if (!annotationId) {
             return null;
           }
 
-          const isActive = shouldAnnotationBeActive(
+          const isActive = getIsActive(
             annotation,
-            topAnnotationAtMouse
+            topAnnotation
           );
 
-          return renderHighlight ? (
-            <React.Fragment key={annotation.data.id}>
-              {renderHighlight({
-                key: annotation.data.id,
-                annotation,
-                active: isActive,
-              })}
-            </React.Fragment>
+          return highlightSlot ? (
+            <AnnotationHighlightItem
+              key={annotationId}
+              annotationId={annotationId}
+              annotation={annotation}
+              active={isActive}
+              slot={highlightSlot}
+            />
           ) : null;
         })}
 
-        {!disableSelector &&
+        {!selectorDisabled &&
           value?.geometry &&
           renderSelector &&
           renderSelector({ annotation: value })}
@@ -173,7 +234,7 @@ export function AnnotationLayout({
         onMouseDown={onInteractionTargetMouseDown}
       />
 
-      {!disableOverlay &&
+      {!overlayDisabled &&
         renderOverlay &&
         renderOverlay({
           type: effectiveType,
@@ -181,24 +242,26 @@ export function AnnotationLayout({
         })}
 
       {annotations.map((annotation) => {
-        if (!annotation.data?.id) return null;
+        const annotationId = annotation.data?.id;
+
+        if (!annotationId) return null;
 
         const isInEditMode =
-          editModeAnnotationIds?.includes(annotation.data.id) || false;
+          editModeIds?.includes(annotationId) || false;
 
-        return (shouldAnnotationBeActive(annotation, topAnnotationAtMouse) ||
+        return (getIsActive(annotation, topAnnotation) ||
           isInEditMode) &&
-          renderContent != null ? (
-          <React.Fragment key={annotation.data.id}>
-            {renderContent({
-              key: annotation.data.id,
-              annotation,
-            })}
-          </React.Fragment>
+          contentSlot != null ? (
+          <AnnotationContentItem
+            key={annotationId}
+            annotationId={annotationId}
+            annotation={annotation}
+            slot={contentSlot}
+          />
         ) : null;
       })}
 
-      {!disableEditor &&
+      {!editorDisabled &&
         value?.selection?.showEditor &&
         renderEditor &&
         onChange &&

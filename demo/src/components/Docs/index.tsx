@@ -63,6 +63,10 @@ const Docs: FC = () => (
       <Simple />
       {/* <Highlight>{simpleCode}</Highlight> */}
     </ExampleContainer>
+    <ExampleContainer>
+      <h1>Multiple Type/Shape Support</h1>
+      <Multi />
+    </ExampleContainer>
 {/* 
     
 

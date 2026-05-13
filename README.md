@@ -1,7 +1,7 @@
-React19 Image Annotation
+React Image Annotation v2
 =========================
 
-> **Prerequisites:** Node.js >=18, npm >=8
+> **Package notes:** peer dependencies are `react@^19` and `styled-components@^6`
 
 An infinitely customizable image annotation library built on React
 
@@ -9,15 +9,17 @@ An infinitely customizable image annotation library built on React
 
 ## Installation
 
-```
-npm install --save react19-image-annotation
+```bash
+npm install react-image-annotation-v2
 # or
-yarn add react19-image-annotation
+yarn add react-image-annotation-v2
 ```
 
 ## Usage
 
-```js
+```jsx
+import Annotation from 'react-image-annotation-v2'
+
 export default class Simple extends Component {
   state = {
     annotations: [],
@@ -118,10 +120,8 @@ This allows you to customize everything about the the look of the annotation int
 - `renderSelector` - used for selecting annotation area (during annotation creation)
 - `renderEditor` - appears after annotation area has been selected (during annotation creation)
 - `renderHighlight` - used to render current annotations in the annotation interface. It is passed an object that contains the property `active`, which is true if the mouse is hovering over the higlight
-- `renderComponent` - auxiliary component that appears when mouse is hovering over the highlight. It is passed an object that contains the annotation being hovered over. `{ annotation }`
+- `renderContent` - auxiliary component that appears when an annotation is active. It is passed `{ annotation }`
 - `renderOverlay` - Component overlay for Annotation (i.e. 'Click and Drag to Annotate')
-
-You can view the default renderProps [here](src/components/defaultProps.js)
 
 **Note**: You cannot use `:hover` selectors in css for components returned by `renderSelector` and `renderHighlight`. This is due to the fact that `Annotation` places DOM layers on top of these components, preventing triggering of `:hover`
 
@@ -131,12 +131,12 @@ You can view the default renderProps [here](src/components/defaultProps.js)
 
 You can switch the shape selector by passing the appropriate `type` as a property. Default shape `TYPE`s are accessible on their appropriate selectors:
 
-```js
+```jsx
 import {
   PointSelector,
   RectangleSelector,
   OvalSelector
-} from 'react-image-annotation/lib/selectors'
+} from 'react-image-annotation-v2'
 
 <Annotation
   type={PointSelector.TYPE}

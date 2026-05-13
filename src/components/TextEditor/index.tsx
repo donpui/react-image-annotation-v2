@@ -69,7 +69,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
       </Inner>
       {value && (
         <Button onClick={onSubmit}>
-          Submit
+          Save description
         </Button>
       )}
     </React.Fragment>
