@@ -62,6 +62,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
   onAnnotationUpdate,
 }) => {
   const { geometry } = annotation;
+  const annotationId = annotation.data?.id;
   const [localGeometry, setLocalGeometry] = useState(geometry);
   const [isDraggingDot, setIsDraggingDot] = useState(false);
   const isDraggingRef = useRef(false);
@@ -132,11 +133,11 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     isDraggingRef.current = false;
 
     // Update the annotation with the final geometry
-    if (localGeometryRef.current && onAnnotationUpdate && annotation.data?.id) {
-      onAnnotationUpdate(annotation.data.id as string, localGeometryRef.current);
+    if (localGeometryRef.current && onAnnotationUpdate && annotationId) {
+      onAnnotationUpdate(annotationId as string, localGeometryRef.current);
     }
     onDraggingEnd();
-  }, [onDraggingEnd, onAnnotationUpdate, annotation.data?.id]);
+  }, [onDraggingEnd, onAnnotationUpdate, annotationId]);
 
   const handleMoveEnd = useCallback(() => {
     onDraggingEnd();

@@ -258,6 +258,21 @@ const Threaded: React.FC = () => {
     }
   }, []);
 
+  const onFocus = useCallback((id: string) => () => {
+    setActiveAnnotations(prev => [...prev, id]);
+  }, []);
+
+  const onBlur = useCallback((id: string) => () => {
+    setActiveAnnotations(prev => {
+      const index = prev.indexOf(id);
+      if (index === -1) return prev;
+      return [
+        ...prev.slice(0, index),
+        ...prev.slice(index + 1)
+      ];
+    });
+  }, []);
+
   const renderEditor = useCallback((props: { annotation: Partial<AnnotationType>, onChange: any, onSubmit: any }) => {
     const { annotation, onChange, onSubmit } = props;
     const geometry = annotation.geometry;
@@ -282,22 +297,7 @@ const Threaded: React.FC = () => {
         setAnnotations={setAnnotations}
       />
     );
-  }, [annotations]);
-
-  const onFocus = useCallback((id: string) => () => {
-    setActiveAnnotations(prev => [...prev, id]);
-  }, []);
-
-  const onBlur = useCallback((id: string) => () => {
-    setActiveAnnotations(prev => {
-      const index = prev.indexOf(id);
-      if (index === -1) return prev;
-      return [
-        ...prev.slice(0, index),
-        ...prev.slice(index + 1)
-      ];
-    });
-  }, []);
+  }, [annotations, onFocus, onBlur]);
 
   const activeAnnotationComparator = useCallback((annotation: AnnotationWithComments, id: string) => {
     return annotation.data.id === id;

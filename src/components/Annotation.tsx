@@ -61,6 +61,16 @@ const InteractionTarget = styled.div`
   right: 0;
 `;
 
+function assignRef<T>(ref: React.Ref<T> | undefined, value: T | null) {
+  if (!ref) return;
+
+  if (typeof ref === 'function') {
+    ref(value);
+  } else {
+    ref.current = value;
+  }
+}
+
 /**
  * Modern React image annotation component
  * Refactored to use React 19 patterns and custom hooks
@@ -231,24 +241,9 @@ export const Annotation = forwardRef<HTMLImageElement, AnnotationProps>((incomin
   // Ref setters
   const setImageRef = useCallback((el: HTMLImageElement | null) => {
     internalImageRef.current = el;
-    
-    // Set the forwarded ref
-    if (forwardedImageRef) {
-      if (typeof forwardedImageRef === 'function') {
-        forwardedImageRef(el);
-      } else {
-        forwardedImageRef.current = el;
-      }
-    }
-    
-    // Set the imageRef prop if provided
-    if (imageRef) {
-      if (typeof imageRef === 'function') {
-        imageRef(el);
-      } else {
-        imageRef.current = el;
-      }
-    }
+
+    assignRef(forwardedImageRef, el);
+    assignRef(imageRef, el);
   }, [forwardedImageRef, imageRef]);
 
   const setTargetRef = useCallback((el: HTMLDivElement | null) => {
@@ -258,15 +253,7 @@ export const Annotation = forwardRef<HTMLImageElement, AnnotationProps>((incomin
   const setContainerRef = useCallback(
     (el: HTMLDivElement | null) => {
       // setHoverRef(el);
-      if (containerRef) {
-        if (typeof containerRef === 'function') {
-          containerRef(el);
-        } else {
-          (
-            containerRef as React.MutableRefObject<HTMLDivElement | null>
-          ).current = el;
-        }
-      }
+      assignRef(containerRef, el);
     },
     [containerRef]
   );
