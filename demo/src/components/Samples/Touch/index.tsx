@@ -6,7 +6,7 @@ import {
   OvalSelector
 } from '../../../../../src/selectors.ts'
 
-import Button from '../../Button/index.tsx'
+import Button from '../../Button/Button.tsx';
 import defaultProps from '../../../../../src/components/defaultProps.tsx'
 
 import mocks from '../../../mocks.js'

@@ -156,12 +156,12 @@ export const DraggableDot: React.FC<DraggableDotProps> = ({ position, onDragStar
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const suppressDotClickBubble = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  return <Dot position={position} onMouseDown={handleMouseDown} onClick={handleClick} data-type="dot" />;
+  return <Dot position={position} onMouseDown={handleMouseDown} onClick={suppressDotClickBubble} data-type="dot" />;
 };
 
 export const MoveButton: React.FC<MoveButtonProps> = ({ onMoveStart, onMove, onMoveEnd, annotationId }) => {
@@ -189,13 +189,13 @@ export const MoveButton: React.FC<MoveButtonProps> = ({ onMoveStart, onMove, onM
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const suppressMoveButtonClickBubble = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
   return (
-    <MoveButtonContainer onMouseDown={handleMouseDown} onClick={handleClick} data-type="move-button">
+    <MoveButtonContainer onMouseDown={handleMouseDown} onClick={suppressMoveButtonClickBubble} data-type="move-button">
       ↕
     </MoveButtonContainer>
   );

@@ -3,7 +3,7 @@ import Annotation, { AnnotationType } from '../../../../../src';
 import { RectangleSelector, PointSelector, OvalSelector } from '../../../../../src';
 import defaultProps from '../../../../../src/components/defaultProps.tsx';
 
-import Button from '../../Button/index.tsx';
+import Button from '../../Button/Button.tsx';
 import img from '../../../img.jpeg';
 
 const Multiple: React.FC = () => {

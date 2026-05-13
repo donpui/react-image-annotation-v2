@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { ButtonLink } from '../Button';
+import { ButtonLink } from '../Button/Button.tsx';
 import Linked from '../Samples/Linked';
 
 const Container = styled.div`

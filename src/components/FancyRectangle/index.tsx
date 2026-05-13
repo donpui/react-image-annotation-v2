@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const Box = styled.div`
   background: rgba(0, 0, 0, 0.2);
@@ -27,15 +28,19 @@ interface FancyRectangleProps {
   style?: React.CSSProperties;
 }
 
-function FancyRectangle (props: FancyRectangleProps) {
-  const { geometry } = props.annotation
+function FancyRectangle ({
+  annotation,
+  className = '',
+  style = EMPTY_STYLE,
+}: FancyRectangleProps) {
+  const { geometry } = annotation
 
   if (!geometry) return null
 
   return (
     <Container
-      className={props.className}
-      style={props.style}
+      className={className}
+      style={style}
     >
       <Box
         style={{
@@ -67,11 +72,6 @@ function FancyRectangle (props: FancyRectangleProps) {
       />
     </Container>
   )
-}
-
-FancyRectangle.defaultProps = {
-  className: '',
-  style: {}
 }
 
 export default FancyRectangle 

@@ -24,6 +24,7 @@ import type {
   Annotation as AnnotationType,
   AnnotationValue
 } from '../types/core';
+import { EMPTY_RENDER_OVERLAY_PROPS } from '../reactStableDefaults';
 
 // Type guard to ensure annotation has required geometry properties
 const isValidAnnotation = (annotation: AnnotationType | AnnotationValue): annotation is AnnotationType => {
@@ -132,7 +133,10 @@ export const defaultProps: Partial<AnnotationProps> = {
     />
   ),
 
-  renderOverlay: ({ type, annotation }: RenderOverlayProps = {}) => {
+  renderOverlay: ({
+    type,
+    annotation,
+  }: RenderOverlayProps = EMPTY_RENDER_OVERLAY_PROPS) => {
     switch (type) {
       case PointSelector.TYPE:
         return (

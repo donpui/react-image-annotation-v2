@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { AnnotationValue } from '../Annotation' // Assuming AnnotationValue is the correct type
+import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const Container = styled.div`
   background: white;
@@ -20,8 +21,12 @@ interface ContentProps {
   className?: string;
 }
 
-function Content (props: ContentProps) {
-  const { geometry } = props.annotation
+function Content ({
+  annotation,
+  style = EMPTY_STYLE,
+  className = '',
+}: ContentProps) {
+  const { geometry } = annotation
   if (!geometry || typeof geometry.x === 'undefined' || typeof geometry.y === 'undefined' || typeof geometry.width === 'undefined' || typeof geometry.height === 'undefined') return null
 
   return (
@@ -30,19 +35,14 @@ function Content (props: ContentProps) {
         position: 'absolute',
         left: `${geometry.x}%`,
         top: `${geometry.y + geometry.height}%`,
-        ...props.style
+        ...style
       }}
-      className={props.className}
+      className={className}
       // geometry={geometry} // Removed as it's not a standard prop for div
     >
-      {props.annotation.data && props.annotation.data.text}
+      {annotation.data && annotation.data.text}
     </Container>
   )
-}
-
-Content.defaultProps = {
-  style: {},
-  className: ''
 }
 
 export default Content 

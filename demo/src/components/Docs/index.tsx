@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import Highlight from '../Highlight/index.tsx'; // Ensure .tsx
+import Highlight from '../Highlight/Highlight.tsx';
 
 // Import Sample Components (now .tsx)
 import Simple from '../Samples/Simple';
@@ -9,7 +9,7 @@ import Linked from '../Samples/Linked';
 import Custom from '../Samples/Custom';
 import Threaded from '../Samples/Threaded';
 import Touch from '../Samples/Touch';
-import { ButtonLink } from '../Button';
+import { ButtonLink } from '../Button/Button.tsx';
 
 import simpleCode from '../Samples/Simple/index.tsx?raw';
 import multiCode from '../Samples/Multiple/index.tsx?raw';
@@ -17,8 +17,8 @@ import linkedCode from '../Samples/Linked/index.tsx?raw';
 import customCode from '../Samples/Custom/index.tsx?raw'; // You might need to create this if it doesn't exist
 import threadedCode from '../Samples/Threaded/index.tsx?raw'; // You might need to create this
 import touchCode from '../Samples/Touch/index.tsx?raw';
-import Drag from '../Samples/Drag/index.tsx';
-import dragCode from '../Samples/Drag/index.tsx?raw';
+import Drag from '../Samples/Drag/Drag.tsx';
+import dragCode from '../Samples/Drag/Drag.tsx?raw';
 
 const Container = styled.main`
   margin: 0 auto;

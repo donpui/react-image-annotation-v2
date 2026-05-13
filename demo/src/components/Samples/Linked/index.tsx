@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../src';
-import Root from '../../Root/index.tsx';
+import Root from '../../Root/Root.tsx';
 import img from '../../../img.jpeg';
 import defaultProps from '../../../../../src/components/defaultProps.tsx';
 import { RectangleSelector } from '../../../../../src/selectors.ts';

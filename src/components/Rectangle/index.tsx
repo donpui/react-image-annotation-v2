@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const Container = styled.div`
   border: dashed 2px black;
@@ -22,29 +23,29 @@ interface RectangleProps {
   active?: boolean;
 }
 
-function Rectangle (props: RectangleProps) {
-  const { geometry } = props.annotation
+function Rectangle ({
+  annotation,
+  className = '',
+  style = EMPTY_STYLE,
+  active,
+}: RectangleProps) {
+  const { geometry } = annotation
   if (!geometry) return null
 
   return (
     <Container
-      className={props.className}
+      className={className}
       style={{
         position: 'absolute',
         left: `${geometry.x}%`,
         top: `${geometry.y}%`,
         height: `${geometry.height}%`,
         width: `${geometry.width}%`,
-        boxShadow: props.active ? '0 0 1px 1px yellow inset' : undefined,
-        ...props.style
+        boxShadow: active ? '0 0 1px 1px yellow inset' : undefined,
+        ...style
       }}
     />
   )
-}
-
-Rectangle.defaultProps = {
-  className: '',
-  style: {}
 }
 
 export default Rectangle 

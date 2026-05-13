@@ -2,6 +2,7 @@ import React from 'react'
 import styled, { keyframes } from 'styled-components'
 import TextEditor from '../TextEditor'
 import { AnnotationValue } from '../Annotation'
+import { EMPTY_STYLE } from '../../reactStableDefaults'
 
 const fadeInScale = keyframes`
   from {
@@ -42,7 +43,7 @@ const Editor: React.FC<EditorProps> = ({
   onChange,
   onSubmit,
   className = '',
-  style = {}
+  style = EMPTY_STYLE
 }) => {
   const { geometry } = annotation;
   if (!geometry) return null;

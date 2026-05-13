@@ -176,8 +176,21 @@ export interface AnnotationEventProps {
   onImageClick?: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
+/** Optional bundle of render callbacks (reduces many `render*` props on `<Annotation />`). */
+export type AnnotationRenderSlots = Pick<
+  AnnotationBaseProps,
+  | 'renderSelector'
+  | 'renderEditor'
+  | 'renderHighlight'
+  | 'renderContent'
+  | 'renderOverlay'
+> &
+  Pick<AnnotationEditingProps, 'renderDraggableHighlight'>;
+
 // Main annotation component props
-export interface AnnotationProps 
-  extends AnnotationBaseProps, 
-          AnnotationEditingProps, 
-          AnnotationEventProps {} 
+export interface AnnotationProps
+  extends AnnotationBaseProps,
+          AnnotationEditingProps,
+          AnnotationEventProps {
+  renderSlots?: AnnotationRenderSlots;
+}

@@ -178,7 +178,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     document.addEventListener('mouseup', handleMouseUp);
   };
 
-  const handleClick = (e: React.MouseEvent) => {
+  const suppressBoxClickBubble = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
@@ -207,7 +207,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       }}
       $isDragging={isDragging}
       onMouseDown={handleMouseDown}
-      onClick={handleClick}
+      onClick={suppressBoxClickBubble}
     >
       <DraggableDot position="top" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />
       <DraggableDot position="right" onDragStart={handleDotDragStart} onDrag={handleDotDrag} onDragEnd={handleDotDragEnd} annotationId={annotation.data?.id as string} />

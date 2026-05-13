@@ -54,13 +54,13 @@ interface DeleteButtonProps {
 }
 
 export const DeleteButton: React.FC<DeleteButtonProps> = ({ annotationId, onRemove }) => {
-  const handleClick = (e: React.MouseEvent) => {
+  const handleRemoveAnnotationClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering drag events
     onRemove(annotationId);
   };
 
   return (
-    <DeleteContainer onClick={handleClick}>
+    <DeleteContainer onClick={handleRemoveAnnotationClick}>
       <DeleteIcon />
     </DeleteContainer>
   );

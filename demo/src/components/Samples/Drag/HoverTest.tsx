@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Annotation from '../../../../../src/components/Annotation'
 import { Annotation as AnnotationType, AnnotationValue } from '../../../../../src/components/Annotation'
 import { RectangleSelector } from '../../../../../src/selectors'
@@ -152,6 +152,25 @@ const HoverTest: React.FC = () => {
      return <Overlay>Hover over rectangles to see them become active</Overlay>
    }, [])
 
+   const renderSlots = useMemo(
+     () => ({
+       renderHighlight,
+       renderEditor,
+       renderSelector,
+       renderContent,
+       renderOverlay,
+       renderDraggableHighlight,
+     }),
+     [
+       renderHighlight,
+       renderEditor,
+       renderSelector,
+       renderContent,
+       renderOverlay,
+       renderDraggableHighlight,
+     ]
+   )
+
       return (
       <div>
         <h3>Hover Test - Active Annotation: {activeAnnotationId || 'None'}</h3>
@@ -172,14 +191,9 @@ const HoverTest: React.FC = () => {
           value={annotation}
           onChange={onChange}
           onSubmit={onSubmit}
-          renderHighlight={renderHighlight}
-          renderEditor={renderEditor}
-          renderSelector={renderSelector}
-          renderContent={renderContent}
-          renderOverlay={renderOverlay}
+          renderSlots={renderSlots}
           enableEditing={true}
           onAnnotationsChange={handleAnnotationsChange}
-          renderDraggableHighlight={renderDraggableHighlight}
           enableRemoval={true}
           onRemoveAnnotation={handleRemoveAnnotation}
         />

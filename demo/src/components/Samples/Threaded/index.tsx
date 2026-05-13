@@ -4,7 +4,7 @@ import type { AnnotationType, AnnotationOwnProps } from '../../../../../src';
 import styled, { keyframes } from 'styled-components';
 import { RectangleSelector } from '../../../../../src/selectors.ts';
 import TextEditor from '../../../../../src/components/TextEditor';
-import Root from '../../Root/index.tsx';
+import Root from '../../Root/Root.tsx';
 import img from '../../../img.jpeg';
 import defaultProps from '../../../../../src/components/defaultProps.tsx';
 

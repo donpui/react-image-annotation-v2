@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import Annotation from '../../../../../src/components/Annotation'
 import { Annotation as AnnotationType, AnnotationValue } from '../../../../../src/components/Annotation'
 import { RectangleSelector } from '../../../../../src/selectors'
@@ -65,6 +65,17 @@ const SimpleDefaultDrag: React.FC = () => {
      return <Overlay>Click and Drag to Annotate</Overlay>
    }, [])
 
+  const renderSlots = useMemo(
+    () => ({
+      renderHighlight,
+      renderEditor,
+      renderSelector,
+      renderContent,
+      renderOverlay,
+    }),
+    [renderHighlight, renderEditor, renderSelector, renderContent, renderOverlay]
+  )
+
   return (
     <div>
       <h3>Simple Default Editing</h3>
@@ -79,11 +90,7 @@ const SimpleDefaultDrag: React.FC = () => {
           value={annotation}
           onChange={onChange}
           onSubmit={onSubmit}
-          renderHighlight={renderHighlight}
-          renderEditor={renderEditor}
-          renderSelector={renderSelector}
-          renderContent={renderContent}
-          renderOverlay={renderOverlay}
+          renderSlots={renderSlots}
           enableEditing={true}
           onAnnotationsChange={handleAnnotationsChange}
           // renderDraggableHighlight is not provided - uses default!
