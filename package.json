@@ -10,7 +10,6 @@
   "module": "dist/react-image-annotation-v2.es.js",
   "devDependencies": {
     "@babel/core": "^7.29.0",
-    "@babel/plugin-transform-class-properties": "^7.28.6",
     "@babel/preset-env": "^7.29.5",
     "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.28.5",

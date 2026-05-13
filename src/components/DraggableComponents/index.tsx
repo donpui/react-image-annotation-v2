@@ -16,7 +16,7 @@ interface MoveButtonProps {
   annotationId: string;
 }
 
-const Dot = styled.div<{ position: string }>`
+const Dot = styled.div<{ $position: DraggableDotProps['position'] }>`
   position: absolute;
   width: 10px;
   height: 10px;
@@ -49,7 +49,7 @@ const Dot = styled.div<{ position: string }>`
   }
 
   ${props => {
-    switch (props.position) {
+    switch (props.$position) {
       case 'top':
         return `
           top: -5px;
@@ -161,7 +161,7 @@ export const DraggableDot: React.FC<DraggableDotProps> = ({ position, onDragStar
     e.stopPropagation();
   };
 
-  return <Dot position={position} onMouseDown={handleMouseDown} onClick={suppressDotClickBubble} data-type="dot" />;
+  return <Dot $position={position} onMouseDown={handleMouseDown} onClick={suppressDotClickBubble} data-type="dot" />;
 };
 
 export const MoveButton: React.FC<MoveButtonProps> = ({ onMoveStart, onMove, onMoveEnd, annotationId }) => {

@@ -58,12 +58,13 @@ const Docs: FC = () => (
       <Drag />
       {/* <Highlight>{dragCode}</Highlight> */}
     </ExampleContainer>
-{/* 
     <h1>Simple Annotation</h1>
     <ExampleContainer>
       <Simple />
-      <Highlight>{simpleCode}</Highlight>
+      {/* <Highlight>{simpleCode}</Highlight> */}
     </ExampleContainer>
+{/* 
+    
 
     <h1>Multiple Type/Shape Support</h1>
     <Multi />

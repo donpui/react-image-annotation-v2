@@ -3,18 +3,19 @@ import styled from 'styled-components';
 
 const ButtonContainer = styled.div`
   position: absolute;
-  bottom: -25px;
+  bottom: -22px;
   right: 0;
   display: flex;
-  gap: 5px;
+  gap: 4px;
+  z-index: 1;
 `;
 
 const Button = styled.button<{ $variant: 'confirm' | 'reset' }>`
-  width: 20px;
-  height: 20px;
+  min-width: 28px;
+  height: 22px;
   background-color: white;
   border: none;
-  border-radius: 50%;
+  border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,6 +38,10 @@ interface ConfirmResetButtonsProps {
 }
 
 export const ConfirmResetButtons: React.FC<ConfirmResetButtonsProps> = ({ onConfirm, onReset }) => {
+  const stopDragStart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   const handleConfirm = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent triggering drag events
     onConfirm();
@@ -48,7 +53,7 @@ export const ConfirmResetButtons: React.FC<ConfirmResetButtonsProps> = ({ onConf
   };
 
   return (
-    <ButtonContainer>
+    <ButtonContainer onMouseDown={stopDragStart}>
       <Button $variant="confirm" onClick={handleConfirm}>
         ✓
       </Button>

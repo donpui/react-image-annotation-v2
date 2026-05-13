@@ -49,10 +49,17 @@ const TextEditor: React.FC<TextEditorProps> = ({
   onBlur,
   value
 }) => {
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  React.useEffect(() => {
+    textareaRef.current?.focus({ preventScroll: true });
+  }, []);
+
   return (
     <React.Fragment>
       <Inner>
         <textarea
+          ref={textareaRef}
           placeholder='Write description'
           onFocus={onFocus}
           onBlur={onBlur}

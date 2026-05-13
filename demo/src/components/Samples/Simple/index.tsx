@@ -36,7 +36,6 @@ const Simple: React.FC = () => {
   const [annotation, setAnnotation] = useState<AnnotationValue>({})
 
   const onChange = (annotation: AnnotationValue) => {
-    console.log('✏️ Annotation changed:', annotation)
     setAnnotation(annotation)
   }
 
