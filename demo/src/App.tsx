@@ -16,10 +16,9 @@ const Main = styled.main`
 const App = () => {
   const isDev = import.meta.env.DEV;
   const basename = isDev ? '' : '/react-image-annotation';
-  const future = { v7_relativeSplatPath: true };
   
   return (
-    <BrowserRouter basename={basename} future={future}>
+    <BrowserRouter basename={basename}>
       <Root>
         <NavBar
           title='react-image-annotation v2'
