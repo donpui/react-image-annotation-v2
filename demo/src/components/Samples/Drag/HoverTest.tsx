@@ -129,19 +129,22 @@ const HoverTest: React.FC = () => {
       />
     }
     
-         return (
-       <DraggableBox
-         annotation={annotation as any}
-         onDotDragStart={onDotDragStart}
-         onDotDrag={onDotDrag}
-         onMoveStart={onMoveStart}
-         onMove={onMove}
-         onDragEnd={onDragEnd}
-         isDragging={isDragging}
-         enableRemoval={enableRemoval}
-         onRemoveAnnotation={onRemoveAnnotation}
-       />
-     )
+    return (
+      <DraggableBox
+        key={annotation.data?.id}
+        annotation={annotation}
+        active={active}
+        isHovered={isHovered}
+        isDragging={isDragging}
+        onDotDragStart={onDotDragStart}
+        onDotDrag={onDotDrag}
+        onMoveStart={onMoveStart}
+        onMove={onMove}
+        onDragEnd={onDragEnd}
+        enableRemoval={enableRemoval}
+        onRemoveAnnotation={onRemoveAnnotation}
+      />
+    )
    }, [activeAnnotationId])
 
    const renderContent = useCallback(({ annotation }: { key: string | number; annotation: AnnotationType }) => {

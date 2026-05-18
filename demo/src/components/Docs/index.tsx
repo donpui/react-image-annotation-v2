@@ -19,6 +19,8 @@ import threadedCode from '../Samples/Threaded/index.tsx?raw'; // You might need 
 import touchCode from '../Samples/Touch/index.tsx?raw';
 import Drag from '../Samples/Drag/Drag.tsx';
 import dragCode from '../Samples/Drag/Drag.tsx?raw';
+import Delete from '../Samples/Delete';
+import deleteCode from '../Samples/Delete/index.tsx?raw';
 
 const Container = styled.main`
   margin: 0 auto;
@@ -58,6 +60,18 @@ const Docs: FC = () => (
       <Drag />
       {/* <Highlight>{dragCode}</Highlight> */}
     </ExampleContainer>
+
+    <h1>Built-in delete control</h1>
+    <p>
+      Enable <code>enableRemoval</code> and handle removal in{' '}
+      <code>onRemoveAnnotation</code>. Use <code>canRemoveAnnotation</code> to
+      gate delete per annotation (Region B has <code>allowDelete: false</code>).
+    </p>
+    <ExampleContainer>
+      <Delete />
+      {/* <Highlight>{deleteCode}</Highlight> */}
+    </ExampleContainer>
+
     <h1>Simple Annotation</h1>
     <ExampleContainer>
       <Simple />

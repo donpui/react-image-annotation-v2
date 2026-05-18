@@ -19,6 +19,7 @@ import type {
   RenderSelectorProps,
   RenderEditorProps,
   RenderHighlightProps,
+  RenderDraggableHighlightProps,
   RenderContentProps,
   RenderOverlayProps,
   Annotation as AnnotationType,
@@ -38,6 +39,7 @@ export const defaultProps: Partial<AnnotationProps> = {
   disableSelector: false,
   disableEditor: false,
   disableOverlay: false,
+  disableHitTesting: false,
   allowTouch: false,
 
   // Selectors configuration
@@ -150,6 +152,100 @@ export const defaultProps: Partial<AnnotationProps> = {
             Click and Drag to Annotate
           </Overlay>
         )
+    }
+  },
+
+  renderDraggableHighlight: ({
+    key,
+    annotation,
+    active,
+    isHovered,
+    isDragging,
+    hasPendingChanges,
+    onDotDragStart,
+    onDotDrag,
+    onMoveStart,
+    onMove,
+    onDragEnd,
+    enableRemoval,
+    onRemoveAnnotation,
+    onConfirm,
+    onReset,
+    onDeleteControlMouseEnter,
+    onDeleteControlMouseLeave,
+  }: RenderDraggableHighlightProps) => {
+    if (!isHovered && !isDragging && !hasPendingChanges) {
+      switch (annotation.geometry.type) {
+        case RectangleSelector.TYPE:
+          return (
+            <Rectangle
+              key={key}
+              annotation={annotation as any}
+              active={active}
+            />
+          )
+        case PointSelector.TYPE:
+          return (
+            <Point
+              key={key}
+              annotation={annotation as any}
+            />
+          )
+        case OvalSelector.TYPE:
+          return (
+            <Oval
+              key={key}
+              annotation={annotation as any}
+              active={active}
+            />
+          )
+        default:
+          return null
+      }
+    }
+
+    if (annotation.geometry.type === RectangleSelector.TYPE) {
+      return (
+        <DraggableBox
+          key={key}
+          annotation={annotation}
+          active={active}
+          isHovered={isHovered}
+          isDragging={isDragging}
+          hasPendingChanges={hasPendingChanges}
+          onDotDragStart={onDotDragStart}
+          onDotDrag={onDotDrag}
+          onMoveStart={onMoveStart}
+          onMove={onMove}
+          onDragEnd={onDragEnd}
+          enableRemoval={enableRemoval}
+          onRemoveAnnotation={onRemoveAnnotation}
+          onConfirm={onConfirm}
+          onReset={onReset}
+          onDeleteControlMouseEnter={onDeleteControlMouseEnter}
+          onDeleteControlMouseLeave={onDeleteControlMouseLeave}
+        />
+      )
+    }
+
+    switch (annotation.geometry.type) {
+      case PointSelector.TYPE:
+        return (
+          <Point
+            key={key}
+            annotation={annotation as any}
+          />
+        )
+      case OvalSelector.TYPE:
+        return (
+          <Oval
+            key={key}
+            annotation={annotation as any}
+            active={active}
+          />
+        )
+      default:
+        return null
     }
   },
 

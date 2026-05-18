@@ -1,6 +1,8 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHoveredAnnotation } from './useHoveredAnnotation';
 import { useSelectorMethods } from './useSelectorMethods';
+import { useDragging } from './useDragging';
+import { usePinnedControlsHover } from './usePinnedControlsHover';
 import type {
   AnnotationProps,
   Annotation as AnnotationType,
@@ -46,16 +48,28 @@ export function useAnnotationViewModel(
     disableSelector,
     disableEditor,
     disableOverlay,
+    disableHitTesting,
     allowTouch,
+    enableEditing = false,
+    onAnnotationsChange,
     renderSelector,
     renderEditor,
     renderHighlight,
+    renderDraggableHighlight,
     renderContent,
     renderOverlay,
+    enableRemoval,
+    onRemoveAnnotation,
+    canRemoveAnnotation,
+    renderDelete,
+    onConfirm,
+    onReset,
     onImageMouseUp,
     onImageMouseDown,
     onImageMouseMove,
     onImageClick,
+    onImageLoad,
+    onImageError,
   } = props;
 
   const internalImageRef = useRef<HTMLImageElement>(null);
@@ -67,9 +81,57 @@ export function useAnnotationViewModel(
       imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
       annotations,
       selectors,
-      enableEditing: !disableEditor,
+      enableEditing,
       throttleMs: 50,
     });
+
+  const previewMode = !!(onConfirm && onReset);
+
+  const {
+    isDragging,
+    draggingAnnotationId,
+    hasPendingChanges,
+    onDotDragStart,
+    onDotDrag,
+    onMoveStart,
+    onMove,
+    onDragEnd,
+    handleConfirm,
+    handleReset,
+    getEffectiveAnnotation,
+  } = useDragging({
+    annotations,
+    onAnnotationsChange,
+    imageRef: internalImageRef,
+    previewMode,
+  });
+
+  const draggingHandlers = useMemo(
+    () => ({
+      onDotDragStart,
+      onDotDrag,
+      onMoveStart,
+      onMove,
+      onDragEnd,
+    }),
+    [onDotDragStart, onDotDrag, onMoveStart, onMove, onDragEnd]
+  );
+
+  const handleConfirmWithCallback = useCallback(
+    (annotationId: string | number) => {
+      handleConfirm(annotationId);
+      onConfirm?.(annotationId);
+    },
+    [handleConfirm, onConfirm]
+  );
+
+  const handleResetWithCallback = useCallback(
+    (annotationId: string | number) => {
+      handleReset(annotationId);
+      onReset?.(annotationId);
+    },
+    [handleReset, onReset]
+  );
 
   const effectiveType = type || selectors[0]?.TYPE;
 
@@ -237,8 +299,23 @@ export function useAnnotationViewModel(
 
   const topAnnotationAtMouse = hoveredAnnotation;
 
+  const {
+    pinnedControlsId,
+    onDeleteControlMouseEnter,
+    onDeleteControlMouseLeave,
+  } = usePinnedControlsHover(hoveredAnnotation);
+
   const shouldAnnotationBeActive = useCallback(
     (annotation: AnnotationType, topAnnotation?: AnnotationType): boolean => {
+      const annotationId = annotation.data?.id;
+      if (
+        annotationId != null &&
+        pinnedControlsId != null &&
+        annotationId === pinnedControlsId
+      ) {
+        return true;
+      }
+
       if (activeAnnotations) {
         const isActive = activeAnnotations.some((active) =>
           activeAnnotationComparator
@@ -249,7 +326,7 @@ export function useAnnotationViewModel(
       }
       return topAnnotation === annotation;
     },
-    [activeAnnotations, activeAnnotationComparator]
+    [activeAnnotations, activeAnnotationComparator, pinnedControlsId]
   );
 
   return {
@@ -266,14 +343,30 @@ export function useAnnotationViewModel(
     annotations,
     layoutOptions: {
       touchEnabled: allowTouch,
-      selectorDisabled: !!disableSelector,
+      selectorDisabled: !!disableSelector || (enableEditing && isDragging),
       overlayDisabled: !!disableOverlay,
-      editorDisabled: !!disableEditor,
+      editorDisabled: !!disableEditor || (enableEditing && isDragging),
+      hitTestingDisabled: !!disableHitTesting || (enableEditing && isDragging),
+      enableEditing,
     },
+    onImageLoad,
+    onImageError,
     annotationState: {
       getIsActive: shouldAnnotationBeActive,
       topAnnotation: topAnnotationAtMouse,
       editModeIds: editModeAnnotationIds,
+      isDragging,
+      draggingAnnotationId,
+      hasPendingChanges,
+      getEffectiveAnnotation: enableEditing ? getEffectiveAnnotation : undefined,
+      draggingHandlers: enableEditing ? draggingHandlers : undefined,
+      onConfirm: enableEditing ? handleConfirmWithCallback : undefined,
+      onReset: enableEditing ? handleResetWithCallback : undefined,
+      enableRemoval,
+      onRemoveAnnotation,
+      canRemoveAnnotation,
+      onDeleteControlMouseEnter,
+      onDeleteControlMouseLeave,
     },
     value,
     setTargetRef,
@@ -285,10 +378,12 @@ export function useAnnotationViewModel(
     onEditorSubmit: handleEditorSubmit,
     renderSlots: {
       renderHighlight,
+      renderDraggableHighlight,
       renderSelector,
       renderOverlay,
       renderContent,
       renderEditor,
+      renderDelete,
     },
   };
 }

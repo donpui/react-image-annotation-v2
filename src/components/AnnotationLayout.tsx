@@ -1,10 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
 import Overlay from './Overlay';
+import { AnnotationDeleteControl } from './AnnotationDeleteControl';
+import { RectangleSelector } from '../selectors';
 import type {
   Annotation as AnnotationType,
   AnnotationValue,
+  CanRemoveAnnotation,
+  OnRemoveAnnotation,
   RenderContentProps,
+  RenderDeleteProps,
+  RenderDraggableHighlightProps,
   RenderEditorProps,
   RenderHighlightProps,
   RenderOverlayProps,
@@ -38,12 +44,13 @@ const AnnotationItems = styled.div`
   pointer-events: none;
 `;
 
-const InteractionTarget = styled.div`
+const InteractionTarget = styled.div<{ $hitTestingDisabled?: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  pointer-events: ${(p) => (p.$hitTestingDisabled ? 'none' : 'auto')};
 `;
 
 interface AnnotationHighlightItemProps {
@@ -94,10 +101,14 @@ function AnnotationContentItem({
 /** One prop on the layout tree instead of many `render*` props (react-doctor / readability). */
 export interface AnnotationLayoutRenderSlots {
   renderHighlight?: (props: RenderHighlightProps) => React.ReactNode;
+  renderDraggableHighlight?: (
+    props: RenderDraggableHighlightProps
+  ) => React.ReactNode;
   renderSelector?: (props: RenderSelectorProps) => React.ReactNode;
   renderOverlay?: (props: RenderOverlayProps) => React.ReactNode;
   renderContent?: (props: RenderContentProps) => React.ReactNode;
   renderEditor?: (props: RenderEditorProps) => React.ReactNode;
+  renderDelete?: (props: RenderDeleteProps) => React.ReactNode;
 }
 
 export interface AnnotationLayoutOptions {
@@ -105,6 +116,8 @@ export interface AnnotationLayoutOptions {
   selectorDisabled: boolean;
   overlayDisabled: boolean;
   editorDisabled: boolean;
+  hitTestingDisabled?: boolean;
+  enableEditing?: boolean;
 }
 
 export interface AnnotationLayoutAnnotationState {
@@ -114,6 +127,25 @@ export interface AnnotationLayoutAnnotationState {
   ) => boolean;
   topAnnotation: AnnotationType | undefined;
   editModeIds?: (string | number)[];
+  isDragging?: boolean;
+  draggingAnnotationId?: string | number;
+  hasPendingChanges?: (annotationId: string | number) => boolean;
+  getEffectiveAnnotation?: (annotation: AnnotationType) => AnnotationType;
+  draggingHandlers?: Pick<
+    RenderDraggableHighlightProps,
+    | 'onDotDragStart'
+    | 'onDotDrag'
+    | 'onMoveStart'
+    | 'onMove'
+    | 'onDragEnd'
+  >;
+  onConfirm?: (annotationId: string | number) => void;
+  onReset?: (annotationId: string | number) => void;
+  enableRemoval?: boolean;
+  onRemoveAnnotation?: OnRemoveAnnotation;
+  canRemoveAnnotation?: CanRemoveAnnotation;
+  onDeleteControlMouseEnter?: (annotationId: string | number) => void;
+  onDeleteControlMouseLeave?: () => void;
 }
 
 export interface AnnotationLayoutProps {
@@ -138,7 +170,45 @@ export interface AnnotationLayoutProps {
   effectiveType: string | undefined;
   onChange?: (value: AnnotationValue) => void;
   onEditorSubmit: () => void;
+  onImageLoad?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
+  onImageError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
   children?: React.ReactNode;
+}
+
+function shouldShowBuiltInDeleteControl({
+  enableRemoval,
+  onRemoveAnnotation,
+  isActive,
+  annotation,
+  canRemoveAnnotation,
+  enableEditing,
+  draggableHighlightSlot,
+  isHovered,
+}: {
+  enableRemoval?: boolean;
+  onRemoveAnnotation?: OnRemoveAnnotation;
+  isActive: boolean;
+  annotation: AnnotationType;
+  canRemoveAnnotation?: CanRemoveAnnotation;
+  enableEditing?: boolean;
+  draggableHighlightSlot?: AnnotationLayoutRenderSlots['renderDraggableHighlight'];
+  isHovered: boolean;
+}) {
+  if (!enableRemoval || !onRemoveAnnotation || !isActive) {
+    return false;
+  }
+
+  if (canRemoveAnnotation && !canRemoveAnnotation(annotation)) {
+    return false;
+  }
+
+  const deleteOnDraggableBox =
+    enableEditing &&
+    !!draggableHighlightSlot &&
+    isHovered &&
+    annotation.geometry?.type === RectangleSelector.TYPE;
+
+  return !deleteOnDraggableBox;
 }
 
 export function AnnotationLayout({
@@ -163,25 +233,43 @@ export function AnnotationLayout({
   effectiveType,
   onChange,
   onEditorSubmit,
+  onImageLoad,
+  onImageError,
   children,
 }: AnnotationLayoutProps) {
   const {
     renderHighlight: highlightSlot,
+    renderDraggableHighlight: draggableHighlightSlot,
     renderSelector,
     renderOverlay,
     renderContent: contentSlot,
     renderEditor,
+    renderDelete,
   } = renderSlots;
   const {
     touchEnabled,
     selectorDisabled,
     overlayDisabled,
     editorDisabled,
+    hitTestingDisabled,
+    enableEditing,
   } = layoutOptions;
   const {
     getIsActive,
     topAnnotation,
     editModeIds,
+    isDragging,
+    draggingAnnotationId,
+    hasPendingChanges,
+    getEffectiveAnnotation,
+    draggingHandlers,
+    onConfirm,
+    onReset,
+    enableRemoval,
+    onRemoveAnnotation,
+    canRemoveAnnotation,
+    onDeleteControlMouseEnter,
+    onDeleteControlMouseLeave,
   } = annotationState;
 
   return (
@@ -194,7 +282,13 @@ export function AnnotationLayout({
       onMouseMove={onContainerMouseMove}
       $allowTouch={touchEnabled}
     >
-      <AnnotationImage ref={setImageRef} src={src} alt={alt} />
+      <AnnotationImage
+        ref={setImageRef}
+        src={src}
+        alt={alt}
+        onLoad={onImageLoad}
+        onError={onImageError}
+      />
 
       <AnnotationItems>
         {annotations.map((annotation) => {
@@ -204,18 +298,45 @@ export function AnnotationLayout({
             return null;
           }
 
-          const isActive = getIsActive(
-            annotation,
-            topAnnotation
-          );
+          const isActive = getIsActive(annotation, topAnnotation);
+          const isHovered = topAnnotation?.data?.id === annotationId;
+          const isDraggingThis =
+            isDragging && draggingAnnotationId === annotationId;
+          const hasPendingChangesThis = !!hasPendingChanges?.(annotationId);
+          const effectiveAnnotation = getEffectiveAnnotation
+            ? getEffectiveAnnotation(annotation)
+            : annotation;
+          const useDraggableSlot =
+            enableEditing &&
+            draggableHighlightSlot &&
+            draggingHandlers &&
+            (isHovered || isDraggingThis || hasPendingChangesThis);
 
-          return highlightSlot ? (
+          const highlightSlotToUse = useDraggableSlot
+            ? (props: RenderHighlightProps) =>
+                draggableHighlightSlot!({
+                  ...props,
+                  annotation: effectiveAnnotation,
+                  isHovered,
+                  isDragging: !!isDraggingThis,
+                  hasPendingChanges: hasPendingChangesThis,
+                  ...draggingHandlers!,
+                  enableRemoval,
+                  onRemoveAnnotation,
+                  onConfirm,
+                  onReset,
+                  onDeleteControlMouseEnter,
+                  onDeleteControlMouseLeave,
+                })
+            : highlightSlot;
+
+          return highlightSlotToUse ? (
             <AnnotationHighlightItem
               key={annotationId}
               annotationId={annotationId}
-              annotation={annotation}
+              annotation={effectiveAnnotation}
               active={isActive}
-              slot={highlightSlot}
+              slot={highlightSlotToUse}
             />
           ) : null;
         })}
@@ -229,6 +350,7 @@ export function AnnotationLayout({
       <InteractionTarget
         ref={setTargetRef}
         data-testid="annotation-target"
+        $hitTestingDisabled={hitTestingDisabled}
         onClick={onInteractionTargetClick}
         onMouseUp={onInteractionTargetMouseUp}
         onMouseDown={onInteractionTargetMouseDown}
@@ -248,17 +370,45 @@ export function AnnotationLayout({
 
         const isInEditMode =
           editModeIds?.includes(annotationId) || false;
+        const isActive = getIsActive(annotation, topAnnotation);
+        const isHovered = topAnnotation?.data?.id === annotationId;
+        const showContent =
+          (isActive || isInEditMode) && contentSlot != null;
+        const showDelete = shouldShowBuiltInDeleteControl({
+          enableRemoval,
+          onRemoveAnnotation,
+          isActive,
+          annotation,
+          canRemoveAnnotation,
+          enableEditing,
+          draggableHighlightSlot,
+          isHovered,
+        });
 
-        return (getIsActive(annotation, topAnnotation) ||
-          isInEditMode) &&
-          contentSlot != null ? (
-          <AnnotationContentItem
-            key={annotationId}
-            annotationId={annotationId}
-            annotation={annotation}
-            slot={contentSlot}
-          />
-        ) : null;
+        if (!showContent && !showDelete) {
+          return null;
+        }
+
+        return (
+          <React.Fragment key={annotationId}>
+            {showContent ? (
+              <AnnotationContentItem
+                annotationId={annotationId}
+                annotation={annotation}
+                slot={contentSlot!}
+              />
+            ) : null}
+            {showDelete && onRemoveAnnotation ? (
+              <AnnotationDeleteControl
+                annotation={annotation}
+                onRemove={onRemoveAnnotation}
+                renderDelete={renderDelete}
+                onDeleteControlMouseEnter={onDeleteControlMouseEnter}
+                onDeleteControlMouseLeave={onDeleteControlMouseLeave}
+              />
+            ) : null}
+          </React.Fragment>
+        );
       })}
 
       {!editorDisabled &&

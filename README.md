@@ -85,6 +85,12 @@ Prop | Description | Default
 `disableSelector` | Set to `true` to not render `Selector` | `false`
 `disableEditor` | Set to `true` to not render `Editor` | `false`
 `disableOverlay` | Set to `true` to not render `Overlay` | `false`
+`disableHitTesting` | Set to `true` so the full-size interaction layer does not capture pointer events (for custom `renderContent` UX) | `false`
+`enableEditing` | Expands rectangle hit areas for built-in drag/resize editing (independent of `disableEditor`) | `false`
+`enableRemoval` | Shows a delete control on the active annotation (top-right of the box). With `enableEditing`, delete also appears on the draggable editor while hovered. | `false`
+`onRemoveAnnotation` | Called when delete is clicked. May be async (e.g. API delete). You update `annotations` in this callback. | —
+`canRemoveAnnotation` | `(annotation) => boolean` — per-annotation gate (e.g. replace app-level `allowDelete`) | always `true` when removal is enabled
+`renderDelete` | Custom delete UI; receives `{ annotation, onRemove, disabled, active }` | built-in × button
 `renderSelector` | Function that renders `Selector` Component | See [custom components](#using-custom-components)
 `renderEditor` | Function that renders `Editor` Component | See [custom components](#using-custom-components)
 `renderHighlight` | Function that renders `Highlight` Component | See [custom components](#using-custom-components)
@@ -94,6 +100,8 @@ Prop | Description | Default
 `onMouseDown` | `onMouseDown` handler on annotation target |
 `onMouseMove` | `onMouseMove` handler on annotation target |
 `onClick` | `onClick` handler on annotation target |
+`onImageLoad` | `onLoad` handler on the underlying `<img>` |
+`onImageError` | `onError` handler on the underlying `<img>` |
 
 #### Annotation object
 
@@ -120,8 +128,18 @@ This allows you to customize everything about the the look of the annotation int
 - `renderSelector` - used for selecting annotation area (during annotation creation)
 - `renderEditor` - appears after annotation area has been selected (during annotation creation)
 - `renderHighlight` - used to render current annotations in the annotation interface. It is passed an object that contains the property `active`, which is true if the mouse is hovering over the higlight
-- `renderContent` - auxiliary component that appears when an annotation is active. It is passed `{ annotation }`
+- `renderContent` - interactive UI for the active annotation (toolbars, drag handles, labels). It is passed `{ annotation }` and is rendered **above** the interaction layer so it can receive pointer events
 - `renderOverlay` - Component overlay for Annotation (i.e. 'Click and Drag to Annotate')
+
+### Highlight vs content layers
+
+The component stacks several absolutely positioned layers over the image:
+
+1. **`renderHighlight`** — visual outline for every annotation (inside a `pointer-events: none` wrapper). Use for shapes, borders, and passive styling only.
+2. **Interaction target** — full-size layer for creating new annotations and hover hit-testing. Set `disableHitTesting` when custom content owns all pointer interaction.
+3. **`renderContent`** — shown only for the active annotation (hover or `activeAnnotations` / `editModeAnnotationIds`). Put buttons, drag handles, and other controls here with `pointer-events: auto` on the elements that need clicks.
+
+`disableEditor` only hides the built-in creation editor; it does **not** control hover hit areas. Use `enableEditing` for the library’s expanded rectangle hit testing when using built-in drag/resize editing.
 
 **Note**: You cannot use `:hover` selectors in css for components returned by `renderSelector` and `renderHighlight`. This is due to the fact that `Annotation` places DOM layers on top of these components, preventing triggering of `:hover`
 

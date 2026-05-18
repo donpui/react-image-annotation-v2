@@ -3,19 +3,19 @@ import styled from 'styled-components';
 
 const ButtonContainer = styled.div`
   position: absolute;
-  bottom: -22px;
+  bottom: -25px;
   right: 0;
   display: flex;
-  gap: 4px;
-  z-index: 1;
+  gap: 5px;
+  z-index: 20;
 `;
 
-const Button = styled.button<{ $variant: 'confirm' | 'reset' }>`
-  min-width: 28px;
-  height: 22px;
+const Button = styled.button`
+  width: 20px;
+  height: 20px;
   background-color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,11 +24,9 @@ const Button = styled.button<{ $variant: 'confirm' | 'reset' }>`
   font-size: 13px;
   font-weight: 600;
   pointer-events: auto;
-  transition: all 0.2s ease;
 
   &:hover {
     background-color: lightgray;
-    transform: scale(1.1);
   }
 `;
 
@@ -37,31 +35,20 @@ interface ConfirmResetButtonsProps {
   onReset: () => void;
 }
 
-export const ConfirmResetButtons: React.FC<ConfirmResetButtonsProps> = ({ onConfirm, onReset }) => {
-  const stopDragStart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  const handleConfirm = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering drag events
-    onConfirm();
-  };
-
-  const handleReset = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering drag events
-    onReset();
-  };
-
+export const ConfirmResetButtons: React.FC<ConfirmResetButtonsProps> = ({
+  onConfirm,
+  onReset,
+}) => {
   return (
-    <ButtonContainer onMouseDown={stopDragStart}>
-      <Button $variant="confirm" onClick={handleConfirm}>
+    <ButtonContainer onMouseDown={(e) => e.stopPropagation()}>
+      <Button type="button" onClick={(e) => { e.stopPropagation(); onConfirm(); }}>
         ✓
       </Button>
-      <Button $variant="reset" onClick={handleReset}>
+      <Button type="button" onClick={(e) => { e.stopPropagation(); onReset(); }}>
         ✕
       </Button>
     </ButtonContainer>
   );
 };
 
-export default ConfirmResetButtons; 
+export default ConfirmResetButtons;

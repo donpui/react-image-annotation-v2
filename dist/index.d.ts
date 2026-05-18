@@ -177,6 +177,8 @@ export interface AnnotationBaseProps {
   disableEditor?: boolean;
   disableOverlay?: boolean;
   allowTouch?: boolean;
+  /** When true, the full-size interaction layer does not capture pointer events (use with custom `renderContent` UX). */
+  disableHitTesting?: boolean;
   renderSelector?: (props: RenderSelectorProps) => React.ReactNode;
   renderEditor?: (props: RenderEditorProps) => React.ReactNode;
   renderHighlight?: (props: RenderHighlightProps) => React.ReactNode;
@@ -185,6 +187,7 @@ export interface AnnotationBaseProps {
 }
 
 export interface AnnotationEditingProps {
+  /** Expands rectangle hit areas for built-in drag/resize; independent of `disableEditor`. */
   enableEditing?: boolean;
   onAnnotationsChange?: (annotations: Annotation[]) => void;
   renderDraggableHighlight?: (
@@ -201,6 +204,8 @@ export interface AnnotationEventProps {
   onImageMouseDown?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageMouseMove?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onImageLoad?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
+  onImageError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 export type AnnotationRenderSlots = Pick<

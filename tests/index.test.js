@@ -41,6 +41,13 @@ describe('Annotation Component', () => {
     expect(screen.getByAltText('Test image')).toBeInTheDocument();
   });
 
+  it('calls onImageLoad when the image loads', () => {
+    const onImageLoad = jest.fn();
+    render(<Annotation {...initialDefaultProps} onImageLoad={onImageLoad} />);
+    fireEvent.load(screen.getByAltText('Test image'));
+    expect(onImageLoad).toHaveBeenCalled();
+  });
+
   it('renders annotations when provided', () => {
     const annotations = [
       {
@@ -110,5 +117,41 @@ describe('Annotation Component', () => {
     await user.click(submitButton);
     
     expect(initialDefaultProps.onSubmit).toHaveBeenCalled();
+  });
+
+  it('calls onRemoveAnnotation when built-in delete is clicked', async () => {
+    const user = userEvent.setup();
+    const onRemoveAnnotation = jest.fn();
+    const annotations = [
+      {
+        geometry: {
+          type: 'RECTANGLE',
+          x: 10,
+          y: 10,
+          width: 30,
+          height: 20,
+        },
+        data: {
+          text: 'Removable',
+          id: 'anno-delete-1',
+        },
+      },
+    ];
+
+    render(
+      <Annotation
+        {...initialDefaultProps}
+        annotations={annotations}
+        activeAnnotations={annotations}
+        enableRemoval
+        onRemoveAnnotation={onRemoveAnnotation}
+      />
+    );
+
+    const deleteButton = screen.getByTestId('annotation-delete-button');
+    expect(deleteButton).toBeInTheDocument();
+
+    await user.click(deleteButton);
+    expect(onRemoveAnnotation).toHaveBeenCalledWith('anno-delete-1');
   });
 });

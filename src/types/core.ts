@@ -93,6 +93,25 @@ export interface RenderContentProps {
   annotation: Annotation;
 }
 
+export type OnRemoveAnnotation = (
+  annotationId: string | number
+) => void | Promise<void>;
+
+export type CanRemoveAnnotation = (annotation: Annotation) => boolean;
+
+export interface DeleteControlHoverHandlers {
+  onDeleteControlMouseEnter?: (annotationId: string | number) => void;
+  onDeleteControlMouseLeave?: () => void;
+}
+
+export interface RenderDeleteProps {
+  key: string | number;
+  annotation: Annotation;
+  active: boolean;
+  onRemove: OnRemoveAnnotation;
+  disabled?: boolean;
+}
+
 export interface RenderOverlayProps {
   type?: string;
   annotation?: AnnotationValue;
@@ -107,11 +126,15 @@ export interface DraggingEventHandlers {
   onDragEnd: () => void;
 }
 
-export interface RenderDraggableHighlightProps extends RenderHighlightProps, DraggingEventHandlers {
+export interface RenderDraggableHighlightProps
+  extends RenderHighlightProps,
+    DraggingEventHandlers,
+    DeleteControlHoverHandlers {
   isDragging: boolean;
   isHovered: boolean;
+  hasPendingChanges?: boolean;
   enableRemoval?: boolean;
-  onRemoveAnnotation?: (annotationId: string | number) => void;
+  onRemoveAnnotation?: OnRemoveAnnotation;
   onConfirm?: (annotationId: string | number) => void;
   onReset?: (annotationId: string | number) => void;
 }
@@ -150,6 +173,8 @@ export interface AnnotationBaseProps {
   disableEditor?: boolean;
   disableOverlay?: boolean;
   allowTouch?: boolean;
+  /** When true, the full-size interaction layer does not capture pointer events (use with custom `renderContent` UX). */
+  disableHitTesting?: boolean;
 
   // Render props
   renderSelector?: (props: RenderSelectorProps) => React.ReactNode;
@@ -157,17 +182,20 @@ export interface AnnotationBaseProps {
   renderHighlight?: (props: RenderHighlightProps) => React.ReactNode;
   renderContent?: (props: RenderContentProps) => React.ReactNode;
   renderOverlay?: (props: RenderOverlayProps) => React.ReactNode;
+  renderDelete?: (props: RenderDeleteProps) => React.ReactNode;
 }
 
 export interface AnnotationEditingProps {
-  // Editing functionality
+  // Editing functionality — expands rectangle hit areas for built-in drag/resize; independent of disableEditor
   enableEditing?: boolean;
   onAnnotationsChange?: (annotations: Annotation[]) => void;
   renderDraggableHighlight?: (props: RenderDraggableHighlightProps) => React.ReactNode;
 
   // Interaction handlers
   enableRemoval?: boolean;
-  onRemoveAnnotation?: (annotationId: string | number) => void;
+  onRemoveAnnotation?: OnRemoveAnnotation;
+  /** When set, only annotations for which this returns true show the delete control. */
+  canRemoveAnnotation?: CanRemoveAnnotation;
   onConfirm?: (annotationId: string | number) => void;
   onReset?: (annotationId: string | number) => void;
 }
@@ -178,6 +206,8 @@ export interface AnnotationEventProps {
   onImageMouseDown?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageMouseMove?: (e: React.MouseEvent<HTMLElement>) => void;
   onImageClick?: (e: React.MouseEvent<HTMLElement>) => void;
+  onImageLoad?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
+  onImageError?: (e: React.SyntheticEvent<HTMLImageElement>) => void;
 }
 
 /** Optional bundle of render callbacks (reduces many `render*` props on `<Annotation />`). */
@@ -189,7 +219,8 @@ export type AnnotationRenderSlots = Pick<
   | 'renderContent'
   | 'renderOverlay'
 > &
-  Pick<AnnotationEditingProps, 'renderDraggableHighlight'>;
+  Pick<AnnotationEditingProps, 'renderDraggableHighlight'> &
+  Pick<AnnotationBaseProps, 'renderDelete'>;
 
 // Main annotation component props
 export interface AnnotationProps
