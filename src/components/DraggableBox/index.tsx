@@ -9,6 +9,7 @@ import {
 import { deleteCornerBoxStyle } from '../DraggableComponents/deleteButtonPosition';
 import type { RenderDraggableHighlightProps } from '../../types/core';
 
+/** Tint + handles only; passive `renderHighlight` draws outline so custom borders stay intact. */
 const BoxContainer = styled.div`
   position: absolute;
   border: none;

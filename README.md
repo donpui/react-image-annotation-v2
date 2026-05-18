@@ -130,6 +130,7 @@ This allows you to customize everything about the the look of the annotation int
 - `renderEditor` - appears after annotation area has been selected (during annotation creation)
 - `renderHighlight` - used to render current annotations in the annotation interface. It is passed an object that contains the property `active`, which is true if the mouse is hovering over the higlight
 - `renderContent` - interactive UI for the active annotation (toolbars, drag handles, labels). It is passed `{ annotation }` and is rendered **above** the interaction layer so it can receive pointer events
+- `renderDraggableHighlight` - when `enableEditing` is enabled, draggable handles render **above** `renderHighlight` (not instead of it), so custom highlight borders stay visible behind the tinted editor layer
 - `renderOverlay` - Component overlay for Annotation (i.e. 'Click and Drag to Annotate')
 
 ### Highlight vs content layers

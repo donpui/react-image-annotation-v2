@@ -207,34 +207,26 @@ export const defaultProps: Partial<AnnotationProps> = {
 
     if (annotation.geometry.type === RectangleSelector.TYPE) {
       return (
-        <>
-          <DraggableBox
-            key={`${key}-editor`}
-            annotation={annotation}
-            active={active}
-            isHovered={isHovered}
-            isDragging={isDragging}
-            hasPendingChanges={hasPendingChanges}
-            onDotDragStart={onDotDragStart}
-            onDotDrag={onDotDrag}
-            onMoveStart={onMoveStart}
-            onMove={onMove}
-            onDragEnd={onDragEnd}
-            enableRemoval={enableRemoval}
-            onRemoveAnnotation={onRemoveAnnotation}
-            onConfirm={onConfirm}
-            onReset={onReset}
-            onDeleteControlMouseEnter={onDeleteControlMouseEnter}
-            onDeleteControlMouseLeave={onDeleteControlMouseLeave}
-          />
-          <Rectangle
-            key={`${key}-highlight`}
-            annotation={annotation as any}
-            active={active}
-            style={{ pointerEvents: 'none' }}
-          />
-        </>
-      )
+        <DraggableBox
+          key={`${key}-editor`}
+          annotation={annotation}
+          active={active}
+          isHovered={isHovered}
+          isDragging={isDragging}
+          hasPendingChanges={hasPendingChanges}
+          onDotDragStart={onDotDragStart}
+          onDotDrag={onDotDrag}
+          onMoveStart={onMoveStart}
+          onMove={onMove}
+          onDragEnd={onDragEnd}
+          enableRemoval={enableRemoval}
+          onRemoveAnnotation={onRemoveAnnotation}
+          onConfirm={onConfirm}
+          onReset={onReset}
+          onDeleteControlMouseEnter={onDeleteControlMouseEnter}
+          onDeleteControlMouseLeave={onDeleteControlMouseLeave}
+        />
+      );
     }
 
     switch (annotation.geometry.type) {

@@ -19,6 +19,7 @@ import threadedCode from '../Samples/Threaded/index.tsx?raw'; // You might need 
 import touchCode from '../Samples/Touch/index.tsx?raw';
 import Drag from '../Samples/Drag/Drag.tsx';
 import dragCode from '../Samples/Drag/Drag.tsx?raw';
+import DragCustomRender from '../Samples/Drag/DragCustomRender.tsx';
 import Delete from '../Samples/Delete';
 import deleteCode from '../Samples/Delete/index.tsx?raw';
 
@@ -59,6 +60,17 @@ const Docs: FC = () => (
     <ExampleContainer>
       <Drag />
       {/* <Highlight>{dragCode}</Highlight> */}
+    </ExampleContainer>
+
+    <h1>Drag + custom highlight and content</h1>
+    <p>
+      Custom <code>renderHighlight</code> and <code>renderContent</code> via{' '}
+      <code>renderSlots</code>. With <code>enableEditing</code>, draggable handles tint the
+      box on top of your highlight borders (they are composed, not replaced). Override{' '}
+      <code>renderDraggableHighlight</code> only if you need fully custom editing chrome.
+    </p>
+    <ExampleContainer>
+      <DragCustomRender />
     </ExampleContainer>
 
     <h1>Built-in delete control</h1>

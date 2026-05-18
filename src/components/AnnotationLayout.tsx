@@ -53,6 +53,17 @@ const InteractionTarget = styled.div<{ $hitTestingDisabled?: boolean }>`
   pointer-events: ${(p) => (p.$hitTestingDisabled ? 'none' : 'auto')};
 `;
 
+/** Above the interaction target so `renderContent` / Editor stay visible over the tinted editor box. */
+const AnnotationPointerPassthroughLayer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  pointer-events: none;
+`;
+
 interface AnnotationHighlightItemProps {
   annotationId: string | number;
   annotation: AnnotationType;
@@ -314,22 +325,27 @@ export function AnnotationLayout({
             draggingHandlers &&
             (isHovered || isDraggingThis || hasPendingChangesThis);
 
+          /** Keep passive `renderHighlight` (your border/fill) and layer draggable UI on top. */
           const highlightSlotToUse = useDraggableSlot
-            ? (props: RenderHighlightProps) =>
-                draggableHighlightSlot!({
-                  ...props,
-                  annotation: effectiveAnnotation,
-                  isHovered,
-                  isDragging: !!isDraggingThis,
-                  hasPendingChanges: hasPendingChangesThis,
-                  ...draggingHandlers!,
-                  enableRemoval,
-                  onRemoveAnnotation,
-                  onConfirm,
-                  onReset,
-                  onDeleteControlMouseEnter,
-                  onDeleteControlMouseLeave,
-                })
+            ? (props: RenderHighlightProps) => (
+                <React.Fragment>
+                  {highlightSlot ? highlightSlot(props) : null}
+                  {draggableHighlightSlot!({
+                    ...props,
+                    annotation: effectiveAnnotation,
+                    isHovered,
+                    isDragging: !!isDraggingThis,
+                    hasPendingChanges: hasPendingChangesThis,
+                    ...draggingHandlers!,
+                    enableRemoval,
+                    onRemoveAnnotation,
+                    onConfirm,
+                    onReset,
+                    onDeleteControlMouseEnter,
+                    onDeleteControlMouseLeave,
+                  })}
+                </React.Fragment>
+              )
             : highlightSlot;
 
           return highlightSlotToUse ? (
@@ -365,63 +381,65 @@ export function AnnotationLayout({
           annotation: value,
         })}
 
-      {annotations.map((annotation) => {
-        const annotationId = annotation.data?.id;
+      <AnnotationPointerPassthroughLayer>
+        {annotations.map((annotation) => {
+          const annotationId = annotation.data?.id;
 
-        if (!annotationId) return null;
+          if (!annotationId) return null;
 
-        const isInEditMode =
-          editModeIds?.includes(annotationId) || false;
-        const isActive = getIsActive(annotation, topAnnotation);
-        const isHovered = topAnnotation?.data?.id === annotationId;
-        const showContent =
-          !contentDisabled && (isActive || isInEditMode) && contentSlot != null;
-        const showDelete = shouldShowBuiltInDeleteControl({
-          enableRemoval,
-          onRemoveAnnotation,
-          isActive,
-          annotation,
-          canRemoveAnnotation,
-          enableEditing,
-          draggableHighlightSlot,
-          isHovered,
-        });
+          const isInEditMode =
+            editModeIds?.includes(annotationId) || false;
+          const isActive = getIsActive(annotation, topAnnotation);
+          const isHovered = topAnnotation?.data?.id === annotationId;
+          const showContent =
+            !contentDisabled && (isActive || isInEditMode) && contentSlot != null;
+          const showDelete = shouldShowBuiltInDeleteControl({
+            enableRemoval,
+            onRemoveAnnotation,
+            isActive,
+            annotation,
+            canRemoveAnnotation,
+            enableEditing,
+            draggableHighlightSlot,
+            isHovered,
+          });
 
-        if (!showContent && !showDelete) {
-          return null;
-        }
+          if (!showContent && !showDelete) {
+            return null;
+          }
 
-        return (
-          <React.Fragment key={annotationId}>
-            {showContent ? (
-              <AnnotationContentItem
-                annotationId={annotationId}
-                annotation={annotation}
-                slot={contentSlot!}
-              />
-            ) : null}
-            {showDelete && onRemoveAnnotation ? (
-              <AnnotationDeleteControl
-                annotation={annotation}
-                onRemove={onRemoveAnnotation}
-                renderDelete={renderDelete}
-                onDeleteControlMouseEnter={onDeleteControlMouseEnter}
-                onDeleteControlMouseLeave={onDeleteControlMouseLeave}
-              />
-            ) : null}
-          </React.Fragment>
-        );
-      })}
-
-      {!editorDisabled &&
-        value?.selection?.showEditor &&
-        renderEditor &&
-        onChange &&
-        renderEditor({
-          annotation: value,
-          onChange,
-          onSubmit: onEditorSubmit,
+          return (
+            <React.Fragment key={annotationId}>
+              {showContent ? (
+                <AnnotationContentItem
+                  annotationId={annotationId}
+                  annotation={annotation}
+                  slot={contentSlot!}
+                />
+              ) : null}
+              {showDelete && onRemoveAnnotation ? (
+                <AnnotationDeleteControl
+                  annotation={annotation}
+                  onRemove={onRemoveAnnotation}
+                  renderDelete={renderDelete}
+                  onDeleteControlMouseEnter={onDeleteControlMouseEnter}
+                  onDeleteControlMouseLeave={onDeleteControlMouseLeave}
+                />
+              ) : null}
+            </React.Fragment>
+          );
         })}
+
+        {!editorDisabled &&
+          value?.selection?.showEditor &&
+          renderEditor &&
+          onChange &&
+          renderEditor({
+            annotation: value,
+            onChange,
+            onSubmit: onEditorSubmit,
+          })}
+      </AnnotationPointerPassthroughLayer>
 
       {children}
     </AnnotationContainer>

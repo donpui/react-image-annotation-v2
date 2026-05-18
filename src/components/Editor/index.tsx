@@ -27,7 +27,9 @@ const Container = styled.div<{ $placement: EditorPlacement }>`
     0px 1px 5px 0px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
     0px 3px 1px -2px rgba(0, 0, 0, 0.12);
-  transform-origin: ${({ $placement }) => $placement === 'above' ? 'bottom left' : 'top left'};
+  pointer-events: auto;
+  transform-origin: ${({ $placement }) =>
+    $placement === 'above' ? 'bottom left' : 'top left'};
 
   animation: ${fadeInScale} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
