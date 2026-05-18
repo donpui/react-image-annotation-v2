@@ -85,6 +85,7 @@ Prop | Description | Default
 `disableSelector` | Set to `true` to not render `Selector` | `false`
 `disableEditor` | Set to `true` to not render `Editor` | `false`
 `disableOverlay` | Set to `true` to not render `Overlay` | `false`
+`disableContent` | Set to `true` to not render hover/active annotation content from `renderContent` | `false`
 `disableHitTesting` | Set to `true` so the full-size interaction layer does not capture pointer events (for custom `renderContent` UX) | `false`
 `enableEditing` | Expands rectangle hit areas for built-in drag/resize editing (independent of `disableEditor`) | `false`
 `enableRemoval` | Shows a delete control on the active annotation (top-right of the box). With `enableEditing`, delete also appears on the draggable editor while hovered. | `false`

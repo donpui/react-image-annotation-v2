@@ -78,6 +78,7 @@ const Drag: React.FC = () => {
           annotations={annotations}
           type={RectangleSelector.TYPE}
           selectors={[RectangleSelector]}
+          disableContent={true}
           value={annotation}
           onChange={onChange}
           onSubmit={onSubmit}

@@ -172,6 +172,8 @@ export interface AnnotationBaseProps {
   disableSelector?: boolean;
   disableEditor?: boolean;
   disableOverlay?: boolean;
+  /** When true, annotation hover/active content from `renderContent` is not rendered. */
+  disableContent?: boolean;
   allowTouch?: boolean;
   /** When true, the full-size interaction layer does not capture pointer events (use with custom `renderContent` UX). */
   disableHitTesting?: boolean;

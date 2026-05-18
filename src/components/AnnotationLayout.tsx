@@ -116,6 +116,7 @@ export interface AnnotationLayoutOptions {
   selectorDisabled: boolean;
   overlayDisabled: boolean;
   editorDisabled: boolean;
+  contentDisabled?: boolean;
   hitTestingDisabled?: boolean;
   enableEditing?: boolean;
 }
@@ -251,6 +252,7 @@ export function AnnotationLayout({
     selectorDisabled,
     overlayDisabled,
     editorDisabled,
+    contentDisabled,
     hitTestingDisabled,
     enableEditing,
   } = layoutOptions;
@@ -373,7 +375,7 @@ export function AnnotationLayout({
         const isActive = getIsActive(annotation, topAnnotation);
         const isHovered = topAnnotation?.data?.id === annotationId;
         const showContent =
-          (isActive || isInEditMode) && contentSlot != null;
+          !contentDisabled && (isActive || isInEditMode) && contentSlot != null;
         const showDelete = shouldShowBuiltInDeleteControl({
           enableRemoval,
           onRemoveAnnotation,

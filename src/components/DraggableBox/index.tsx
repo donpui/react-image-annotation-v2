@@ -9,9 +9,9 @@ import {
 import { deleteCornerBoxStyle } from '../DraggableComponents/deleteButtonPosition';
 import type { RenderDraggableHighlightProps } from '../../types/core';
 
-const BoxContainer = styled.div<{ $isDragging?: boolean }>`
+const BoxContainer = styled.div`
   position: absolute;
-  border: 1px dashed #ffffff;
+  border: none;
   background: rgba(151, 151, 151, 0.3);
   border-radius: 3px;
   pointer-events: auto;
@@ -93,7 +93,6 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
         width: `${geometry.width}%`,
         height: `${geometry.height}%`,
       }}
-      $isDragging={isDragging}
       data-annotation-draggable-box
     >
       <DraggableDot
