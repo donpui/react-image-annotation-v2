@@ -87,6 +87,7 @@ Prop | Description | Default
 `disableOverlay` | Set to `true` to not render `Overlay` | `false`
 `disableContent` | Set to `true` to not render hover/active annotation content from `renderContent` | `false`
 `disableHitTesting` | Set to `true` so the full-size interaction layer does not capture pointer events (for custom `renderContent` UX) | `false`
+`drawingCursor` | CSS `cursor` on the interaction layer while drag-drawing (`selection.mode === 'SELECTING'`). Use a plain SVG/PNG (no CSS filters). Helpers: `buildDrawingCursor`, `buildDrawingCursorFromSvg`. | —
 `enableEditing` | Expands rectangle hit areas for built-in drag/resize editing (independent of `disableEditor`) | `false`
 `enableRemoval` | Shows a delete control on the active annotation (top-right of the box). With `enableEditing`, delete also appears on the draggable editor while hovered. | `false`
 `onRemoveAnnotation` | Called when delete is clicked. May be async (e.g. API delete). You update `annotations` in this callback. | —

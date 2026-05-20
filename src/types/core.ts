@@ -177,6 +177,11 @@ export interface AnnotationBaseProps {
   allowTouch?: boolean;
   /** When true, the full-size interaction layer does not capture pointer events (use with custom `renderContent` UX). */
   disableHitTesting?: boolean;
+  /**
+   * CSS `cursor` value while drag-drawing a new annotation (`selection.mode === 'SELECTING'`).
+   * Example: `url('/analysis-cursor.svg') 12.5 12.5, auto` or a `data:image/svg+xml,...` URL.
+   */
+  drawingCursor?: string;
 
   // Render props
   renderSelector?: (props: RenderSelectorProps) => React.ReactNode;

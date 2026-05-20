@@ -45,6 +45,7 @@ export function useAnnotationViewModel(
     activeAnnotations,
     editModeAnnotationIds,
     disableAnnotation,
+    drawingCursor,
     disableSelector,
     disableEditor,
     disableOverlay,
@@ -135,6 +136,35 @@ export function useAnnotationViewModel(
   );
 
   const effectiveType = type || selectors[0]?.TYPE;
+
+  const isDrawing = value?.selection?.mode === 'SELECTING';
+
+  const applyDrawingCursorToTarget = useCallback(
+    (cursor: string) => {
+      if (targetRef.current) {
+        targetRef.current.style.cursor = cursor;
+      }
+    },
+    []
+  );
+
+  const clearDrawingCursorFromTarget = useCallback(() => {
+    if (targetRef.current) {
+      targetRef.current.style.removeProperty('cursor');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!drawingCursor || !isDrawing) {
+      document.body.style.removeProperty('cursor');
+      return;
+    }
+    const previous = document.body.style.cursor;
+    document.body.style.cursor = drawingCursor;
+    return () => {
+      document.body.style.cursor = previous;
+    };
+  }, [drawingCursor, isDrawing]);
 
   const { callSelectorMethod } = useSelectorMethods({
     selectors,
@@ -250,16 +280,39 @@ export function useAnnotationViewModel(
     (e: React.MouseEvent<HTMLElement>) => {
       onImageMouseUp?.(e);
       callSelectorMethod('onMouseUp', e);
+      if (drawingCursor && !disableAnnotation) {
+        clearDrawingCursorFromTarget();
+        if (!isDrawing) {
+          document.body.style.removeProperty('cursor');
+        }
+      }
     },
-    [onImageMouseUp, callSelectorMethod]
+    [
+      onImageMouseUp,
+      callSelectorMethod,
+      drawingCursor,
+      disableAnnotation,
+      clearDrawingCursorFromTarget,
+      isDrawing,
+    ]
   );
 
   const handleInteractionTargetMouseDown = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
+      if (drawingCursor && !disableAnnotation) {
+        applyDrawingCursorToTarget(drawingCursor);
+        document.body.style.cursor = drawingCursor;
+      }
       onImageMouseDown?.(e);
       callSelectorMethod('onMouseDown', e);
     },
-    [onImageMouseDown, callSelectorMethod]
+    [
+      drawingCursor,
+      disableAnnotation,
+      applyDrawingCursorToTarget,
+      onImageMouseDown,
+      callSelectorMethod,
+    ]
   );
 
   const handleInteractionTargetClick = useCallback(
@@ -350,6 +403,8 @@ export function useAnnotationViewModel(
       contentDisabled: !!disableContent,
       hitTestingDisabled: !!disableHitTesting || (enableEditing && isDragging),
       enableEditing,
+      drawingCursor,
+      disableAnnotation,
     },
     onImageLoad,
     onImageError,
@@ -371,6 +426,7 @@ export function useAnnotationViewModel(
       onDeleteControlMouseLeave,
     },
     value,
+    isDrawing,
     setTargetRef,
     onInteractionTargetClick: handleInteractionTargetClick,
     onInteractionTargetMouseUp: handleInteractionTargetMouseUp,

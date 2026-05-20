@@ -20,6 +20,8 @@ import touchCode from '../Samples/Touch/index.tsx?raw';
 import Drag from '../Samples/Drag/Drag.tsx';
 import dragCode from '../Samples/Drag/Drag.tsx?raw';
 import DragCustomRender from '../Samples/Drag/DragCustomRender.tsx';
+import DrawingCursor from '../Samples/DrawingCursor';
+import drawingCursorCode from '../Samples/DrawingCursor/index.tsx?raw';
 import Delete from '../Samples/Delete';
 import deleteCode from '../Samples/Delete/index.tsx?raw';
 
@@ -71,6 +73,18 @@ const Docs: FC = () => (
     </p>
     <ExampleContainer>
       <DragCustomRender />
+    </ExampleContainer>
+
+    <h1>Custom cursor while drawing</h1>
+    <p>
+      Use <code>drawingCursor</code> to set a CSS cursor on the interaction layer while
+      drag-drawing a new annotation (<code>selection.mode === &apos;SELECTING&apos;</code>
+      ). Pass a file URL with hotspot coordinates, or an inline SVG via{' '}
+      <code>data:image/svg+xml</code>.
+    </p>
+    <ExampleContainer>
+      <DrawingCursor />
+      {/* <Highlight>{drawingCursorCode}</Highlight> */}
     </ExampleContainer>
 
     <h1>Built-in delete control</h1>

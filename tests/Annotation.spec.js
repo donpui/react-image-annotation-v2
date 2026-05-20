@@ -36,5 +36,33 @@ describe('Annotation', () => {
     expect(screen.getByText('Test annotation')).toBeInTheDocument();
   });
 
-  // Add more tests as needed for your specific use cases
+  it('applies drawingCursor on the interaction target while selecting', () => {
+    const { rerender } = render(
+      <Annotation
+        {...requiredProps}
+        drawingCursor="url(/cursor.svg) 12.5 12.5, auto"
+        value={{
+          selection: { mode: 'SELECTING', anchorX: 10, anchorY: 10 },
+          geometry: { type: 'RECTANGLE', x: 10, y: 10, width: 5, height: 5 },
+        }}
+      />
+    );
+
+    expect(screen.getByTestId('annotation-target')).toHaveAttribute(
+      'data-is-drawing',
+      'true'
+    );
+
+    rerender(
+      <Annotation
+        {...requiredProps}
+        drawingCursor="url(/cursor.svg) 12.5 12.5, auto"
+        value={{}}
+      />
+    );
+
+    expect(screen.getByTestId('annotation-target')).not.toHaveAttribute(
+      'data-is-drawing'
+    );
+  });
 });

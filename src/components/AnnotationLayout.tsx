@@ -17,7 +17,10 @@ import type {
   RenderSelectorProps,
 } from '../types/core';
 
-const AnnotationContainer = styled.div<{ $allowTouch?: boolean }>`
+const AnnotationContainer = styled.div<{
+  $allowTouch?: boolean;
+  $cursor?: string;
+}>`
   clear: both;
   position: relative;
   width: 100%;
@@ -27,6 +30,7 @@ const AnnotationContainer = styled.div<{ $allowTouch?: boolean }>`
   }
 
   touch-action: ${(p) => (p.$allowTouch ? 'pinch-zoom' : 'auto')};
+  ${(p) => (p.$cursor ? `cursor: ${p.$cursor};` : '')}
 `;
 
 const AnnotationImage = styled.img`
@@ -44,13 +48,17 @@ const AnnotationItems = styled.div`
   pointer-events: none;
 `;
 
-const InteractionTarget = styled.div<{ $hitTestingDisabled?: boolean }>`
+const InteractionTarget = styled.div<{
+  $hitTestingDisabled?: boolean;
+  $cursor?: string;
+}>`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   pointer-events: ${(p) => (p.$hitTestingDisabled ? 'none' : 'auto')};
+  ${(p) => (p.$cursor ? `cursor: ${p.$cursor};` : '')}
 `;
 
 /** Above the interaction target so `renderContent` / Editor stay visible over the tinted editor box. */
@@ -130,6 +138,9 @@ export interface AnnotationLayoutOptions {
   contentDisabled?: boolean;
   hitTestingDisabled?: boolean;
   enableEditing?: boolean;
+  /** Applied while `value.selection.mode === 'SELECTING'` (and on mousedown before re-render). */
+  drawingCursor?: string;
+  disableAnnotation?: boolean;
 }
 
 export interface AnnotationLayoutAnnotationState {
@@ -175,6 +186,7 @@ export interface AnnotationLayoutProps {
   layoutOptions: AnnotationLayoutOptions;
   annotationState: AnnotationLayoutAnnotationState;
   value: AnnotationValue | undefined;
+  isDrawing?: boolean;
   setTargetRef: React.RefCallback<HTMLDivElement>;
   onInteractionTargetClick: (e: React.MouseEvent<HTMLElement>) => void;
   onInteractionTargetMouseUp: (e: React.MouseEvent<HTMLElement>) => void;
@@ -238,6 +250,7 @@ export function AnnotationLayout({
   layoutOptions,
   annotationState,
   value,
+  isDrawing,
   setTargetRef,
   onInteractionTargetClick,
   onInteractionTargetMouseUp,
@@ -266,7 +279,12 @@ export function AnnotationLayout({
     contentDisabled,
     hitTestingDisabled,
     enableEditing,
+    drawingCursor,
+    disableAnnotation,
   } = layoutOptions;
+
+  const interactionCursor =
+    !!drawingCursor && !disableAnnotation ? drawingCursor : undefined;
   const {
     getIsActive,
     topAnnotation,
@@ -294,6 +312,7 @@ export function AnnotationLayout({
       onTouchCancel={onContainerTouchCancel}
       onMouseMove={onContainerMouseMove}
       $allowTouch={touchEnabled}
+      $cursor={isDrawing ? drawingCursor : undefined}
     >
       <AnnotationImage
         ref={setImageRef}
@@ -368,7 +387,9 @@ export function AnnotationLayout({
       <InteractionTarget
         ref={setTargetRef}
         data-testid="annotation-target"
+        data-is-drawing={isDrawing && drawingCursor ? true : undefined}
         $hitTestingDisabled={hitTestingDisabled}
+        $cursor={interactionCursor}
         onClick={onInteractionTargetClick}
         onMouseUp={onInteractionTargetMouseUp}
         onMouseDown={onInteractionTargetMouseDown}

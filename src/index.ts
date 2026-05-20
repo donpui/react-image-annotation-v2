@@ -36,6 +36,10 @@ export {
   deleteCornerBoxStyle,
 } from './components/DraggableComponents';
 export { AnnotationDeleteControl } from './components/AnnotationDeleteControl';
+export {
+  buildDrawingCursor,
+  buildDrawingCursorFromSvg,
+} from './utils/buildDrawingCursor';
 
 // Default export is the refactored component
 export default Annotation; 
