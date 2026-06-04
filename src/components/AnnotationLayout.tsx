@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import Overlay from './Overlay';
+import { AnnotationContentAnchor } from './AnnotationContentAnchor';
 import { AnnotationDeleteControl } from './AnnotationDeleteControl';
 import { RectangleSelector } from '../selectors';
 import type {
@@ -24,6 +25,7 @@ const AnnotationContainer = styled.div<{
   clear: both;
   position: relative;
   width: 100%;
+  overflow: visible;
 
   &:hover ${Overlay} {
     opacity: 1;
@@ -61,7 +63,19 @@ const InteractionTarget = styled.div<{
   ${(p) => (p.$cursor ? `cursor: ${p.$cursor};` : '')}
 `;
 
-/** Above the interaction target so `renderContent` / Editor stay visible over the tinted editor box. */
+/** Above the interaction target so handles and move icon receive pointer events. */
+const AnnotationEditChromeLayer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 25;
+  pointer-events: none;
+  overflow: visible;
+`;
+
+/** Above edit chrome so `renderContent` / Editor stay visible when not editing. */
 const AnnotationPointerPassthroughLayer = styled.div`
   position: absolute;
   top: 0;
@@ -70,6 +84,7 @@ const AnnotationPointerPassthroughLayer = styled.div`
   bottom: 0;
   z-index: 20;
   pointer-events: none;
+  overflow: visible;
 `;
 
 interface AnnotationHighlightItemProps {
@@ -100,20 +115,36 @@ interface AnnotationContentItemProps {
   annotationId: string | number;
   annotation: AnnotationType;
   slot: (props: RenderContentProps) => React.ReactNode;
+  containerRef: React.RefObject<HTMLElement | null>;
+  onEngageEdit?: (annotationId: string | number) => void;
 }
 
 function AnnotationContentItem({
   annotationId,
   annotation,
   slot,
+  containerRef,
+  onEngageEdit,
 }: AnnotationContentItemProps) {
   return (
-    <>
-      {slot({
-        key: annotationId,
-        annotation,
-      })}
-    </>
+    <AnnotationContentAnchor
+      annotation={annotation}
+      containerRef={containerRef}
+      placement="auto"
+    >
+      <div
+        style={{ pointerEvents: 'auto', display: 'inline-block' }}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+          onEngageEdit?.(annotationId);
+        }}
+      >
+        {slot({
+          key: annotationId,
+          annotation,
+        })}
+      </div>
+    </AnnotationContentAnchor>
   );
 }
 
@@ -169,6 +200,11 @@ export interface AnnotationLayoutAnnotationState {
   canRemoveAnnotation?: CanRemoveAnnotation;
   onDeleteControlMouseEnter?: (annotationId: string | number) => void;
   onDeleteControlMouseLeave?: () => void;
+  /** When set, only this annotation receives hover/edit UI. */
+  focusAnnotationId?: string | number | null;
+  /** Hover shows `renderContent`; click/drag shows edit chrome instead. */
+  showContentOnHover?: boolean;
+  engageEdit?: (annotationId: string | number) => void;
 }
 
 export interface AnnotationLayoutProps {
@@ -301,7 +337,12 @@ export function AnnotationLayout({
     canRemoveAnnotation,
     onDeleteControlMouseEnter,
     onDeleteControlMouseLeave,
+    focusAnnotationId,
+    showContentOnHover = false,
+    engageEdit,
   } = annotationState;
+
+  const passthroughLayerRef = useRef<HTMLDivElement>(null);
 
   return (
     <AnnotationContainer
@@ -338,42 +379,15 @@ export function AnnotationLayout({
           const effectiveAnnotation = getEffectiveAnnotation
             ? getEffectiveAnnotation(annotation)
             : annotation;
-          const useDraggableSlot =
-            enableEditing &&
-            draggableHighlightSlot &&
-            draggingHandlers &&
-            (isHovered || isDraggingThis || hasPendingChangesThis);
-
-          /** Keep passive `renderHighlight` (your border/fill) and layer draggable UI on top. */
-          const highlightSlotToUse = useDraggableSlot
-            ? (props: RenderHighlightProps) => (
-                <React.Fragment>
-                  {highlightSlot ? highlightSlot(props) : null}
-                  {draggableHighlightSlot!({
-                    ...props,
-                    annotation: effectiveAnnotation,
-                    isHovered,
-                    isDragging: !!isDraggingThis,
-                    hasPendingChanges: hasPendingChangesThis,
-                    ...draggingHandlers!,
-                    enableRemoval,
-                    onRemoveAnnotation,
-                    onConfirm,
-                    onReset,
-                    onDeleteControlMouseEnter,
-                    onDeleteControlMouseLeave,
-                  })}
-                </React.Fragment>
-              )
-            : highlightSlot;
-
-          return highlightSlotToUse ? (
+          const isEditEngaged =
+            focusAnnotationId != null && focusAnnotationId === annotationId;
+          return highlightSlot ? (
             <AnnotationHighlightItem
               key={annotationId}
               annotationId={annotationId}
               annotation={effectiveAnnotation}
               active={isActive}
-              slot={highlightSlotToUse}
+              slot={highlightSlot}
             />
           ) : null;
         })}
@@ -395,6 +409,56 @@ export function AnnotationLayout({
         onMouseDown={onInteractionTargetMouseDown}
       />
 
+      {enableEditing && draggableHighlightSlot && draggingHandlers && (
+        <AnnotationEditChromeLayer>
+          {annotations.map((annotation) => {
+            const annotationId = annotation.data?.id;
+            if (!annotationId) return null;
+
+            const isActive = getIsActive(annotation, topAnnotation);
+            const isHovered = topAnnotation?.data?.id === annotationId;
+            const isDraggingThis =
+              isDragging && draggingAnnotationId === annotationId;
+            const hasPendingChangesThis = !!hasPendingChanges?.(annotationId);
+            const isEditEngaged =
+              focusAnnotationId != null && focusAnnotationId === annotationId;
+            const useDraggableSlot =
+              isDraggingThis ||
+              hasPendingChangesThis ||
+              isEditEngaged ||
+              (isHovered && !showContentOnHover);
+
+            if (!useDraggableSlot) return null;
+
+            const effectiveAnnotation = getEffectiveAnnotation
+              ? getEffectiveAnnotation(annotation)
+              : annotation;
+
+            return (
+              <React.Fragment key={`edit-chrome-${annotationId}`}>
+                {draggableHighlightSlot({
+                  key: annotationId,
+                  annotation: effectiveAnnotation,
+                  active: isActive,
+                  isHovered,
+                  isDragging: !!isDraggingThis,
+                  hasPendingChanges: hasPendingChangesThis,
+                  allowResetOnMouseLeave:
+                    !isEditEngaged && !(onConfirm && onReset),
+                  ...draggingHandlers,
+                  enableRemoval,
+                  onRemoveAnnotation,
+                  onConfirm,
+                  onReset,
+                  onDeleteControlMouseEnter,
+                  onDeleteControlMouseLeave,
+                })}
+              </React.Fragment>
+            );
+          })}
+        </AnnotationEditChromeLayer>
+      )}
+
       {!overlayDisabled &&
         renderOverlay &&
         renderOverlay({
@@ -402,7 +466,7 @@ export function AnnotationLayout({
           annotation: value,
         })}
 
-      <AnnotationPointerPassthroughLayer>
+      <AnnotationPointerPassthroughLayer ref={passthroughLayerRef}>
         {annotations.map((annotation) => {
           const annotationId = annotation.data?.id;
 
@@ -412,8 +476,21 @@ export function AnnotationLayout({
             editModeIds?.includes(annotationId) || false;
           const isActive = getIsActive(annotation, topAnnotation);
           const isHovered = topAnnotation?.data?.id === annotationId;
+          const isDraggingThis =
+            isDragging && draggingAnnotationId === annotationId;
+          const hasPendingChangesThis = !!hasPendingChanges?.(annotationId);
+          const isEditEngaged =
+            focusAnnotationId != null && focusAnnotationId === annotationId;
+          const suppressContentForEditChrome =
+            enableEditing &&
+            !!draggableHighlightSlot &&
+            !!draggingHandlers &&
+            (isEditEngaged || isDraggingThis || hasPendingChangesThis);
           const showContent =
-            !contentDisabled && (isActive || isInEditMode) && contentSlot != null;
+            !contentDisabled &&
+            contentSlot != null &&
+            (isInEditMode ||
+              (isActive && !suppressContentForEditChrome));
           const showDelete = shouldShowBuiltInDeleteControl({
             enableRemoval,
             onRemoveAnnotation,
@@ -435,6 +512,8 @@ export function AnnotationLayout({
                 <AnnotationContentItem
                   annotationId={annotationId}
                   annotation={annotation}
+                  containerRef={passthroughLayerRef}
+                  onEngageEdit={engageEdit}
                   slot={contentSlot!}
                 />
               ) : null}
@@ -454,12 +533,20 @@ export function AnnotationLayout({
         {!editorDisabled &&
           value?.selection?.showEditor &&
           renderEditor &&
-          onChange &&
-          renderEditor({
-            annotation: value,
-            onChange,
-            onSubmit: onEditorSubmit,
-          })}
+          onChange && (
+            <AnnotationContentAnchor
+              annotation={value}
+              containerRef={passthroughLayerRef}
+              placement="auto"
+              offsetPx={16}
+            >
+              {renderEditor({
+                annotation: value,
+                onChange,
+                onSubmit: onEditorSubmit,
+              })}
+            </AnnotationContentAnchor>
+          )}
       </AnnotationPointerPassthroughLayer>
 
       {children}

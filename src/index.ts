@@ -36,6 +36,11 @@ export {
   deleteCornerBoxStyle,
 } from './components/DraggableComponents';
 export { AnnotationDeleteControl } from './components/AnnotationDeleteControl';
+export { AnnotationContentAnchor } from './components/AnnotationContentAnchor';
+export type {
+  AnnotationContentAnchorProps,
+  AnnotationContentAnchorPlacement,
+} from './components/AnnotationContentAnchor';
 export {
   buildDrawingCursor,
   buildDrawingCursorFromSvg,

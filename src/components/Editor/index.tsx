@@ -16,11 +16,7 @@ const fadeInScale = keyframes`
   }
 `
 
-type EditorPlacement = 'above' | 'below';
-
-const EDITOR_OFFSET_PX = 16;
-
-const Container = styled.div<{ $placement: EditorPlacement }>`
+const Container = styled.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -28,9 +24,7 @@ const Container = styled.div<{ $placement: EditorPlacement }>`
     0px 2px 2px 0px rgba(0, 0, 0, 0.14),
     0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
-  transform-origin: ${({ $placement }) =>
-    $placement === 'above' ? 'bottom left' : 'top left'};
-
+  transform-origin: top left;
   animation: ${fadeInScale} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
 `
@@ -50,45 +44,12 @@ const Editor: React.FC<EditorProps> = ({
   className = '',
   style = EMPTY_STYLE
 }) => {
-  const { geometry } = annotation;
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const [placement, setPlacement] = React.useState<EditorPlacement>('below');
-
-  React.useLayoutEffect(() => {
-    const editor = containerRef.current;
-    const annotationContainer = editor?.parentElement;
-
-    if (!editor || !annotationContainer || !geometry) return;
-
-    const containerRect = annotationContainer.getBoundingClientRect();
-    const editorHeight = editor.offsetHeight;
-    const annotationBottom = ((geometry.y ?? 0) + (geometry.height ?? 0)) / 100 * containerRect.height;
-    const nextPlacement = annotationBottom + EDITOR_OFFSET_PX + editorHeight > containerRect.height ? 'above' : 'below';
-
-    setPlacement(nextPlacement);
-  }, [geometry, annotation.data?.text]);
-
-  if (!geometry) return null;
-
-  const positionStyle: React.CSSProperties = placement === 'above'
-    ? {
-      bottom: `calc(${100 - (geometry.y ?? 0)}% + ${EDITOR_OFFSET_PX}px)`
-    }
-    : {
-      top: `calc(${(geometry.y ?? 0) + (geometry.height ?? 0)}% + ${EDITOR_OFFSET_PX}px)`
-    };
+  if (!annotation.geometry) return null;
 
   return (
     <Container
-      ref={containerRef}
       className={className}
-      $placement={placement}
-      style={{
-        position: 'absolute',
-        left: `${geometry.x ?? 0}%`,
-        ...positionStyle,
-        ...style
-      }}
+      style={style}
     >
       <TextEditor
         onChange={e => onChange({

@@ -100,10 +100,7 @@ function renderContent({ annotation }: RenderContentProps) {
         background: 'black',
         color: 'white',
         padding: 10,
-        position: 'absolute',
         fontSize: 12,
-        left: `${geometry.x}%`,
-        top: `${geometry.y + geometry.height}%`
       }}
     >
       <div>Custom Content</div>
@@ -122,9 +119,6 @@ function renderEditor(props: RenderEditorProps) {
       style={{
         background: 'white',
         borderRadius: 3,
-        position: 'absolute',
-        left: `${geometry.x}%`,
-        top: `${geometry.y + geometry.height}%`,
       }}
     >
       <div>Custom Editor</div>

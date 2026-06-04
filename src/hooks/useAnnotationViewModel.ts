@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHoveredAnnotation } from './useHoveredAnnotation';
+import { useInteractionFocus } from './useInteractionFocus';
 import { useSelectorMethods } from './useSelectorMethods';
 import { useDragging } from './useDragging';
 import { usePinnedControlsHover } from './usePinnedControlsHover';
@@ -77,17 +78,10 @@ export function useAnnotationViewModel(
   const internalImageRef = useRef<HTMLImageElement>(null);
   const targetRef = useRef<HTMLDivElement>(null);
 
-  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } =
-    useHoveredAnnotation({
-      targetRef: targetRef as React.RefObject<HTMLElement>,
-      imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
-      annotations,
-      selectors,
-      enableEditing,
-      throttleMs: 50,
-    });
-
   const previewMode = !!(onConfirm && onReset);
+  const isDrawing = value?.selection?.mode === 'SELECTING';
+  const isCreationEditorOpen = !!value?.selection?.showEditor;
+  const showContentOnHover = !disableContent && !!renderContent;
 
   const {
     isDragging,
@@ -108,6 +102,41 @@ export function useAnnotationViewModel(
     previewMode,
   });
 
+  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } =
+    useHoveredAnnotation({
+      targetRef: targetRef as React.RefObject<HTMLElement>,
+      imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
+      annotations,
+      selectors,
+      enableEditing,
+      suppressHover: isDrawing || isCreationEditorOpen,
+      throttleMs: 50,
+    });
+
+  const {
+    effectiveTopAnnotation,
+    focusAnnotationId,
+    clearEditingSession,
+    engageEdit,
+    onContainerMouseLeave: clearEditingSessionOnLeave,
+  } = useInteractionFocus({
+    enableEditing,
+    isDrawing,
+    isCreationEditorOpen,
+    isDragging,
+    draggingAnnotationId,
+    hasPendingChanges,
+    annotations,
+    hoveredAnnotation,
+    lockEditSessionOnHover: !showContentOnHover,
+  });
+
+  useEffect(() => {
+    if (isDragging && draggingAnnotationId != null) {
+      engageEdit(draggingAnnotationId);
+    }
+  }, [isDragging, draggingAnnotationId, engageEdit]);
+
   const draggingHandlers = useMemo(
     () => ({
       onDotDragStart,
@@ -123,21 +152,21 @@ export function useAnnotationViewModel(
     (annotationId: string | number) => {
       handleConfirm(annotationId);
       onConfirm?.(annotationId);
+      clearEditingSession();
     },
-    [handleConfirm, onConfirm]
+    [handleConfirm, onConfirm, clearEditingSession]
   );
 
   const handleResetWithCallback = useCallback(
     (annotationId: string | number) => {
       handleReset(annotationId);
       onReset?.(annotationId);
+      clearEditingSession();
     },
-    [handleReset, onReset]
+    [handleReset, onReset, clearEditingSession]
   );
 
   const effectiveType = type || selectors[0]?.TYPE;
-
-  const isDrawing = value?.selection?.mode === 'SELECTING';
 
   const applyDrawingCursorToTarget = useCallback(
     (cursor: string) => {
@@ -272,8 +301,9 @@ export function useAnnotationViewModel(
   const handleTargetMouseLeave = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       hoveredMouseHandlers.onMouseLeave(e.nativeEvent);
+      clearEditingSessionOnLeave();
     },
-    [hoveredMouseHandlers]
+    [hoveredMouseHandlers, clearEditingSessionOnLeave]
   );
 
   const handleInteractionTargetMouseUp = useCallback(
@@ -303,6 +333,24 @@ export function useAnnotationViewModel(
         applyDrawingCursorToTarget(drawingCursor);
         document.body.style.cursor = drawingCursor;
       }
+
+      const isCreatingNew =
+        value?.selection?.mode === 'SELECTING' || !!value?.selection?.showEditor;
+      const existingId = effectiveTopAnnotation?.data?.id;
+      const pointerOverExisting =
+        enableEditing &&
+        !isCreatingNew &&
+        !isCreationEditorOpen &&
+        existingId != null;
+
+      if (pointerOverExisting) {
+        if (showContentOnHover) {
+          engageEdit(existingId);
+        }
+        onImageMouseDown?.(e);
+        return;
+      }
+
       onImageMouseDown?.(e);
       callSelectorMethod('onMouseDown', e);
     },
@@ -310,6 +358,13 @@ export function useAnnotationViewModel(
       drawingCursor,
       disableAnnotation,
       applyDrawingCursorToTarget,
+      enableEditing,
+      showContentOnHover,
+      effectiveTopAnnotation?.data?.id,
+      isCreationEditorOpen,
+      value?.selection?.mode,
+      value?.selection?.showEditor,
+      engageEdit,
       onImageMouseDown,
       callSelectorMethod,
     ]
@@ -351,13 +406,13 @@ export function useAnnotationViewModel(
     }
   }, [value?.selection?.showEditor, handleKeyDown]);
 
-  const topAnnotationAtMouse = hoveredAnnotation;
+  const topAnnotationAtMouse = effectiveTopAnnotation;
 
   const {
     pinnedControlsId,
     onDeleteControlMouseEnter,
     onDeleteControlMouseLeave,
-  } = usePinnedControlsHover(hoveredAnnotation);
+  } = usePinnedControlsHover(effectiveTopAnnotation);
 
   const shouldAnnotationBeActive = useCallback(
     (annotation: AnnotationType, topAnnotation?: AnnotationType): boolean => {
@@ -401,7 +456,10 @@ export function useAnnotationViewModel(
       overlayDisabled: !!disableOverlay,
       editorDisabled: !!disableEditor || (enableEditing && isDragging),
       contentDisabled: !!disableContent,
-      hitTestingDisabled: !!disableHitTesting || (enableEditing && isDragging),
+      hitTestingDisabled:
+        !!disableHitTesting ||
+        (enableEditing && isDragging) ||
+        isCreationEditorOpen,
       enableEditing,
       drawingCursor,
       disableAnnotation,
@@ -417,6 +475,10 @@ export function useAnnotationViewModel(
       hasPendingChanges,
       getEffectiveAnnotation: enableEditing ? getEffectiveAnnotation : undefined,
       draggingHandlers: enableEditing ? draggingHandlers : undefined,
+      focusAnnotationId,
+      showContentOnHover,
+      engageEdit:
+        enableEditing && showContentOnHover ? engageEdit : undefined,
       onConfirm: enableEditing ? handleConfirmWithCallback : undefined,
       onReset: enableEditing ? handleResetWithCallback : undefined,
       enableRemoval,

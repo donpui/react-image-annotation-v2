@@ -9,6 +9,9 @@ import {
 import { deleteCornerBoxStyle } from '../DraggableComponents/deleteButtonPosition';
 import type { RenderDraggableHighlightProps } from '../../types/core';
 
+/** Padding around box bounds so moving to handles / ✓ ✕ does not count as "outside". */
+const EDIT_CHROME_HIT_PAD_PX = 36;
+
 /** Tint + handles only; passive `renderHighlight` draws outline so custom borders stay intact. */
 const BoxContainer = styled.div`
   position: absolute;
@@ -37,6 +40,7 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
   onReset,
   onDeleteControlMouseEnter,
   onDeleteControlMouseLeave,
+  allowResetOnMouseLeave = true,
 }) => {
   const { geometry } = annotation;
   const annotationId = annotation.data?.id;
@@ -45,7 +49,13 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     (isDragging || hasPendingChanges) && onConfirm && onReset;
 
   useEffect(() => {
-    if (isDragging || hasPendingChanges || !onReset || annotationId == null) {
+    if (
+      !allowResetOnMouseLeave ||
+      isDragging ||
+      hasPendingChanges ||
+      !onReset ||
+      annotationId == null
+    ) {
       return;
     }
 
@@ -56,11 +66,12 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
       const boxRect = box.getBoundingClientRect();
       const { clientX, clientY } = event;
 
+      const pad = EDIT_CHROME_HIT_PAD_PX;
       if (
-        clientX < boxRect.left ||
-        clientX > boxRect.right ||
-        clientY < boxRect.top ||
-        clientY > boxRect.bottom
+        clientX < boxRect.left - pad ||
+        clientX > boxRect.right + pad ||
+        clientY < boxRect.top - pad ||
+        clientY > boxRect.bottom + pad
       ) {
         onReset(annotationId);
       }
@@ -70,7 +81,13 @@ export const DraggableBox: React.FC<DraggableBoxProps> = ({
     return () => {
       document.removeEventListener('mousemove', handleMouseMoveOutside);
     };
-  }, [isDragging, hasPendingChanges, onReset, annotationId]);
+  }, [
+    allowResetOnMouseLeave,
+    isDragging,
+    hasPendingChanges,
+    onReset,
+    annotationId,
+  ]);
 
   if (
     !geometry ||

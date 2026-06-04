@@ -160,12 +160,7 @@ const ThreadedEditor: React.FC<ThreadedEditorProps> = ({ annotation, onChange, o
   return (
     <EditorContainer
       className={className}
-      style={{
-        position: 'absolute',
-        left: `${geometry.x}%`,
-        top: `${(geometry.y ?? 0) + (geometry.height ?? 0)}%`,
-        ...style
-      }}
+      style={style}
     >
       <TextEditor
         onChange={onUpdateText}
@@ -189,14 +184,7 @@ const ThreadedContent: React.FC<ThreadedContentProps> = ({ annotation, annotatio
 
   return (
     <React.Fragment>
-      <Content
-        key={data.id}
-        style={{
-          position: 'absolute',
-          left: `${geometry.x}%`,
-          top: `${(geometry.y ?? 0) + (geometry.height ?? 0)}%`
-        }}
-      >
+      <Content key={data.id}>
         <ContentClearanceTop />
         <ContentClearanceLeft />
         <ContentClearanceRight />

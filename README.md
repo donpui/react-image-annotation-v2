@@ -140,7 +140,7 @@ The component stacks several absolutely positioned layers over the image:
 
 1. **`renderHighlight`** — visual outline for every annotation (inside a `pointer-events: none` wrapper). Use for shapes, borders, and passive styling only.
 2. **Interaction target** — full-size layer for creating new annotations and hover hit-testing. Set `disableHitTesting` when custom content owns all pointer interaction.
-3. **`renderContent`** — shown only for the active annotation (hover or `activeAnnotations` / `editModeAnnotationIds`). Put buttons, drag handles, and other controls here with `pointer-events: auto` on the elements that need clicks.
+3. **`renderContent`** — shown only for the active annotation (hover or `activeAnnotations` / `editModeAnnotationIds`). Put buttons, drag handles, and other controls here with `pointer-events: auto` on the elements that need clicks. The layout wraps `renderContent` in `AnnotationContentAnchor`, which positions the panel below the box and shifts it horizontally so it stays inside the image — do not set `position: absolute` with geometry-based `left`/`top` on your content (use margins/padding on the inner card instead). For fully custom trees outside `<Annotation />`, import `AnnotationContentAnchor` from the package.
 
 `disableEditor` only hides the built-in creation editor; it does **not** control hover hit areas. Use `enableEditing` for the library’s expanded rectangle hit testing when using built-in drag/resize editing.
 

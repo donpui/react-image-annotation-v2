@@ -137,6 +137,8 @@ export interface RenderDraggableHighlightProps
   onRemoveAnnotation?: OnRemoveAnnotation;
   onConfirm?: (annotationId: string | number) => void;
   onReset?: (annotationId: string | number) => void;
+  /** When false, moving outside the box does not call onReset (used during interaction lock). */
+  allowResetOnMouseLeave?: boolean;
 }
 
 // Component prop interfaces

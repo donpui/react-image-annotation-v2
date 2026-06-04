@@ -9,6 +9,8 @@ interface UseHoveredAnnotationProps {
   annotations: Annotation[];
   selectors: any[];
   enableEditing?: boolean;
+  /** Skip hit-testing while drawing a new annotation. */
+  suppressHover?: boolean;
   throttleMs?: number;
 }
 
@@ -32,6 +34,7 @@ export function useHoveredAnnotation({
   annotations,
   selectors,
   enableEditing,
+  suppressHover = false,
   throttleMs = 50, // Increase throttle to reduce frequency
 }: UseHoveredAnnotationProps): UseHoveredAnnotationReturn {
   const [hoveredAnnotation, setHoveredAnnotation] = useState<Annotation | undefined>(undefined);
@@ -48,6 +51,15 @@ export function useHoveredAnnotation({
 
   // Callback to handle position changes and update hovered annotation
   const handlePositionChange = useCallback((position: { x: number | null; y: number | null }) => {
+    if (suppressHover) {
+      if (lastHoveredIdRef.current != null) {
+        lastHoveredIdRef.current = undefined;
+        lastHoveredAnnotationRef.current = undefined;
+        setHoveredAnnotation(undefined);
+      }
+      return;
+    }
+
     const { x, y } = position;
     const newHoveredAnnotation = getTopAnnotationAt(x, y);
     const newHoveredId = newHoveredAnnotation?.data?.id;
@@ -58,7 +70,7 @@ export function useHoveredAnnotation({
       lastHoveredAnnotationRef.current = newHoveredAnnotation;
       setHoveredAnnotation(newHoveredAnnotation);
     }
-  }, [getTopAnnotationAt]);
+  }, [getTopAnnotationAt, suppressHover]);
 
   // Use the optimized mouse position hook with our callback
   const { handlers } = useRelativeMousePosition(targetRef, {

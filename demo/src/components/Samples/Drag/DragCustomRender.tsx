@@ -65,12 +65,8 @@ const renderContent = ({ key, annotation }: RenderContentProps) => {
     <ContentCard
       key={key}
       style={{
-        position: 'absolute',
-        left: `${geometry.x}%`,
-        top: `${geometry.y + geometry.height}%`,
-        marginTop: 6,
+        marginTop: 0,
         marginLeft: 4,
-        zIndex: 25,
       }}
     >
       <strong style={{ color: '#38bdf8' }}>renderContent</strong>
@@ -148,7 +144,8 @@ const DragCustomRender: React.FC = () => {
         Uses <code>renderHighlight</code> for teal borders and{' '}
         <code>renderContent</code> for the dark card when active.{' '}
         <code>enableEditing</code> draws the draggable layer on top (tint + handles + ✓ ✕){' '}
-        without replacing those renderers.
+        without replacing those renderers. Hover for the label card; click the rectangle or
+        card to show move/resize handles (✓/✕). Click empty image area to draw a new one.
       </p>
       <div className="annotation-container" style={{ position: 'relative' }}>
         <Annotation

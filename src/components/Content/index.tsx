@@ -33,9 +33,8 @@ function Content ({
   return (
     <Container
       style={{
-        position: 'absolute',
-        left: `${geometry.x}%`,
-        top: `${geometry.y + geometry.height}%`,
+        marginTop: 8,
+        marginLeft: 8,
         ...style
       }}
       className={className}
