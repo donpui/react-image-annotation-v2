@@ -2,7 +2,7 @@
 import Annotation from './components/Annotation';
 
 // Selectors
-import { RectangleSelector, PointSelector, OvalSelector } from './selectors';
+import { RectangleSelector, PointSelector, OvalSelector, PolygonSelector } from './selectors';
 
 
 // Custom hooks (React 19 patterns)
@@ -19,10 +19,12 @@ export type * from './types/core';
 export {
   Annotation,
   RectangleSelector,
-  PointSelector, 
+  PointSelector,
   OvalSelector,
+  PolygonSelector,
 };
 
+export { default as Polygon } from './components/Polygon';
 export { DraggableBox } from './components/DraggableBox';
 export {
   DraggableDot,
