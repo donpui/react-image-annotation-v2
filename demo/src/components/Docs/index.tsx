@@ -103,7 +103,8 @@ const Docs: FC = () => (
     <p>
       Use <code>PolygonSelector</code> to draw free-form polygons by clicking to place
       points. Supports 3–50 points. Double-click or click the first point (turns green on
-      hover) to close. Press <kbd>Esc</kbd> to cancel.
+      hover) to close. Press <kbd>Esc</kbd> to cancel. The example below loads with one
+      completed five-point polygon by default.
     </p>
     <ExampleContainer>
       <MultiPoints />

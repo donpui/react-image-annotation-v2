@@ -1,6 +1,7 @@
 import React from 'react';
 
 const CLOSE_THRESHOLD_PCT = 3;
+const DOT_SIZE_PX = 10;
 
 interface PointData {
   x: number;
@@ -55,6 +56,18 @@ function Polygon({ annotation, className, style, active }: PolygonProps) {
   const svgPointsStr = points.map(p => `${p.x},${p.y}`).join(' ');
 
   return (
+    <div
+      className={className}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        ...style,
+      }}
+    >
     <svg
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
@@ -64,11 +77,9 @@ function Polygon({ annotation, className, style, active }: PolygonProps) {
         left: 0,
         width: '100%',
         height: '100%',
-        pointerEvents: 'none',
         overflow: 'visible',
-        ...style,
+        pointerEvents: 'none',
       }}
-      className={className}
     >
       {/* Completed polygon fill */}
       {!isCollecting && points.length >= 3 && (
@@ -124,24 +135,38 @@ function Polygon({ annotation, className, style, active }: PolygonProps) {
         />
       )}
 
-      {/* Point dots */}
-      {points.map((point, i) => {
+    </svg>
+
+      {/* Point dots — HTML so they stay circular when SVG is non-uniformly scaled */}
+      {isCollecting &&
+        points.map((point, i) => {
         const isFirst = i === 0;
         const isHighlighted = isFirst && isCursorNearFirst;
         return (
-          <circle
+          <div
             key={i}
-            cx={point.x}
-            cy={point.y}
-            r="0.8"
-            fill={isHighlighted ? 'rgba(0,180,0,0.9)' : isFirst ? 'white' : 'rgba(0,0,0,0.85)'}
-            stroke={isHighlighted ? 'white' : isFirst ? 'rgba(0,0,0,0.85)' : 'white'}
-            strokeWidth="1.5"
-            vectorEffect="non-scaling-stroke"
+            style={{
+              position: 'absolute',
+              left: `${point.x}%`,
+              top: `${point.y}%`,
+              width: DOT_SIZE_PX,
+              height: DOT_SIZE_PX,
+              transform: 'translate(-50%, -50%)',
+              borderRadius: '50%',
+              boxSizing: 'border-box',
+              backgroundColor: isHighlighted
+                ? 'rgba(0,180,0,0.9)'
+                : isFirst
+                  ? 'white'
+                  : 'rgba(0,0,0,0.85)',
+              border: `1.5px solid ${
+                isHighlighted ? 'white' : isFirst ? 'rgba(0,0,0,0.85)' : 'white'
+              }`,
+            }}
           />
         );
       })}
-    </svg>
+    </div>
   );
 }
 

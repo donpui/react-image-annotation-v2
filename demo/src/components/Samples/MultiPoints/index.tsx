@@ -11,8 +11,31 @@ import type {
 } from '../../../../../src/types/core';
 import img from '../../../img.jpeg';
 
+const initialAnnotations: AnnotationType[] = [
+  {
+    geometry: {
+      type: PolygonSelector.TYPE,
+      points: [
+        { x: 18, y: 22 },
+        { x: 52, y: 18 },
+        { x: 62, y: 48 },
+        { x: 38, y: 58 },
+        { x: 15, y: 42 },
+      ],
+      x: 15,
+      y: 18,
+      width: 47,
+      height: 40,
+    },
+    data: {
+      id: 'demo-polygon-1',
+      text: 'Sample polygon',
+    },
+  },
+];
+
 const MultiPoints: React.FC = () => {
-  const [annotations, setAnnotations] = useState<AnnotationType[]>([]);
+  const [annotations, setAnnotations] = useState<AnnotationType[]>(initialAnnotations);
   const [annotation, setAnnotation] = useState<AnnotationValue>({});
 
   const onChange = (value: AnnotationValue) => {
@@ -41,9 +64,9 @@ const MultiPoints: React.FC = () => {
     <div>
       <h3>Multi-point Polygon Annotation</h3>
       <p>
-        Click to place points (min 3, max {PolygonSelector.MAX_POINTS}). Double-click or click
-        the first point (highlighted in green) to close the polygon. Press <kbd>Esc</kbd> to
-        cancel.
+        One completed five-point polygon is shown by default. Click to place points (min 3,
+        max {PolygonSelector.MAX_POINTS}). Double-click or click the first point (highlighted
+        in green) to close the polygon. Press <kbd>Esc</kbd> to cancel.
       </p>
       {isCollecting && (
         <p style={{ color: '#555', fontSize: 13 }}>
