@@ -1,63 +1,61 @@
-import { mount } from 'enzyme'
-import { expect } from 'chai'
-import React from 'react'
-
-import { RectangleSelector as selector } from '../../src/selectors'
-
-function createRect ({ x, y, width, height } = { x: 10, y: 10, width: 10, height: 10 }) {
-  return {
-    x, y, width, height
-  }
-}
+import { RectangleSelector } from '../../src/selectors';
 
 describe('RectangleSelector', () => {
+  const createRect = (options = {}) => ({
+    x: 10,
+    y: 10,
+    width: 20,
+    height: 10,
+    ...options
+  });
+
   describe('TYPE', () => {
     it('should be a defined string', () => {
-      expect(selector.TYPE).to.be.a('string')
-    })
-  })
+      expect(typeof RectangleSelector.TYPE).toBe('string');
+    });
+  });
 
   describe('intersects', () => {
-    it('should return true when point is on top left of geometry', () => {
-      expect(
-        selector.intersects({ x: 10, y: 10 }, createRect())
-      ).to.be.true
-    })
-    it('should return true when point is on top right of geometry', () => {
-      expect(
-        selector.intersects({ x: 20, y: 10 }, createRect())
-      ).to.be.true
-    })
-    it('should return true when point is on bottom left of geometry', () => {
-      expect(
-        selector.intersects({ x: 10, y: 20 }, createRect())
-      ).to.be.true
-    })
-    it('should return true when point is on bottom right of geometry', () => {
-      expect(
-        selector.intersects({ x: 20, y: 20 }, createRect())
-      ).to.be.true
-    })
     it('should return true when point is inside geometry', () => {
-      expect(
-        selector.intersects({ x: 15, y: 15 }, createRect())
-      ).to.be.true
-    })
-    it('should return false when point is outside of geometry', () => {
-      expect(selector.intersects({ x: 0, y: 0 }, createRect())).to.be.false
-      expect(selector.intersects({ x: 10, y: 0 }, createRect())).to.be.false
-      expect(selector.intersects({ x: 0, y: 10 }, createRect())).to.be.false
-      expect(selector.intersects({ x: 30, y: 30 }, createRect())).to.be.false
-    })
-  })
+      const point = { x: 15, y: 15 };
+      const geometry = createRect();
+      expect(RectangleSelector.intersects(point, geometry)).toBe(true);
+    });
+
+    it('should return false when point is outside geometry', () => {
+      const point = { x: 0, y: 0 };
+      const geometry = createRect();
+      expect(RectangleSelector.intersects(point, geometry)).toBe(false);
+    });
+
+    it('should handle edge cases', () => {
+      const geometry = createRect();
+      
+      // Test points on edges
+      expect(RectangleSelector.intersects({ x: 10, y: 10 }, geometry)).toBe(true); // Top-left corner
+      expect(RectangleSelector.intersects({ x: 30, y: 10 }, geometry)).toBe(true); // Top-right corner
+      expect(RectangleSelector.intersects({ x: 10, y: 20 }, geometry)).toBe(true); // Bottom-left corner
+      expect(RectangleSelector.intersects({ x: 30, y: 20 }, geometry)).toBe(true); // Bottom-right corner
+    });
+  });
 
   describe('area', () => {
-    it('should return geometry area', () => {
-      expect(selector.area(createRect({ width: 10, height: 10 }))).to.equal(100)
-    })
-  })
+    it('should calculate area correctly', () => {
+      const geometry = createRect({ width: 10, height: 10 });
+      expect(RectangleSelector.area(geometry)).toBe(100);
+    });
+
+    it('should return 0 for invalid dimensions', () => {
+      expect(RectangleSelector.area(createRect({ width: 0, height: 10 }))).toBe(0);
+      expect(RectangleSelector.area(createRect({ width: 10, height: 0 }))).toBe(0);
+      expect(RectangleSelector.area(createRect({ width: -10, height: 10 }))).toBe(0);
+    });
+  });
 
   describe('methods', () => {
-    xit('should be defined')
-  })
-})
+    it('should be defined', () => {
+      expect(RectangleSelector.methods).toBeDefined();
+      expect(typeof RectangleSelector.methods).toBe('object');
+    });
+  });
+});

@@ -1,65 +1,70 @@
 {
-  "name": "react-image-annotation",
-  "version": "0.9.10",
-  "description": "react-image-annotation React component",
-  "author": "Arian Allenson Valdez <arianallensonv@gmail.com> (http://arianv.com/)",
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
-  ],
-  "scripts": {
-    "build": "nwb build-react-component",
-    "deploy": "gh-pages -d demo/dist",
-    "clean": "nwb clean-module && nwb clean-demo",
-    "start": "nwb serve-react-demo",
-    "test": "nwb test-react",
-    "test:coverage": "nwb test-react --coverage",
-    "test:watch": "nwb test-react --server"
-  },
-  "dependencies": {
-    "styled-components": "^3.1.6"
-  },
-  "peerDependencies": {
-    "prop-types": "^15.6.0",
-    "react": "^16.3",
-    "react-dom": ">=0.14"
-  },
-  "devDependencies": {
-    "chai": "^4.1.2",
-    "enzyme": "^3.3.0",
-    "enzyme-adapter-react-16": "^1.1.1",
-    "gh-pages": "^1.1.0",
-    "nwb": "0.21.x",
-    "raw-loader": "^0.5.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-router": "^4.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-syntax-highlighter": "^7.0.0",
-    "standard": "^10.0.3"
-  },
-  "standard": {
-    "env": [
-      "jest",
-      "jasmine"
-    ],
-    "globals": [
-      "fetch",
-      "URL"
-    ],
-    "parser": "babel-eslint"
-  },
-  "homepage": "",
-  "license": "MIT",
+  "name": "react-image-annotation-v2",
+  "version": "1.0.0",
+  "author": "Updated by Donatas, Original by Arian Allenson Valdez <arianallensonv@gmail.com> (http://arianv.com/)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Secretmapper/react-image-annotation"
+    "url": "https://github.com/donpui/react-image-annotation-v2"
   },
+  "main": "./dist/react-image-annotation-v2.cjs",
+  "module": "./dist/react-image-annotation-v2.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/react-image-annotation-v2.mjs",
+      "require": "./dist/react-image-annotation-v2.cjs",
+      "default": "./dist/react-image-annotation-v2.mjs"
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.5",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@vitejs/plugin-react": "^6.0.1",
+    "babel-jest": "^30.4.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "gh-pages": "^6.3.0",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "react": "^19.2.6",
+    "react-doctor": "latest",
+    "react-dom": "^19.2.6",
+    "react-router-dom": "^7.15.0",
+    "styled-components": "^6.4.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.12"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "styled-components": "^5.0.0 || ^6.0.0"
+  },
+  "description": "react-image-annotation React component",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "react-component"
-  ]
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "npm run clean && vite build && node scripts/prepare-package.mjs",
+    "deploy": "gh-pages -d demo/dist",
+    "clean": "rm -rf dist es lib umd demo/dist",
+    "start": "bun run build && vite --config vite.demo.config.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "doctor": "react-doctor "
+  }
 }

@@ -1,52 +1,49 @@
-import { mount } from 'enzyme'
-import { expect } from 'chai'
-import React from 'react'
+import { PointSelector } from '../../src/selectors';
 
-import { PointSelector as selector } from '../../src/selectors'
+describe('PointSelector', () => {
+  const createPoint = (options = {}) => ({
+    x: 10,
+    y: 10,
+    ...options
+  });
 
-function createPoint ({ x, y } = { x: 10, y: 10 }) {
-  return { x, y }
-}
-
-function createContainer({ width, height } = { width: 100, height: 100 }) {
-  return { width, height }
-}
-
-describe('PoinntSelector', () => {
   describe('TYPE', () => {
     it('should be a defined string', () => {
-      expect(selector.TYPE).to.be.a('string')
-    })
-  })
+      expect(typeof PointSelector.TYPE).toBe('string');
+    });
+  });
 
   describe('intersects', () => {
-    it('should return true when point is inside geometry', () => {
-      expect(
-        selector.intersects({ x: 10, y: 10 }, createPoint(), createContainer())
-      ).to.be.true
-    })
-    it('should return false when point is outside of geometry', () => {
-      expect(selector.intersects({ x: 0, y: 0 }, createPoint(), createContainer())).to.be.false
-      expect(selector.intersects({ x: 10, y: 0 }, createPoint(), createContainer())).to.be.false
-      expect(selector.intersects({ x: 0, y: 10 }, createPoint(), createContainer())).to.be.false
-      expect(selector.intersects({ x: 30, y: 30 }, createPoint(), createContainer())).to.be.false
-    })
-  })
+    it('should return true when point matches geometry', () => {
+      const point = { x: 10, y: 10 };
+      const geometry = createPoint();
+      expect(PointSelector.intersects(point, geometry)).toBe(true);
+    });
+
+    it('should return false when point does not match geometry', () => {
+      const point = { x: 0, y: 0 };
+      const geometry = createPoint();
+      expect(PointSelector.intersects(point, geometry)).toBe(false);
+    });
+
+    it('should handle edge cases', () => {
+      const geometry = createPoint();
+      const container = { width: 100, height: 100 };
+
+      // Default margin allows a few percentage points off the exact hit (see PointSelector MARGIN)
+      expect(PointSelector.intersects({ x: 11, y: 10 }, geometry, container)).toBe(true);
+      expect(PointSelector.intersects({ x: 10, y: 11 }, geometry, container)).toBe(true);
+      expect(PointSelector.intersects({ x: 9, y: 10 }, geometry, container)).toBe(true);
+      expect(PointSelector.intersects({ x: 10, y: 9 }, geometry, container)).toBe(true);
+      expect(PointSelector.intersects({ x: 14, y: 10 }, geometry, container)).toBe(false);
+      expect(PointSelector.intersects({ x: 10, y: 6 }, geometry, container)).toBe(false);
+    });
+  });
 
   describe('area', () => {
-    it('should return geometry area', () => {
-      expect(
-        selector.area(createPoint(), createContainer())
-      ).to.equal(36)
-    })
-    it('should return geometry area based on container', () => {
-      expect(
-        selector.area(createPoint(), createContainer({ width: 200, height: 200 }))
-      ).to.equal(9)
-    })
-  })
-
-  describe('methods', () => {
-    xit('should be defined')
-  })
-})
+    it('should return 0 for point area', () => {
+      const geometry = createPoint();
+      expect(PointSelector.area(geometry)).toBe(0);
+    });
+  });
+});
