@@ -418,9 +418,9 @@ function ne(e, t) {
 	e && (typeof e == "function" ? e(t) : e.current = t);
 }
 function re(e, r) {
-	let { src: o, alt: s = "Annotation Image", style: c, className: l, containerRef: u, imageRef: d, annotations: f, type: p, selectors: m, value: h, onChange: g, onSubmit: _, activeAnnotationComparator: v, activeAnnotations: y, editModeAnnotationIds: b, disableAnnotation: w, drawingCursor: T, disableSelector: re, disableEditor: E, disableOverlay: D, disableContent: ie, disableHitTesting: ae, allowTouch: O, enableEditing: k = !1, onAnnotationsChange: oe, renderSelector: se, renderEditor: ce, renderHighlight: le, renderDraggableHighlight: ue, renderContent: de, renderOverlay: fe, enableRemoval: A, onRemoveAnnotation: pe, canRemoveAnnotation: me, renderDelete: j, onConfirm: M, onReset: he, onImageMouseUp: N, onImageMouseDown: ge, onImageMouseMove: _e, onImageClick: P, onImageLoad: ve, onImageError: ye } = e, F = a(null), I = a(null), L = !!(M && he), R = h?.selection?.mode === "SELECTING" || h?.selection?.mode === "COLLECTING_POINTS", z = !!h?.selection?.showEditor, B = !ie && !!de, { isDragging: V, draggingAnnotationId: H, hasPendingChanges: be, onDotDragStart: U, onDotDrag: xe, onMoveStart: Se, onMove: W, onDragEnd: Ce, handleConfirm: we, handleReset: Te, getEffectiveAnnotation: Ee } = ee({
+	let { src: o, alt: s = "Annotation Image", style: c, className: l, containerRef: u, imageRef: d, annotations: f, type: p, selectors: m, value: h, onChange: g, onSubmit: _, activeAnnotationComparator: v, activeAnnotations: y, editModeAnnotationIds: b, disableAnnotation: w, drawingCursor: T, disableSelector: re, disableEditor: ie, disableOverlay: E, disableContent: ae, disableHitTesting: oe, allowTouch: D, enableEditing: O = !1, onAnnotationsChange: se, renderSelector: ce, renderEditor: le, renderHighlight: ue, renderDraggableHighlight: de, renderContent: fe, renderOverlay: pe, enableRemoval: me, onRemoveAnnotation: he, canRemoveAnnotation: ge, renderDelete: k, onConfirm: A, onReset: _e, onImageMouseUp: ve, onImageMouseDown: j, onImageMouseMove: M, onImageClick: N, onImageLoad: P, onImageError: ye } = e, F = a(null), I = a(null), L = !!(A && _e), R = h?.selection?.mode === "SELECTING" || h?.selection?.mode === "COLLECTING_POINTS", z = !!h?.selection?.showEditor, B = !ae && !!fe, { isDragging: V, draggingAnnotationId: H, hasPendingChanges: be, onDotDragStart: U, onDotDrag: xe, onMoveStart: Se, onMove: Ce, onDragEnd: W, handleConfirm: we, handleReset: Te, getEffectiveAnnotation: Ee } = ee({
 		annotations: f,
-		onAnnotationsChange: oe,
+		onAnnotationsChange: se,
 		imageRef: F,
 		previewMode: L
 	}), { hoveredAnnotation: De, mouseHandlers: G } = x({
@@ -428,11 +428,11 @@ function re(e, r) {
 		imageRef: F,
 		annotations: f,
 		selectors: m,
-		enableEditing: k,
+		enableEditing: O,
 		suppressHover: R || z,
 		throttleMs: 50
-	}), { effectiveTopAnnotation: Oe, focusAnnotationId: ke, clearEditingSession: K, engageEdit: q, onContainerMouseLeave: Ae } = S({
-		enableEditing: k,
+	}), { effectiveTopAnnotation: Oe, focusAnnotationId: ke, clearEditingSession: Ae, engageEdit: K, onContainerMouseLeave: je } = S({
+		enableEditing: O,
 		isDrawing: R,
 		isCreationEditorOpen: z,
 		isDragging: V,
@@ -443,39 +443,39 @@ function re(e, r) {
 		lockEditSessionOnHover: !B
 	});
 	n(() => {
-		V && H != null && q(H);
+		V && H != null && K(H);
 	}, [
 		V,
 		H,
-		q
+		K
 	]);
-	let J = i(() => ({
+	let Me = i(() => ({
 		onDotDragStart: U,
 		onDotDrag: xe,
 		onMoveStart: Se,
-		onMove: W,
-		onDragEnd: Ce
+		onMove: Ce,
+		onDragEnd: W
 	}), [
 		U,
 		xe,
 		Se,
-		W,
-		Ce
-	]), je = t((e) => {
-		we(e), M?.(e), K();
+		Ce,
+		W
+	]), q = t((e) => {
+		we(e), A?.(e), Ae();
 	}, [
 		we,
-		M,
-		K
-	]), Me = t((e) => {
-		Te(e), he?.(e), K();
+		A,
+		Ae
+	]), Ne = t((e) => {
+		Te(e), _e?.(e), Ae();
 	}, [
 		Te,
-		he,
-		K
-	]), Ne = p || m[0]?.TYPE, Pe = t((e) => {
+		_e,
+		Ae
+	]), Pe = p || m[0]?.TYPE, Fe = t((e) => {
 		I.current && (I.current.style.cursor = e);
-	}, []), Fe = t(() => {
+	}, []), Ie = t(() => {
 		I.current && I.current.style.removeProperty("cursor");
 	}, []);
 	n(() => {
@@ -488,33 +488,33 @@ function re(e, r) {
 			document.body.style.cursor = e;
 		};
 	}, [T, R]);
-	let { callSelectorMethod: Y } = C({
+	let { callSelectorMethod: J } = C({
 		selectors: m,
-		effectiveType: Ne,
+		effectiveType: Pe,
 		value: h,
 		onChange: g,
 		disableAnnotation: w
-	}), Ie = t((e) => {
-		navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && O && e.preventDefault(), Y("onTouchStart", e);
-	}, [O, Y]), Le = t((e) => {
-		Y("onTouchEnd", e);
-	}, [Y]), Re = t((e) => {
-		G.onTouchMove(e), navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && O && e.preventDefault(), Y("onTouchMove", e);
+	}), Y = t((e) => {
+		navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && D && e.preventDefault(), J("onTouchStart", e);
+	}, [D, J]), Le = t((e) => {
+		J("onTouchEnd", e);
+	}, [J]), Re = t((e) => {
+		G.onTouchMove(e), navigator.userAgent.toLowerCase().includes("safari") && !navigator.userAgent.toLowerCase().includes("chrome") && D && e.preventDefault(), J("onTouchMove", e);
 	}, [
 		G,
-		O,
-		Y
+		D,
+		J
 	]), ze = t((e) => {
 		G.onTouchLeave(e);
 	}, [G]);
 	n(() => {
 		let e = I.current;
-		if (!(!O || !e)) return e.ontouchstart = Ie, e.ontouchend = Le, e.ontouchmove = Re, e.ontouchcancel = ze, () => {
+		if (!(!D || !e)) return e.ontouchstart = Y, e.ontouchend = Le, e.ontouchmove = Re, e.ontouchcancel = ze, () => {
 			e.ontouchstart = null, e.ontouchend = null, e.ontouchmove = null, e.ontouchcancel = null;
 		};
 	}, [
-		O,
-		Ie,
+		D,
+		Y,
 		Le,
 		Re,
 		ze
@@ -526,46 +526,46 @@ function re(e, r) {
 	}, []), He = t((e) => {
 		ne(u, e);
 	}, [u]), Ue = t((e) => {
-		G.onMouseMove(e.nativeEvent), _e?.(e), Y("onMouseMove", e);
+		G.onMouseMove(e.nativeEvent), M?.(e), J("onMouseMove", e);
 	}, [
 		G,
-		_e,
-		Y
-	]), X = t((e) => {
-		G.onMouseLeave(e.nativeEvent), Ae();
-	}, [G, Ae]), We = t((e) => {
-		N?.(e), Y("onMouseUp", e), T && !w && (Fe(), R || document.body.style.removeProperty("cursor"));
+		M,
+		J
+	]), We = t((e) => {
+		G.onMouseLeave(e.nativeEvent), je();
+	}, [G, je]), X = t((e) => {
+		ve?.(e), J("onMouseUp", e), T && !w && (Ie(), R || document.body.style.removeProperty("cursor"));
 	}, [
-		N,
-		Y,
+		ve,
+		J,
+		T,
+		w,
+		Ie,
+		R
+	]), Ge = t((e) => {
+		T && !w && (Fe(T), document.body.style.cursor = T);
+		let t = h?.selection?.mode === "SELECTING" || h?.selection?.mode === "COLLECTING_POINTS" || !!h?.selection?.showEditor, n = Oe?.data?.id;
+		if (O && !t && !z && n != null) {
+			B && K(n), j?.(e);
+			return;
+		}
+		j?.(e), J("onMouseDown", e);
+	}, [
 		T,
 		w,
 		Fe,
-		R
-	]), Ge = t((e) => {
-		T && !w && (Pe(T), document.body.style.cursor = T);
-		let t = h?.selection?.mode === "SELECTING" || h?.selection?.mode === "COLLECTING_POINTS" || !!h?.selection?.showEditor, n = Oe?.data?.id;
-		if (k && !t && !z && n != null) {
-			B && q(n), ge?.(e);
-			return;
-		}
-		ge?.(e), Y("onMouseDown", e);
-	}, [
-		T,
-		w,
-		Pe,
-		k,
+		O,
 		B,
 		Oe?.data?.id,
 		z,
 		h?.selection?.mode,
 		h?.selection?.showEditor,
-		q,
-		ge,
-		Y
+		K,
+		j,
+		J
 	]), Ke = t((e) => {
-		P?.(e), Y("onClick", e);
-	}, [P, Y]), qe = t(() => {
+		N?.(e), J("onClick", e);
+	}, [N, J]), qe = t(() => {
 		_ && h && _(h);
 	}, [_, h]), Je = t((e) => {
 		e.key === "Escape" && g && (h?.selection?.showEditor || h?.geometry) && g({
@@ -581,7 +581,7 @@ function re(e, r) {
 		h?.selection?.mode,
 		Je
 	]);
-	let Ye = Oe, { pinnedControlsId: Xe, onDeleteControlMouseEnter: Ze, onDeleteControlMouseLeave: Qe } = te(Oe), Z = t((e, t) => {
+	let Ye = Oe, { pinnedControlsId: Xe, onDeleteControlMouseEnter: Ze, onDeleteControlMouseLeave: Qe } = te(Oe), $e = t((e, t) => {
 		let n = e.data?.id;
 		return n != null && Xe != null && n === Xe ? !0 : y && y.some((t) => v ? v(e, t) : e.data.id === t) || t === e;
 	}, [
@@ -593,7 +593,7 @@ function re(e, r) {
 		setContainerRef: He,
 		style: c,
 		className: l,
-		onContainerMouseLeave: X,
+		onContainerMouseLeave: We,
 		onContainerTouchCancel: ze,
 		onContainerMouseMove: Ue,
 		setImageRef: Be,
@@ -601,35 +601,35 @@ function re(e, r) {
 		alt: s,
 		annotations: f,
 		layoutOptions: {
-			touchEnabled: O,
-			selectorDisabled: !!re || k && V,
-			overlayDisabled: !!D,
-			editorDisabled: !!E || k && V,
-			contentDisabled: !!ie,
-			hitTestingDisabled: !!ae || k && V || z,
-			enableEditing: k,
+			touchEnabled: D,
+			selectorDisabled: !!re || O && V,
+			overlayDisabled: !!E,
+			editorDisabled: !!ie || O && V,
+			contentDisabled: !!ae,
+			hitTestingDisabled: !!oe || O && V || z,
+			enableEditing: O,
 			drawingCursor: T,
 			disableAnnotation: w
 		},
-		onImageLoad: ve,
+		onImageLoad: P,
 		onImageError: ye,
 		annotationState: {
-			getIsActive: Z,
+			getIsActive: $e,
 			topAnnotation: Ye,
 			editModeIds: b,
 			isDragging: V,
 			draggingAnnotationId: H,
 			hasPendingChanges: be,
-			getEffectiveAnnotation: k ? Ee : void 0,
-			draggingHandlers: k ? J : void 0,
+			getEffectiveAnnotation: O ? Ee : void 0,
+			draggingHandlers: O ? Me : void 0,
 			focusAnnotationId: ke,
 			showContentOnHover: B,
-			engageEdit: k && B ? q : void 0,
-			onConfirm: k ? je : void 0,
-			onReset: k ? Me : void 0,
-			enableRemoval: A,
-			onRemoveAnnotation: pe,
-			canRemoveAnnotation: me,
+			engageEdit: O && B ? K : void 0,
+			onConfirm: O ? q : void 0,
+			onReset: O ? Ne : void 0,
+			enableRemoval: me,
+			onRemoveAnnotation: he,
+			canRemoveAnnotation: ge,
 			onDeleteControlMouseEnter: Ze,
 			onDeleteControlMouseLeave: Qe
 		},
@@ -637,25 +637,25 @@ function re(e, r) {
 		isDrawing: R,
 		setTargetRef: Ve,
 		onInteractionTargetClick: Ke,
-		onInteractionTargetMouseUp: We,
+		onInteractionTargetMouseUp: X,
 		onInteractionTargetMouseDown: Ge,
-		effectiveType: Ne,
+		effectiveType: Pe,
 		onChange: g,
 		onEditorSubmit: qe,
 		renderSlots: {
-			renderHighlight: le,
-			renderDraggableHighlight: ue,
-			renderSelector: se,
-			renderOverlay: fe,
-			renderContent: de,
-			renderEditor: ce,
-			renderDelete: j
+			renderHighlight: ue,
+			renderDraggableHighlight: de,
+			renderSelector: ce,
+			renderOverlay: pe,
+			renderContent: fe,
+			renderEditor: le,
+			renderDelete: k
 		}
 	};
 }
 //#endregion
 //#region src/components/Point/index.tsx
-var E = s.div`
+var ie = s.div`
   border: solid 3px white;
   border-radius: 50%;
   box-sizing: border-box;
@@ -668,16 +668,16 @@ var E = s.div`
   transform: translate3d(-50%, -50%, 0);
   width: 16px;
 `;
-function D(e) {
+function E(e) {
 	let { geometry: t } = e.annotation;
-	return t ? /* @__PURE__ */ u(E, { style: {
+	return t ? /* @__PURE__ */ u(ie, { style: {
 		top: `${t.y}%`,
 		left: `${t.x}%`
 	} }) : null;
 }
 //#endregion
 //#region src/components/TextEditor/index.tsx
-var ie = s.div`
+var ae = s.div`
   padding: 8px 16px;
 
   textarea {
@@ -687,7 +687,7 @@ var ie = s.div`
     min-height: 60px;
     outline: 0;
   }
-`, ae = s.div`
+`, oe = s.div`
   background: whitesmoke;
   border: 0;
   box-sizing: border-box;
@@ -706,22 +706,22 @@ var ie = s.div`
   &:focus, &:hover {
     background: #eeeeee;
   }
-`, O = ({ onChange: t, onSubmit: n, onFocus: r, onBlur: i, value: a }) => {
+`, D = ({ onChange: t, onSubmit: n, onFocus: r, onBlur: i, value: a }) => {
 	let o = e.useRef(null);
 	return e.useEffect(() => {
 		o.current?.focus({ preventScroll: !0 });
-	}, []), /* @__PURE__ */ d(e.Fragment, { children: [/* @__PURE__ */ u(ie, { children: /* @__PURE__ */ u("textarea", {
+	}, []), /* @__PURE__ */ d(e.Fragment, { children: [/* @__PURE__ */ u(ae, { children: /* @__PURE__ */ u("textarea", {
 		ref: o,
 		placeholder: "Write description",
 		onFocus: r,
 		onBlur: i,
 		onChange: t,
 		value: a
-	}) }), a && /* @__PURE__ */ u(ae, {
+	}) }), a && /* @__PURE__ */ u(oe, {
 		onClick: n,
 		children: "Save description"
 	})] });
-}, k = {}, oe = {}, se = c`
+}, O = {}, se = {}, ce = c`
   from {
     opacity: 0;
     transform: scale(0);
@@ -731,7 +731,7 @@ var ie = s.div`
     opacity: 1;
     transform: scale(1);
   }
-`, ce = s.div`
+`, le = s.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -740,12 +740,12 @@ var ie = s.div`
     0px 3px 1px -2px rgba(0, 0, 0, 0.12);
   pointer-events: auto;
   transform-origin: top left;
-  animation: ${se} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: ${ce} 0.31s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
-`, le = ({ annotation: e, onChange: t, onSubmit: n, className: r = "", style: i = k }) => e.geometry ? /* @__PURE__ */ u(ce, {
+`, ue = ({ annotation: e, onChange: t, onSubmit: n, className: r = "", style: i = O }) => e.geometry ? /* @__PURE__ */ u(le, {
 	className: r,
 	style: i,
-	children: /* @__PURE__ */ u(O, {
+	children: /* @__PURE__ */ u(D, {
 		onChange: (n) => t({
 			...e,
 			data: {
@@ -756,38 +756,38 @@ var ie = s.div`
 		onSubmit: n,
 		value: e.data?.text
 	})
-}) : null, ue = s.div`
+}) : null, de = s.div`
   background: rgba(0, 0, 0, 0.2);
   position: absolute;
-`, de = s.div`
+`, fe = s.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
 `;
-function fe({ annotation: e, className: t = "", style: n = k }) {
+function pe({ annotation: e, className: t = "", style: n = O }) {
 	let { geometry: r } = e;
-	return r ? /* @__PURE__ */ d(de, {
+	return r ? /* @__PURE__ */ d(fe, {
 		className: t,
 		style: n,
 		children: [
-			/* @__PURE__ */ u(ue, { style: {
+			/* @__PURE__ */ u(de, { style: {
 				height: `${r.y}%`,
 				width: "100%"
 			} }),
-			/* @__PURE__ */ u(ue, { style: {
+			/* @__PURE__ */ u(de, { style: {
 				top: `${r.y}%`,
 				height: `${r.height}%`,
 				width: `${r.x}%`
 			} }),
-			/* @__PURE__ */ u(ue, { style: {
+			/* @__PURE__ */ u(de, { style: {
 				top: `${r.y}%`,
 				left: `${r.x + r.width}%`,
 				height: `${r.height}%`,
 				width: `${100 - (r.x + r.width)}%`
 			} }),
-			/* @__PURE__ */ u(ue, { style: {
+			/* @__PURE__ */ u(de, { style: {
 				top: `${r.y + r.height}%`,
 				height: `${100 - (r.y + r.height)}%`,
 				width: "100%"
@@ -797,37 +797,13 @@ function fe({ annotation: e, className: t = "", style: n = k }) {
 }
 //#endregion
 //#region src/components/Rectangle/index.tsx
-var A = s.div`
-  border: dashed 2px black;
-  box-shadow: 0px 0px 1px 1px white inset;
-  box-sizing: border-box;
-  transition: box-shadow 0.21s ease-in-out;
-`;
-function pe({ annotation: e, className: t = "", style: n = k, active: r }) {
-	let { geometry: i } = e;
-	return i ? /* @__PURE__ */ u(A, {
-		className: t,
-		style: {
-			position: "absolute",
-			left: `${i.x}%`,
-			top: `${i.y}%`,
-			height: `${i.height}%`,
-			width: `${i.width}%`,
-			boxShadow: r ? "0 0 1px 1px yellow inset" : void 0,
-			...n
-		}
-	}) : null;
-}
-//#endregion
-//#region src/components/Oval/index.tsx
 var me = s.div`
   border: dashed 2px black;
-  border-radius: 100%;
   box-shadow: 0px 0px 1px 1px white inset;
   box-sizing: border-box;
   transition: box-shadow 0.21s ease-in-out;
 `;
-function j({ annotation: e, className: t = "", style: n = k, active: r }) {
+function he({ annotation: e, className: t = "", style: n = O, active: r }) {
 	let { geometry: i } = e;
 	return i ? /* @__PURE__ */ u(me, {
 		className: t,
@@ -843,21 +819,44 @@ function j({ annotation: e, className: t = "", style: n = k, active: r }) {
 	}) : null;
 }
 //#endregion
+//#region src/components/Oval/index.tsx
+var ge = s.div`
+  border: dashed 2px black;
+  border-radius: 100%;
+  box-shadow: 0px 0px 1px 1px white inset;
+  box-sizing: border-box;
+  transition: box-shadow 0.21s ease-in-out;
+`;
+function k({ annotation: e, className: t = "", style: n = O, active: r }) {
+	let { geometry: i } = e;
+	return i ? /* @__PURE__ */ u(ge, {
+		className: t,
+		style: {
+			position: "absolute",
+			left: `${i.x}%`,
+			top: `${i.y}%`,
+			height: `${i.height}%`,
+			width: `${i.width}%`,
+			boxShadow: r ? "0 0 1px 1px yellow inset" : void 0,
+			...n
+		}
+	}) : null;
+}
+//#endregion
 //#region src/components/Polygon/index.tsx
-var M = 3;
-function he(e, t) {
+var A = 3, _e = 10;
+function ve(e, t) {
 	return Math.sqrt((e.x - t.x) ** 2 + (e.y - t.y) ** 2);
 }
-function N({ annotation: e, className: t, style: n, active: r }) {
+function j({ annotation: e, className: t, style: n, active: r }) {
 	let { geometry: i, selection: a } = e;
 	if (!i || !i.points || i.points.length === 0) return null;
-	let o = i.points, s = a?.cursorX, c = a?.cursorY, l = a?.mode === "COLLECTING_POINTS", f = o.length >= 3, p = o[0], m = l && f && s !== void 0 && c !== void 0 && he({
+	let o = i.points, s = a?.cursorX, c = a?.cursorY, l = a?.mode === "COLLECTING_POINTS", f = o.length >= 3, p = o[0], m = l && f && s !== void 0 && c !== void 0 && ve({
 		x: s,
 		y: c
-	}, p) < M, h = o.map((e) => `${e.x},${e.y}`).join(" ");
-	return /* @__PURE__ */ d("svg", {
-		viewBox: "0 0 100 100",
-		preserveAspectRatio: "none",
+	}, p) < A, h = o.map((e) => `${e.x},${e.y}`).join(" ");
+	return /* @__PURE__ */ d("div", {
+		className: t,
 		style: {
 			position: "absolute",
 			top: 0,
@@ -865,67 +864,80 @@ function N({ annotation: e, className: t, style: n, active: r }) {
 			width: "100%",
 			height: "100%",
 			pointerEvents: "none",
-			overflow: "visible",
 			...n
 		},
-		className: t,
-		children: [
-			!l && o.length >= 3 && /* @__PURE__ */ u("polygon", {
-				points: h,
-				fill: "rgba(0,0,0,0.1)",
-				stroke: r ? "yellow" : "black",
-				strokeWidth: "2",
-				strokeDasharray: r ? void 0 : "5,3",
-				strokeLinejoin: "round",
-				vectorEffect: "non-scaling-stroke"
-			}),
-			l && o.length > 1 && /* @__PURE__ */ u("polyline", {
-				points: h,
-				fill: "none",
-				stroke: "rgba(0,0,0,0.85)",
-				strokeWidth: "2",
-				strokeDasharray: "6,3",
-				strokeLinejoin: "round",
-				vectorEffect: "non-scaling-stroke"
-			}),
-			l && m && /* @__PURE__ */ u("line", {
-				x1: o[o.length - 1].x,
-				y1: o[o.length - 1].y,
-				x2: p.x,
-				y2: p.y,
-				stroke: "rgba(0,128,0,0.7)",
-				strokeWidth: "2",
-				strokeDasharray: "6,3",
-				vectorEffect: "non-scaling-stroke"
-			}),
-			l && !m && s !== void 0 && c !== void 0 && /* @__PURE__ */ u("line", {
-				x1: o[o.length - 1].x,
-				y1: o[o.length - 1].y,
-				x2: s,
-				y2: c,
-				stroke: "rgba(0,0,0,0.4)",
-				strokeWidth: "2",
-				strokeDasharray: "6,3",
-				vectorEffect: "non-scaling-stroke"
-			}),
-			o.map((e, t) => {
-				let n = t === 0, r = n && m;
-				return /* @__PURE__ */ u("circle", {
-					cx: e.x,
-					cy: e.y,
-					r: "0.8",
-					fill: r ? "rgba(0,180,0,0.9)" : n ? "white" : "rgba(0,0,0,0.85)",
-					stroke: r ? "white" : n ? "rgba(0,0,0,0.85)" : "white",
-					strokeWidth: "1.5",
+		children: [/* @__PURE__ */ d("svg", {
+			viewBox: "0 0 100 100",
+			preserveAspectRatio: "none",
+			style: {
+				position: "absolute",
+				top: 0,
+				left: 0,
+				width: "100%",
+				height: "100%",
+				overflow: "visible",
+				pointerEvents: "none"
+			},
+			children: [
+				!l && o.length >= 3 && /* @__PURE__ */ u("polygon", {
+					points: h,
+					fill: "rgba(0,0,0,0.1)",
+					stroke: r ? "yellow" : "black",
+					strokeWidth: "2",
+					strokeDasharray: r ? void 0 : "5,3",
+					strokeLinejoin: "round",
 					vectorEffect: "non-scaling-stroke"
-				}, t);
-			})
-		]
+				}),
+				l && o.length > 1 && /* @__PURE__ */ u("polyline", {
+					points: h,
+					fill: "none",
+					stroke: "rgba(0,0,0,0.85)",
+					strokeWidth: "2",
+					strokeDasharray: "6,3",
+					strokeLinejoin: "round",
+					vectorEffect: "non-scaling-stroke"
+				}),
+				l && m && /* @__PURE__ */ u("line", {
+					x1: o[o.length - 1].x,
+					y1: o[o.length - 1].y,
+					x2: p.x,
+					y2: p.y,
+					stroke: "rgba(0,128,0,0.7)",
+					strokeWidth: "2",
+					strokeDasharray: "6,3",
+					vectorEffect: "non-scaling-stroke"
+				}),
+				l && !m && s !== void 0 && c !== void 0 && /* @__PURE__ */ u("line", {
+					x1: o[o.length - 1].x,
+					y1: o[o.length - 1].y,
+					x2: s,
+					y2: c,
+					stroke: "rgba(0,0,0,0.4)",
+					strokeWidth: "2",
+					strokeDasharray: "6,3",
+					vectorEffect: "non-scaling-stroke"
+				})
+			]
+		}), l && o.map((e, t) => {
+			let n = t === 0, r = n && m;
+			return /* @__PURE__ */ u("div", { style: {
+				position: "absolute",
+				left: `${e.x}%`,
+				top: `${e.y}%`,
+				width: _e,
+				height: _e,
+				transform: "translate(-50%, -50%)",
+				borderRadius: "50%",
+				boxSizing: "border-box",
+				backgroundColor: r ? "rgba(0,180,0,0.9)" : n ? "white" : "rgba(0,0,0,0.85)",
+				border: `1.5px solid ${r ? "white" : n ? "rgba(0,0,0,0.85)" : "white"}`
+			} }, t);
+		})]
 	});
 }
 //#endregion
 //#region src/components/Content/index.tsx
-var ge = s.div`
+var M = s.div`
   background: white;
   border-radius: 2px;
   box-shadow:
@@ -937,9 +949,9 @@ var ge = s.div`
   margin-left: 8px;
   pointer-events: auto;
 `;
-function _e({ annotation: e, style: t = k, className: n = "" }) {
+function N({ annotation: e, style: t = O, className: n = "" }) {
 	let { geometry: r } = e;
-	return !r || r.x === void 0 || r.y === void 0 || r.width === void 0 || r.height === void 0 ? null : /* @__PURE__ */ u(ge, {
+	return !r || r.x === void 0 || r.y === void 0 || r.width === void 0 || r.height === void 0 ? null : /* @__PURE__ */ u(M, {
 		style: {
 			marginTop: 8,
 			marginLeft: 8,
@@ -965,7 +977,7 @@ var P = s.div`
   right: 4px;
   transition: opacity 0.21s ease-in-out;
   user-select: none;
-`, ve = () => /* @__PURE__ */ u("svg", {
+`, ye = () => /* @__PURE__ */ u("svg", {
 	width: "18",
 	height: "18",
 	viewBox: "0 0 24 24",
@@ -979,8 +991,8 @@ var P = s.div`
 		strokeLinecap: "round",
 		strokeLinejoin: "round"
 	})
-}), ye = 20, F = 44;
-function I(e) {
+}), F = 20, I = 44;
+function L(e) {
 	return /* @__PURE__ */ u("svg", {
 		viewBox: "0 0 24 24",
 		xmlns: "http://www.w3.org/2000/svg",
@@ -994,7 +1006,7 @@ function I(e) {
 }
 //#endregion
 //#region src/components/DraggableComponents/DeleteButton.tsx
-var L = s.button`
+var R = s.button`
   border-radius: 10px;
   position: relative;
   border: none !important;
@@ -1030,12 +1042,12 @@ var L = s.button`
     background-color: lightgray;
     transform: scale(1.1);
   }
-`, R = s(I)`
+`, z = s(L)`
   width: 12px;
   height: 12px;
   color: #0f0f0f;
   flex-shrink: 0;
-`, z = ({ annotationId: e, onRemove: t, disabled: n, className: r, style: i }) => /* @__PURE__ */ u(L, {
+`, B = ({ annotationId: e, onRemove: t, disabled: n, className: r, style: i }) => /* @__PURE__ */ u(R, {
 	type: "button",
 	className: r,
 	style: i,
@@ -1046,18 +1058,18 @@ var L = s.button`
 	"aria-label": "Remove annotation",
 	$disabled: n,
 	"data-testid": "annotation-delete-button",
-	children: /* @__PURE__ */ u(R, {})
+	children: /* @__PURE__ */ u(z, {})
 });
 //#endregion
 //#region src/components/DraggableComponents/deleteButtonPosition.ts
-function B(e) {
+function V(e) {
 	return !e || typeof e.x != "number" || typeof e.y != "number" || typeof e.width != "number" ? null : {
 		left: `calc(${e.x}% + ${e.width}%)`,
 		top: `calc(${e.y}%)`,
 		transform: "translate(-50%, -50%)"
 	};
 }
-var V = {
+var H = {
 	position: "absolute",
 	top: 0,
 	right: 0,
@@ -1069,14 +1081,14 @@ var V = {
 	justifyContent: "center",
 	pointerEvents: "auto",
 	zIndex: 20
-}, H = s.div`
+}, be = s.div`
   position: absolute;
   bottom: -25px;
   right: 0;
   display: flex;
   gap: 5px;
   z-index: 20;
-`, be = s.button`
+`, U = s.button`
   width: 20px;
   height: 20px;
   background-color: white;
@@ -1094,22 +1106,22 @@ var V = {
   &:hover {
     background-color: lightgray;
   }
-`, U = ({ onConfirm: e, onReset: t }) => /* @__PURE__ */ d(H, {
+`, xe = ({ onConfirm: e, onReset: t }) => /* @__PURE__ */ d(be, {
 	onMouseDown: (e) => e.stopPropagation(),
-	children: [/* @__PURE__ */ u(be, {
+	children: [/* @__PURE__ */ u(U, {
 		type: "button",
 		onClick: (t) => {
 			t.stopPropagation(), e();
 		},
 		children: "✓"
-	}), /* @__PURE__ */ u(be, {
+	}), /* @__PURE__ */ u(U, {
 		type: "button",
 		onClick: (e) => {
 			e.stopPropagation(), t();
 		},
 		children: "✕"
 	})]
-}), xe = s.div`
+}), Se = s.div`
   position: absolute;
   width: 10px;
   height: 10px;
@@ -1128,7 +1140,7 @@ var V = {
 		default: return "";
 	}
 }}
-`, Se = s.div`
+`, Ce = s.div`
   position: absolute;
   display: flex;
   justify-content: center;
@@ -1140,7 +1152,7 @@ var V = {
   cursor: move;
   z-index: 15;
   pointer-events: auto;
-`, W = ({ position: e, onDragStart: t, onDrag: n, onDragEnd: r, annotationId: i }) => /* @__PURE__ */ u(xe, {
+`, W = ({ position: e, onDragStart: t, onDrag: n, onDragEnd: r, annotationId: i }) => /* @__PURE__ */ u(Se, {
 	$position: e,
 	onMouseDown: (a) => {
 		a.preventDefault(), a.stopPropagation();
@@ -1158,7 +1170,7 @@ var V = {
 	},
 	onClick: (e) => e.stopPropagation(),
 	"data-type": "dot"
-}), Ce = ({ onMoveStart: e, onMove: t, onMoveEnd: n, annotationId: r }) => /* @__PURE__ */ u(Se, {
+}), we = ({ onMoveStart: e, onMove: t, onMoveEnd: n, annotationId: r }) => /* @__PURE__ */ u(Ce, {
 	onMouseDown: (i) => {
 		i.preventDefault(), i.stopPropagation();
 		let a = {
@@ -1175,8 +1187,8 @@ var V = {
 	},
 	onClick: (e) => e.stopPropagation(),
 	"data-type": "move-button",
-	children: /* @__PURE__ */ u(ve, {})
-}), we = 36, Te = s.div`
+	children: /* @__PURE__ */ u(ye, {})
+}), Te = 36, Ee = s.div`
   position: absolute;
   border: none;
   background: rgba(151, 151, 151, 0.3);
@@ -1184,14 +1196,14 @@ var V = {
   pointer-events: auto;
   z-index: 10;
   box-sizing: border-box;
-`, Ee = ({ annotation: e, isDragging: t, hasPendingChanges: r, onDotDragStart: i, onDotDrag: o, onMoveStart: s, onMove: c, onDragEnd: l, enableRemoval: f, onRemoveAnnotation: p, onConfirm: m, onReset: h, onDeleteControlMouseEnter: g, onDeleteControlMouseLeave: _, allowResetOnMouseLeave: v = !0 }) => {
+`, De = ({ annotation: e, isDragging: t, hasPendingChanges: r, onDotDragStart: i, onDotDrag: o, onMoveStart: s, onMove: c, onDragEnd: l, enableRemoval: f, onRemoveAnnotation: p, onConfirm: m, onReset: h, onDeleteControlMouseEnter: g, onDeleteControlMouseLeave: _, allowResetOnMouseLeave: v = !0 }) => {
 	let { geometry: y } = e, b = e.data?.id, x = a(null), S = (t || r) && m && h;
 	if (n(() => {
 		if (!v || t || r || !h || b == null) return;
 		let e = (e) => {
 			let t = x.current;
 			if (!t) return;
-			let n = t.getBoundingClientRect(), { clientX: r, clientY: i } = e, a = we;
+			let n = t.getBoundingClientRect(), { clientX: r, clientY: i } = e, a = Te;
 			(r < n.left - a || r > n.right + a || i < n.top - a || i > n.bottom + a) && h(b);
 		};
 		return document.addEventListener("mousemove", e), () => {
@@ -1205,7 +1217,7 @@ var V = {
 		b
 	]), !y || typeof y.x != "number" || typeof y.y != "number" || typeof y.width != "number" || typeof y.height != "number") return null;
 	let C = String(b ?? "");
-	return /* @__PURE__ */ d(Te, {
+	return /* @__PURE__ */ d(Ee, {
 		ref: x,
 		className: "rectangle-editor-box",
 		style: {
@@ -1244,56 +1256,56 @@ var V = {
 				onDragEnd: l,
 				annotationId: C
 			}),
-			/* @__PURE__ */ u(Ce, {
+			/* @__PURE__ */ u(we, {
 				onMoveStart: s,
 				onMove: c,
 				onMoveEnd: l,
 				annotationId: C
 			}),
 			f && p && b != null && /* @__PURE__ */ u("div", {
-				style: V,
+				style: H,
 				onMouseEnter: () => g?.(b),
 				onMouseLeave: () => _?.(),
 				onPointerEnter: () => g?.(b),
 				onPointerLeave: () => _?.(),
-				children: /* @__PURE__ */ u(z, {
+				children: /* @__PURE__ */ u(B, {
 					annotationId: b,
 					onRemove: p
 				})
 			}),
-			S && /* @__PURE__ */ u(U, {
+			S && /* @__PURE__ */ u(xe, {
 				onConfirm: () => m(b),
 				onReset: () => h(b)
 			})
 		]
 	});
-}, De = "RECTANGLE";
-function G({ x: e, y: t }, n, r) {
+}, G = "RECTANGLE";
+function Oe({ x: e, y: t }, n, r) {
 	if (!n) return !1;
 	let i = Math.min(n.x, n.x + n.width), a = Math.max(n.x, n.x + n.width), o = Math.min(n.y, n.y + n.height), s = Math.max(n.y, n.y + n.height);
 	return !(e < i || t < o || e > a || t > s);
 }
-function Oe(e, t) {
+function ke(e, t) {
 	return !e || e.width <= 0 || e.height <= 0 ? 0 : Math.abs(e.width) * Math.abs(e.height);
 }
-var ke = {
+var Ae = {
 	onTouchStart(e, t) {
 		return K(e, t);
 	},
 	onTouchEnd(e, t) {
-		return q(e, t);
+		return je(e, t);
 	},
 	onTouchMove(e, t) {
-		return Ae(e, t);
+		return Me(e, t);
 	},
 	onMouseDown(e, t) {
 		return K(e, t);
 	},
 	onMouseUp(e, t) {
-		return q(e, t);
+		return je(e, t);
 	},
 	onMouseMove(e, t) {
-		return Ae(e, t);
+		return Me(e, t);
 	}
 };
 function K(e, t) {
@@ -1311,7 +1323,7 @@ function K(e, t) {
 		};
 	}
 }
-function q(e, t) {
+function je(e, t) {
 	if (e.selection) {
 		let { selection: t, geometry: n } = e;
 		if (!n) return {};
@@ -1329,14 +1341,14 @@ function q(e, t) {
 	}
 	return e;
 }
-function Ae(e, t) {
+function Me(e, t) {
 	if (e.selection && e.selection.mode === "SELECTING") {
 		let { anchorX: n, anchorY: r } = e.selection, { x: i, y: a } = h(t), o = i - n, s = a - r;
 		return {
 			...e,
 			geometry: {
 				...e.geometry,
-				type: De,
+				type: G,
 				x: o > 0 ? n : i,
 				y: s > 0 ? r : a,
 				width: Math.abs(o),
@@ -1346,30 +1358,30 @@ function Ae(e, t) {
 	}
 	return e;
 }
-var J = {
-	TYPE: De,
-	intersects: G,
-	area: Oe,
-	methods: ke
-}, je = 6, Me = (e = {
+var q = {
+	TYPE: G,
+	intersects: Oe,
+	area: ke,
+	methods: Ae
+}, Ne = 6, Pe = (e = {
 	width: 100,
 	height: 100
 }) => ({
-	marginX: je / e.width * 100,
-	marginY: je / e.height * 100
-}), Ne = "POINT";
-function Pe({ x: e, y: t }, n, r) {
+	marginX: Ne / e.width * 100,
+	marginY: Ne / e.height * 100
+}), Fe = "POINT";
+function Ie({ x: e, y: t }, n, r) {
 	if (!n) return !1;
-	let { marginX: i, marginY: a } = Me(r), o = Math.min(i, a) / 2, s = Math.abs(e - n.x), c = Math.abs(t - n.y);
+	let { marginX: i, marginY: a } = Pe(r), o = Math.min(i, a) / 2, s = Math.abs(e - n.x), c = Math.abs(t - n.y);
 	return s <= o && c <= o;
 }
-function Fe(e, t) {
+function J(e, t) {
 	return 0;
 }
 var Y = {
-	TYPE: Ne,
-	intersects: Pe,
-	area: Fe,
+	TYPE: Fe,
+	intersects: Ie,
+	area: J,
 	methods: { onClick(e, t) {
 		return e.geometry ? {} : {
 			...e,
@@ -1383,12 +1395,12 @@ var Y = {
 				...h(t),
 				width: 0,
 				height: 0,
-				type: Ne
+				type: Fe
 			}
 		};
 	} }
-}, Ie = (e) => e ** 2, Le = "OVAL";
-function Re({ x: e, y: t }, n, r) {
+}, Le = (e) => e ** 2, Re = "OVAL";
+function ze({ x: e, y: t }, n, r) {
 	if (!n || !n.width || !n.height) return !1;
 	let i = Math.abs(n.width), a = Math.abs(n.height), o = {
 		x: n.x + i / 2,
@@ -1396,22 +1408,22 @@ function Re({ x: e, y: t }, n, r) {
 	}, s = i / 2, c = a / 2;
 	if (s === 0 || c === 0) return !1;
 	let l = e - o.x, u = t - o.y;
-	return Ie(l) / Ie(s) + Ie(u) / Ie(c) <= 1;
+	return Le(l) / Le(s) + Le(u) / Le(c) <= 1;
 }
-function ze(e, t) {
+function Be(e, t) {
 	if (!e || e.width <= 0 || e.height <= 0) return 0;
 	let n = Math.abs(e.width), r = Math.abs(e.height);
 	return n / 2 * Math.PI * (r / 2);
 }
-var Be = {
+var Ve = {
 	onTouchStart(e, t) {
-		return Ve(e, t);
-	},
-	onTouchEnd(e, t) {
 		return He(e, t);
 	},
-	onTouchMove(e, t) {
+	onTouchEnd(e, t) {
 		return Ue(e, t);
+	},
+	onTouchMove(e, t) {
+		return We(e, t);
 	},
 	onMouseDown(e, t) {
 		if (!e.geometry) {
@@ -1445,7 +1457,7 @@ var Be = {
 				...e,
 				geometry: {
 					...e.geometry,
-					type: Le,
+					type: Re,
 					x: Math.min(n, i),
 					y: Math.min(r, a),
 					width: Math.abs(i - n),
@@ -1456,7 +1468,7 @@ var Be = {
 		return e;
 	}
 };
-function Ve(e, t) {
+function He(e, t) {
 	if (e.selection) return {};
 	{
 		let { x: n, y: r } = h(t);
@@ -1472,7 +1484,7 @@ function Ve(e, t) {
 	}
 	return e;
 }
-function He(e, t) {
+function Ue(e, t) {
 	if (e.selection) {
 		let { selection: t, geometry: n } = e;
 		if (!n) return {};
@@ -1490,14 +1502,14 @@ function He(e, t) {
 	}
 	return e;
 }
-function Ue(e, t) {
+function We(e, t) {
 	if (e.selection && e.selection.mode === "SELECTING") {
 		let { anchorX: n, anchorY: r } = e.selection, { x: i, y: a } = h(t), o = i - n, s = a - r;
 		return {
 			...e,
 			geometry: {
 				...e.geometry,
-				type: Le,
+				type: Re,
 				x: o > 0 ? n : i,
 				y: s > 0 ? r : a,
 				width: Math.abs(o),
@@ -1508,15 +1520,15 @@ function Ue(e, t) {
 	return e;
 }
 var X = {
-	TYPE: Le,
-	intersects: Re,
-	area: ze,
-	methods: Be
-}, We = "POLYGON", Ge = 3, Ke = 350, qe = 2;
-function Je(e, t) {
+	TYPE: Re,
+	intersects: ze,
+	area: Be,
+	methods: Ve
+}, Ge = "POLYGON", Ke = 3, qe = 350, Je = 2;
+function Ye(e, t) {
 	return Math.sqrt((e.x - t.x) ** 2 + (e.y - t.y) ** 2);
 }
-function Ye(e) {
+function Xe(e) {
 	let t = e.map((e) => e.x), n = e.map((e) => e.y), r = Math.min(...t), i = Math.min(...n);
 	return {
 		x: r,
@@ -1525,7 +1537,7 @@ function Ye(e) {
 		height: Math.max(...n) - i
 	};
 }
-function Xe({ x: e, y: t }, n) {
+function Ze({ x: e, y: t }, n) {
 	if (!n || !n.points || n.points.length < 3) return !1;
 	let r = n.points, i = !1;
 	for (let n = 0, a = r.length - 1; n < r.length; a = n++) {
@@ -1534,14 +1546,14 @@ function Xe({ x: e, y: t }, n) {
 	}
 	return i;
 }
-function Ze(e) {
+function Qe(e) {
 	if (!e || !e.points || e.points.length < 3) return 0;
 	let t = e.points, n = 0;
 	for (let e = 0, r = t.length - 1; e < t.length; r = e++) n += (t[r].x + t[e].x) * (t[r].y - t[e].y);
 	return Math.abs(n / 2);
 }
-function Qe(e) {
-	let t = Ye(e.geometry?.points || []);
+function $e(e) {
+	let t = Xe(e.geometry?.points || []);
 	return {
 		...e,
 		geometry: {
@@ -1561,9 +1573,9 @@ function Qe(e) {
 	};
 }
 var Z = {
-	TYPE: We,
-	intersects: Xe,
-	area: Ze,
+	TYPE: Ge,
+	intersects: Ze,
+	area: Qe,
 	methods: {
 		onClick(e, t) {
 			let { x: n, y: r } = h(t);
@@ -1579,7 +1591,7 @@ var Z = {
 					lastClickTime: Date.now()
 				},
 				geometry: {
-					type: We,
+					type: Ge,
 					points: [{
 						x: n,
 						y: r
@@ -1587,16 +1599,16 @@ var Z = {
 				}
 			};
 			let o = Date.now() - (e.selection?.lastClickTime || 0), s = e.selection?.lastClickX ?? n, c = e.selection?.lastClickY ?? r;
-			return o < Ke && Je({
+			return o < qe && Ye({
 				x: n,
 				y: r
 			}, {
 				x: s,
 				y: c
-			}) < qe && a.length >= 3 || a.length >= 3 && Je({
+			}) < Je && a.length >= 3 || a.length >= 3 && Ye({
 				x: n,
 				y: r
-			}, a[0]) < Ge ? Qe(e) : a.length >= 50 ? a.length >= 3 ? Qe(e) : e : {
+			}, a[0]) < Ke ? $e(e) : a.length >= 50 ? a.length >= 3 ? $e(e) : e : {
 				...e,
 				selection: {
 					...e.selection,
@@ -1607,7 +1619,7 @@ var Z = {
 				},
 				geometry: {
 					...e.geometry,
-					type: We,
+					type: Ge,
 					points: [...a, {
 						x: n,
 						y: r
@@ -1637,9 +1649,9 @@ var Z = {
 	disableContent: !1,
 	disableHitTesting: !1,
 	allowTouch: !1,
-	type: J.TYPE,
+	type: q.TYPE,
 	selectors: [
-		J,
+		q,
 		Y,
 		X,
 		Z
@@ -1651,38 +1663,38 @@ var Z = {
 	},
 	renderSelector: ({ annotation: e }) => {
 		switch (e.geometry?.type) {
-			case J.TYPE: return /* @__PURE__ */ u(fe, { annotation: e });
-			case Y.TYPE: return /* @__PURE__ */ u(D, { annotation: e });
-			case X.TYPE: return /* @__PURE__ */ u(j, { annotation: e });
-			case Z.TYPE: return /* @__PURE__ */ u(N, { annotation: e });
+			case q.TYPE: return /* @__PURE__ */ u(pe, { annotation: e });
+			case Y.TYPE: return /* @__PURE__ */ u(E, { annotation: e });
+			case X.TYPE: return /* @__PURE__ */ u(k, { annotation: e });
+			case Z.TYPE: return /* @__PURE__ */ u(j, { annotation: e });
 			default: return null;
 		}
 	},
-	renderEditor: ({ annotation: e, onChange: t, onSubmit: n }) => /* @__PURE__ */ u(le, {
+	renderEditor: ({ annotation: e, onChange: t, onSubmit: n }) => /* @__PURE__ */ u(ue, {
 		annotation: e,
 		onChange: t,
 		onSubmit: n
 	}),
 	renderHighlight: ({ key: e, annotation: t, active: n }) => {
 		switch (t.geometry.type) {
-			case J.TYPE: return /* @__PURE__ */ u(pe, {
+			case q.TYPE: return /* @__PURE__ */ u(he, {
 				annotation: t,
 				active: n
 			}, e);
-			case Y.TYPE: return /* @__PURE__ */ u(D, { annotation: t }, e);
-			case X.TYPE: return /* @__PURE__ */ u(j, {
+			case Y.TYPE: return /* @__PURE__ */ u(E, { annotation: t }, e);
+			case X.TYPE: return /* @__PURE__ */ u(k, {
 				annotation: t,
 				active: n
 			}, e);
-			case Z.TYPE: return /* @__PURE__ */ u(N, {
+			case Z.TYPE: return /* @__PURE__ */ u(j, {
 				annotation: t,
 				active: n
 			}, e);
 			default: return null;
 		}
 	},
-	renderContent: ({ key: e, annotation: t }) => /* @__PURE__ */ u(_e, { annotation: t }, e),
-	renderOverlay: ({ type: e, annotation: t } = oe) => {
+	renderContent: ({ key: e, annotation: t }) => /* @__PURE__ */ u(N, { annotation: t }, e),
+	renderOverlay: ({ type: e, annotation: t } = se) => {
 		switch (e) {
 			case Y.TYPE: return /* @__PURE__ */ u(P, { children: "Click to Annotate" });
 			case Z.TYPE: return /* @__PURE__ */ u(P, { children: "Click to add points · Double-click or click first point to finish · Esc to cancel" });
@@ -1691,22 +1703,22 @@ var Z = {
 	},
 	renderDraggableHighlight: ({ key: e, annotation: t, active: n, isHovered: r, isDragging: i, hasPendingChanges: a, onDotDragStart: o, onDotDrag: s, onMoveStart: c, onMove: l, onDragEnd: d, enableRemoval: f, onRemoveAnnotation: p, onConfirm: m, onReset: h, onDeleteControlMouseEnter: g, onDeleteControlMouseLeave: _ }) => {
 		if (!r && !i && !a) switch (t.geometry.type) {
-			case J.TYPE: return /* @__PURE__ */ u(pe, {
+			case q.TYPE: return /* @__PURE__ */ u(he, {
 				annotation: t,
 				active: n
 			}, e);
-			case Y.TYPE: return /* @__PURE__ */ u(D, { annotation: t }, e);
-			case X.TYPE: return /* @__PURE__ */ u(j, {
+			case Y.TYPE: return /* @__PURE__ */ u(E, { annotation: t }, e);
+			case X.TYPE: return /* @__PURE__ */ u(k, {
 				annotation: t,
 				active: n
 			}, e);
-			case Z.TYPE: return /* @__PURE__ */ u(N, {
+			case Z.TYPE: return /* @__PURE__ */ u(j, {
 				annotation: t,
 				active: n
 			}, e);
 			default: return null;
 		}
-		if (t.geometry.type === J.TYPE) return /* @__PURE__ */ u(Ee, {
+		if (t.geometry.type === q.TYPE) return /* @__PURE__ */ u(De, {
 			annotation: t,
 			active: n,
 			isHovered: r,
@@ -1725,37 +1737,37 @@ var Z = {
 			onDeleteControlMouseLeave: _
 		}, `${e}-editor`);
 		switch (t.geometry.type) {
-			case Y.TYPE: return /* @__PURE__ */ u(D, { annotation: t }, e);
-			case X.TYPE: return /* @__PURE__ */ u(j, {
+			case Y.TYPE: return /* @__PURE__ */ u(E, { annotation: t }, e);
+			case X.TYPE: return /* @__PURE__ */ u(k, {
 				annotation: t,
 				active: n
 			}, e);
-			case Z.TYPE: return /* @__PURE__ */ u(N, {
+			case Z.TYPE: return /* @__PURE__ */ u(j, {
 				annotation: t,
 				active: n
 			}, e);
 			default: return null;
 		}
 	}
-}, $ = 8, $e = 6;
-function et(e) {
+}, $ = 8, et = 6;
+function tt(e) {
 	return !!e && typeof e.x == "number" && typeof e.y == "number" && typeof e.width == "number" && typeof e.height == "number";
 }
-function tt({ placement: e, geometry: t, containerHeight: n, overlayHeight: r, offsetPx: i }) {
+function nt({ placement: e, geometry: t, containerHeight: n, overlayHeight: r, offsetPx: i }) {
 	if (e === "above") return "above";
 	if (e === "below") return "below";
 	let a = t.y / 100 * n, o = (t.y + t.height) / 100 * n, s = r + i + $, c = n - o, l = a;
 	return c >= s ? "below" : l >= s || l >= c ? "above" : "below";
 }
-function nt({ annotation: e, containerRef: t, placement: n = "auto", offsetPx: i = $e, className: s, style: c, children: l }) {
+function rt({ annotation: e, containerRef: t, placement: n = "auto", offsetPx: i = et, className: s, style: c, children: l }) {
 	let d = a(null), [f, p] = o({
 		x: 0,
 		y: 0
 	}), [m, h] = o(n === "above" ? "above" : "below"), { geometry: g } = e;
 	return r(() => {
 		let e = d.current, r = t.current;
-		if (!e || !r || !et(g)) return;
-		let a = r.getBoundingClientRect(), o = e.offsetHeight, s = tt({
+		if (!e || !r || !tt(g)) return;
+		let a = r.getBoundingClientRect(), o = e.offsetHeight, s = nt({
 			placement: n,
 			geometry: g,
 			containerHeight: a.height,
@@ -1779,7 +1791,7 @@ function nt({ annotation: e, containerRef: t, placement: n = "auto", offsetPx: i
 		n,
 		i,
 		m
-	]), et(g) ? /* @__PURE__ */ u("div", {
+	]), tt(g) ? /* @__PURE__ */ u("div", {
 		ref: d,
 		className: s,
 		style: {
@@ -1807,7 +1819,7 @@ function nt({ annotation: e, containerRef: t, placement: n = "auto", offsetPx: i
 }
 //#endregion
 //#region src/components/AnnotationDeleteControl.tsx
-var rt = s.div`
+var it = s.div`
   position: absolute;
   pointer-events: auto;
   z-index: 10;
@@ -1817,8 +1829,8 @@ var rt = s.div`
   align-items: center;
   justify-content: center;
 `;
-function it({ annotation: e, onRemove: n, renderDelete: r, disabled: i, onDeleteControlMouseEnter: a, onDeleteControlMouseLeave: s }) {
-	let [c, l] = o(!1), d = e.data?.id, f = B(e.geometry), p = i || c, m = t(async () => {
+function at({ annotation: e, onRemove: n, renderDelete: r, disabled: i, onDeleteControlMouseEnter: a, onDeleteControlMouseLeave: s }) {
+	let [c, l] = o(!1), d = e.data?.id, f = V(e.geometry), p = i || c, m = t(async () => {
 		if (!(p || d == null)) {
 			l(!0);
 			try {
@@ -1843,7 +1855,7 @@ function it({ annotation: e, onRemove: n, renderDelete: r, disabled: i, onDelete
 		onPointerEnter: h,
 		onPointerLeave: g
 	};
-	return r ? /* @__PURE__ */ u(rt, {
+	return r ? /* @__PURE__ */ u(it, {
 		style: f,
 		..._,
 		children: r({
@@ -1853,11 +1865,11 @@ function it({ annotation: e, onRemove: n, renderDelete: r, disabled: i, onDelete
 			onRemove: m,
 			disabled: p
 		})
-	}) : /* @__PURE__ */ u(rt, {
+	}) : /* @__PURE__ */ u(it, {
 		style: f,
 		className: "annotation-delete",
 		..._,
-		children: /* @__PURE__ */ u(z, {
+		children: /* @__PURE__ */ u(B, {
 			annotationId: d,
 			onRemove: m,
 			disabled: p
@@ -1866,7 +1878,7 @@ function it({ annotation: e, onRemove: n, renderDelete: r, disabled: i, onDelete
 }
 //#endregion
 //#region src/components/AnnotationLayout.tsx
-var at = s.div`
+var ot = s.div`
   clear: both;
   position: relative;
   width: 100%;
@@ -1878,18 +1890,18 @@ var at = s.div`
 
   touch-action: ${(e) => e.$allowTouch ? "pinch-zoom" : "auto"};
   ${(e) => e.$cursor ? `cursor: ${e.$cursor};` : ""}
-`, ot = s.img`
+`, st = s.img`
   display: block;
   width: 100%;
   user-select: none;
-`, st = s.div`
+`, ct = s.div`
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
   pointer-events: none;
-`, ct = s.div`
+`, lt = s.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -1897,7 +1909,7 @@ var at = s.div`
   right: 0;
   pointer-events: ${(e) => e.$hitTestingDisabled ? "none" : "auto"};
   ${(e) => e.$cursor ? `cursor: ${e.$cursor};` : ""}
-`, lt = s.div`
+`, ut = s.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -1906,7 +1918,7 @@ var at = s.div`
   z-index: 25;
   pointer-events: none;
   overflow: visible;
-`, ut = s.div`
+`, dt = s.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -1916,15 +1928,15 @@ var at = s.div`
   pointer-events: none;
   overflow: visible;
 `;
-function dt({ annotationId: e, annotation: t, active: n, slot: r }) {
+function ft({ annotationId: e, annotation: t, active: n, slot: r }) {
 	return /* @__PURE__ */ u(l, { children: r({
 		key: e,
 		annotation: t,
 		active: n
 	}) });
 }
-function ft({ annotationId: e, annotation: t, slot: n, containerRef: r, onEngageEdit: i }) {
-	return /* @__PURE__ */ u(nt, {
+function pt({ annotationId: e, annotation: t, slot: n, containerRef: r, onEngageEdit: i }) {
+	return /* @__PURE__ */ u(rt, {
 		annotation: t,
 		containerRef: r,
 		placement: "auto",
@@ -1943,58 +1955,58 @@ function ft({ annotationId: e, annotation: t, slot: n, containerRef: r, onEngage
 		})
 	});
 }
-function pt({ enableRemoval: e, onRemoveAnnotation: t, isActive: n, annotation: r, canRemoveAnnotation: i, enableEditing: a, draggableHighlightSlot: o, isHovered: s }) {
-	return !e || !t || !n || i && !i(r) ? !1 : !(a && o && s && r.geometry?.type === J.TYPE);
+function mt({ enableRemoval: e, onRemoveAnnotation: t, isActive: n, annotation: r, canRemoveAnnotation: i, enableEditing: a, draggableHighlightSlot: o, isHovered: s }) {
+	return !e || !t || !n || i && !i(r) ? !1 : !(a && o && s && r.geometry?.type === q.TYPE);
 }
-function mt({ setContainerRef: t, style: n, className: r, onContainerMouseLeave: i, onContainerTouchCancel: o, onContainerMouseMove: s, setImageRef: c, src: l, alt: f, annotations: p, renderSlots: m, layoutOptions: h, annotationState: g, value: _, isDrawing: v, setTargetRef: y, onInteractionTargetClick: b, onInteractionTargetMouseUp: x, onInteractionTargetMouseDown: S, effectiveType: C, onChange: w, onEditorSubmit: T, onImageLoad: ee, onImageError: te, children: ne }) {
-	let { renderHighlight: re, renderDraggableHighlight: E, renderSelector: D, renderOverlay: ie, renderContent: ae, renderEditor: O, renderDelete: k } = m, { touchEnabled: oe, selectorDisabled: se, overlayDisabled: ce, editorDisabled: le, contentDisabled: ue, hitTestingDisabled: de, enableEditing: fe, drawingCursor: A, disableAnnotation: pe } = h, me = A && !pe ? A : void 0, { getIsActive: j, topAnnotation: M, editModeIds: he, isDragging: N, draggingAnnotationId: ge, hasPendingChanges: _e, getEffectiveAnnotation: P, draggingHandlers: ve, onConfirm: ye, onReset: F, enableRemoval: I, onRemoveAnnotation: L, canRemoveAnnotation: R, onDeleteControlMouseEnter: z, onDeleteControlMouseLeave: B, focusAnnotationId: V, showContentOnHover: H = !1, engageEdit: be } = g, U = a(null);
-	return /* @__PURE__ */ d(at, {
+function ht({ setContainerRef: t, style: n, className: r, onContainerMouseLeave: i, onContainerTouchCancel: o, onContainerMouseMove: s, setImageRef: c, src: l, alt: f, annotations: p, renderSlots: m, layoutOptions: h, annotationState: g, value: _, isDrawing: v, setTargetRef: y, onInteractionTargetClick: b, onInteractionTargetMouseUp: x, onInteractionTargetMouseDown: S, effectiveType: C, onChange: w, onEditorSubmit: T, onImageLoad: ee, onImageError: te, children: ne }) {
+	let { renderHighlight: re, renderDraggableHighlight: ie, renderSelector: E, renderOverlay: ae, renderContent: oe, renderEditor: D, renderDelete: O } = m, { touchEnabled: se, selectorDisabled: ce, overlayDisabled: le, editorDisabled: ue, contentDisabled: de, hitTestingDisabled: fe, enableEditing: pe, drawingCursor: me, disableAnnotation: he } = h, ge = me && !he ? me : void 0, { getIsActive: k, topAnnotation: A, editModeIds: _e, isDragging: ve, draggingAnnotationId: j, hasPendingChanges: M, getEffectiveAnnotation: N, draggingHandlers: P, onConfirm: ye, onReset: F, enableRemoval: I, onRemoveAnnotation: L, canRemoveAnnotation: R, onDeleteControlMouseEnter: z, onDeleteControlMouseLeave: B, focusAnnotationId: V, showContentOnHover: H = !1, engageEdit: be } = g, U = a(null);
+	return /* @__PURE__ */ d(ot, {
 		ref: t,
 		style: n,
 		className: r,
 		onMouseLeave: i,
 		onTouchCancel: o,
 		onMouseMove: s,
-		$allowTouch: oe,
-		$cursor: v ? A : void 0,
+		$allowTouch: se,
+		$cursor: v ? me : void 0,
 		children: [
-			/* @__PURE__ */ u(ot, {
+			/* @__PURE__ */ u(st, {
 				ref: c,
 				src: l,
 				alt: f,
 				onLoad: ee,
 				onError: te
 			}),
-			/* @__PURE__ */ d(st, { children: [p.map((e) => {
+			/* @__PURE__ */ d(ct, { children: [p.map((e) => {
 				let t = e.data?.id;
 				if (!t) return null;
-				let n = j(e, M);
-				M?.data?.id, _e?.(t);
-				let r = P ? P(e) : e;
-				return re ? /* @__PURE__ */ u(dt, {
+				let n = k(e, A);
+				A?.data?.id, M?.(t);
+				let r = N ? N(e) : e;
+				return re ? /* @__PURE__ */ u(ft, {
 					annotationId: t,
 					annotation: r,
 					active: n,
 					slot: re
 				}, t) : null;
-			}), !se && _?.geometry && D && D({ annotation: _ })] }),
-			/* @__PURE__ */ u(ct, {
+			}), !ce && _?.geometry && E && E({ annotation: _ })] }),
+			/* @__PURE__ */ u(lt, {
 				ref: y,
 				"data-testid": "annotation-target",
-				"data-is-drawing": v && A ? !0 : void 0,
-				$hitTestingDisabled: de,
-				$cursor: me,
+				"data-is-drawing": v && me ? !0 : void 0,
+				$hitTestingDisabled: fe,
+				$cursor: ge,
 				onClick: b,
 				onMouseUp: x,
 				onMouseDown: S
 			}),
-			fe && E && ve && /* @__PURE__ */ u(lt, { children: p.map((t) => {
+			pe && ie && P && /* @__PURE__ */ u(ut, { children: p.map((t) => {
 				let n = t.data?.id;
 				if (!n) return null;
-				let r = j(t, M), i = M?.data?.id === n, a = N && ge === n, o = !!_e?.(n), s = V != null && V === n;
+				let r = k(t, A), i = A?.data?.id === n, a = ve && j === n, o = !!M?.(n), s = V != null && V === n;
 				if (!(a || o || s || i && !H)) return null;
-				let c = P ? P(t) : t;
-				return /* @__PURE__ */ u(e.Fragment, { children: E({
+				let c = N ? N(t) : t;
+				return /* @__PURE__ */ u(e.Fragment, { children: ie({
 					key: n,
 					annotation: c,
 					active: r,
@@ -2002,7 +2014,7 @@ function mt({ setContainerRef: t, style: n, className: r, onContainerMouseLeave:
 					isDragging: !!a,
 					hasPendingChanges: o,
 					allowResetOnMouseLeave: !s && !(ye && F),
-					...ve,
+					...P,
 					enableRemoval: I,
 					onRemoveAnnotation: L,
 					onConfirm: ye,
@@ -2011,44 +2023,44 @@ function mt({ setContainerRef: t, style: n, className: r, onContainerMouseLeave:
 					onDeleteControlMouseLeave: B
 				}) }, `edit-chrome-${n}`);
 			}) }),
-			!ce && ie && ie({
+			!le && ae && ae({
 				type: C,
 				annotation: _
 			}),
-			/* @__PURE__ */ d(ut, {
+			/* @__PURE__ */ d(dt, {
 				ref: U,
 				children: [p.map((t) => {
 					let n = t.data?.id;
 					if (!n) return null;
-					let r = he?.includes(n) || !1, i = j(t, M), a = M?.data?.id === n, o = N && ge === n, s = !!_e?.(n), c = !ue && ae != null && (r || i && !(fe && E && ve && (V != null && V === n || o || s))), l = pt({
+					let r = _e?.includes(n) || !1, i = k(t, A), a = A?.data?.id === n, o = ve && j === n, s = !!M?.(n), c = !de && oe != null && (r || i && !(pe && ie && P && (V != null && V === n || o || s))), l = mt({
 						enableRemoval: I,
 						onRemoveAnnotation: L,
 						isActive: i,
 						annotation: t,
 						canRemoveAnnotation: R,
-						enableEditing: fe,
-						draggableHighlightSlot: E,
+						enableEditing: pe,
+						draggableHighlightSlot: ie,
 						isHovered: a
 					});
-					return !c && !l ? null : /* @__PURE__ */ d(e.Fragment, { children: [c ? /* @__PURE__ */ u(ft, {
+					return !c && !l ? null : /* @__PURE__ */ d(e.Fragment, { children: [c ? /* @__PURE__ */ u(pt, {
 						annotationId: n,
 						annotation: t,
 						containerRef: U,
 						onEngageEdit: be,
-						slot: ae
-					}) : null, l && L ? /* @__PURE__ */ u(it, {
+						slot: oe
+					}) : null, l && L ? /* @__PURE__ */ u(at, {
 						annotation: t,
 						onRemove: L,
-						renderDelete: k,
+						renderDelete: O,
 						onDeleteControlMouseEnter: z,
 						onDeleteControlMouseLeave: B
 					}) : null] }, n);
-				}), !le && _?.selection?.showEditor && O && w && /* @__PURE__ */ u(nt, {
+				}), !ue && _?.selection?.showEditor && D && w && /* @__PURE__ */ u(rt, {
 					annotation: _,
 					containerRef: U,
 					placement: "auto",
 					offsetPx: 16,
-					children: O({
+					children: D({
 						annotation: _,
 						onChange: w,
 						onSubmit: T
@@ -2061,7 +2073,7 @@ function mt({ setContainerRef: t, style: n, className: r, onContainerMouseLeave:
 }
 //#endregion
 //#region src/components/Annotation.tsx
-function ht({ ref: e, ...t }) {
+function gt({ ref: e, ...t }) {
 	let { children: n, ...r } = i(() => {
 		let { renderSlots: e, ...n } = t;
 		return {
@@ -2076,25 +2088,25 @@ function ht({ ref: e, ...t }) {
 			renderDraggableHighlight: n.renderDraggableHighlight ?? e?.renderDraggableHighlight ?? Q.renderDraggableHighlight
 		};
 	}, [t]);
-	return /* @__PURE__ */ u(mt, {
+	return /* @__PURE__ */ u(ht, {
 		...re(r, e),
 		children: n
 	});
 }
-ht.displayName = "Annotation";
+gt.displayName = "Annotation";
 //#endregion
 //#region src/hooks/useMouseHover.ts
-function gt(e, t) {
+function _t(e, t) {
 	if (!e || typeof e.getBoundingClientRect != "function") return !1;
 	let { pageX: n, pageY: r } = t, { left: i, right: a, bottom: o, top: s } = e.getBoundingClientRect();
 	return n > i && n < a && r > s && r < o;
 }
-function _t() {
+function vt() {
 	let [e, r] = o(!1), i = a(null);
 	return n(() => {
 		let e = (e) => {
 			let t = i.current;
-			r(gt(t, {
+			r(_t(t, {
 				pageX: e.pageX,
 				pageY: e.pageY
 			}));
@@ -2111,15 +2123,15 @@ function _t() {
 }
 //#endregion
 //#region src/utils/buildDrawingCursor.ts
-function vt(e, t, n, r = "crosshair") {
+function yt(e, t, n, r = "crosshair") {
 	let i = e.trim();
 	return `${i.startsWith("url(") ? i : `url("${i}")`} ${t} ${n}, ${r}`;
 }
-function yt(e, t, n, r = "crosshair") {
-	return vt(`data:image/svg+xml,${encodeURIComponent(e.trim())}`, t, n, r);
+function bt(e, t, n, r = "crosshair") {
+	return yt(`data:image/svg+xml,${encodeURIComponent(e.trim())}`, t, n, r);
 }
 //#endregion
 //#region src/index.ts
-var bt = ht;
+var xt = gt;
 //#endregion
-export { ht as Annotation, nt as AnnotationContentAnchor, it as AnnotationDeleteControl, U as ConfirmResetButtons, F as DELETE_BUTTON_HIT_AREA_PX, ye as DELETE_BUTTON_SIZE_PX, z as DeleteButton, I as DeleteCrossIcon, Ee as DraggableBox, W as DraggableDot, Ce as MoveButton, X as OvalSelector, Y as PointSelector, N as Polygon, Z as PolygonSelector, J as RectangleSelector, vt as buildDrawingCursor, yt as buildDrawingCursorFromSvg, bt as default, V as deleteCornerBoxStyle, B as getDeleteCornerPosition, b as useAnnotationHitDetection, ee as useDragging, _t as useMouseHover, y as useRelativeMousePosition, C as useSelectorMethods };
+export { gt as Annotation, rt as AnnotationContentAnchor, at as AnnotationDeleteControl, xe as ConfirmResetButtons, I as DELETE_BUTTON_HIT_AREA_PX, F as DELETE_BUTTON_SIZE_PX, B as DeleteButton, L as DeleteCrossIcon, De as DraggableBox, W as DraggableDot, we as MoveButton, X as OvalSelector, Y as PointSelector, j as Polygon, Z as PolygonSelector, q as RectangleSelector, yt as buildDrawingCursor, bt as buildDrawingCursorFromSvg, xt as default, H as deleteCornerBoxStyle, V as getDeleteCornerPosition, b as useAnnotationHitDetection, ee as useDragging, vt as useMouseHover, y as useRelativeMousePosition, C as useSelectorMethods };
