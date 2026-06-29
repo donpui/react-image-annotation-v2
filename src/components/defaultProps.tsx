@@ -4,6 +4,7 @@ import Editor from './Editor'
 import FancyRectangle from './FancyRectangle'
 import Rectangle from './Rectangle'
 import Oval from './Oval'
+import Polygon from './Polygon'
 import Content from './Content'
 import Overlay from './Overlay'
 import { DraggableBox } from './DraggableBox'
@@ -11,7 +12,8 @@ import { DraggableBox } from './DraggableBox'
 import {
   RectangleSelector,
   PointSelector,
-  OvalSelector
+  OvalSelector,
+  PolygonSelector,
 } from '../selectors'
 
 import type {
@@ -48,7 +50,8 @@ export const defaultProps: Partial<AnnotationProps> = {
   selectors: [
     RectangleSelector,
     PointSelector,
-    OvalSelector
+    OvalSelector,
+    PolygonSelector,
   ],
 
   // Comparator for active annotations
@@ -83,6 +86,12 @@ export const defaultProps: Partial<AnnotationProps> = {
       case OvalSelector.TYPE:
         return (
           <Oval
+            annotation={annotation as any}
+          />
+        )
+      case PolygonSelector.TYPE:
+        return (
+          <Polygon
             annotation={annotation as any}
           />
         )
@@ -124,6 +133,14 @@ export const defaultProps: Partial<AnnotationProps> = {
             active={active}
           />
         )
+      case PolygonSelector.TYPE:
+        return (
+          <Polygon
+            key={key}
+            annotation={annotation as any}
+            active={active}
+          />
+        )
       default:
         return null
     }
@@ -145,6 +162,12 @@ export const defaultProps: Partial<AnnotationProps> = {
         return (
           <Overlay>
             Click to Annotate
+          </Overlay>
+        )
+      case PolygonSelector.TYPE:
+        return (
+          <Overlay>
+            Click to add points · Double-click or click first point to finish · Esc to cancel
           </Overlay>
         )
       default:
@@ -200,6 +223,14 @@ export const defaultProps: Partial<AnnotationProps> = {
               active={active}
             />
           )
+        case PolygonSelector.TYPE:
+          return (
+            <Polygon
+              key={key}
+              annotation={annotation as any}
+              active={active}
+            />
+          )
         default:
           return null
       }
@@ -240,6 +271,14 @@ export const defaultProps: Partial<AnnotationProps> = {
       case OvalSelector.TYPE:
         return (
           <Oval
+            key={key}
+            annotation={annotation as any}
+            active={active}
+          />
+        )
+      case PolygonSelector.TYPE:
+        return (
+          <Polygon
             key={key}
             annotation={annotation as any}
             active={active}

@@ -24,6 +24,7 @@ import DrawingCursor from '../Samples/DrawingCursor';
 import drawingCursorCode from '../Samples/DrawingCursor/index.tsx?raw';
 import Delete from '../Samples/Delete';
 import deleteCode from '../Samples/Delete/index.tsx?raw';
+import MultiPoints from '../Samples/MultiPoints';
 
 const Container = styled.main`
   margin: 0 auto;
@@ -96,6 +97,17 @@ const Docs: FC = () => (
     <ExampleContainer>
       <Delete />
       {/* <Highlight>{deleteCode}</Highlight> */}
+    </ExampleContainer>
+
+    <h1>Multi-point Polygon Annotation</h1>
+    <p>
+      Use <code>PolygonSelector</code> to draw free-form polygons by clicking to place
+      points. Supports 3–50 points. Double-click or click the first point (turns green on
+      hover) to close. Press <kbd>Esc</kbd> to cancel. The example below loads with one
+      completed five-point polygon by default.
+    </p>
+    <ExampleContainer>
+      <MultiPoints />
     </ExampleContainer>
 
     <h1>Simple Annotation</h1>

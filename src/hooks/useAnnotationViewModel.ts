@@ -79,7 +79,9 @@ export function useAnnotationViewModel(
   const targetRef = useRef<HTMLDivElement>(null);
 
   const previewMode = !!(onConfirm && onReset);
-  const isDrawing = value?.selection?.mode === 'SELECTING';
+  const isDrawing =
+    value?.selection?.mode === 'SELECTING' ||
+    value?.selection?.mode === 'COLLECTING_POINTS';
   const isCreationEditorOpen = !!value?.selection?.showEditor;
   const showContentOnHover = !disableContent && !!renderContent;
 
@@ -335,7 +337,9 @@ export function useAnnotationViewModel(
       }
 
       const isCreatingNew =
-        value?.selection?.mode === 'SELECTING' || !!value?.selection?.showEditor;
+        value?.selection?.mode === 'SELECTING' ||
+        value?.selection?.mode === 'COLLECTING_POINTS' ||
+        !!value?.selection?.showEditor;
       const existingId = effectiveTopAnnotation?.data?.id;
       const pointerOverExisting =
         enableEditing &&
@@ -400,11 +404,14 @@ export function useAnnotationViewModel(
   );
 
   useEffect(() => {
-    if (value?.selection?.showEditor) {
+    const active =
+      value?.selection?.showEditor ||
+      value?.selection?.mode === 'COLLECTING_POINTS';
+    if (active) {
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
-  }, [value?.selection?.showEditor, handleKeyDown]);
+  }, [value?.selection?.showEditor, value?.selection?.mode, handleKeyDown]);
 
   const topAnnotationAtMouse = effectiveTopAnnotation;
 
