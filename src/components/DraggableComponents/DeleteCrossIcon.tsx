@@ -3,7 +3,7 @@ import React from 'react';
 export const DELETE_BUTTON_SIZE_PX = 20;
 
 /** Invisible padding around the visible button for easier targeting. */
-export const DELETE_BUTTON_HIT_AREA_PX = 44;
+export const DELETE_BUTTON_HIT_AREA_PX = 24;
 
 /** Close icon (SVG Repo). */
 export function DeleteCrossIcon(props: React.SVGProps<SVGSVGElement>) {
