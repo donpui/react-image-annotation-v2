@@ -85,6 +85,7 @@ Prop | Description | Default
 `disableSelector` | Set to `true` to not render `Selector` | `false`
 `disableEditor` | Set to `true` to not render `Editor` | `false`
 `disableOverlay` | Set to `true` to not render `Overlay` | `false`
+`showOverlayOnce` | Show the hover overlay only until the user starts creating their first annotation (also hidden while drawing) | `false`
 `disableContent` | Set to `true` to not render hover/active annotation content from `renderContent` | `false`
 `disableHitTesting` | Set to `true` so the full-size interaction layer does not capture pointer events (for custom `renderContent` UX) | `false`
 `drawingCursor` | CSS `cursor` on the interaction layer while drag-drawing (`selection.mode === 'SELECTING'`). Use a plain SVG/PNG (no CSS filters). Helpers: `buildDrawingCursor`, `buildDrawingCursorFromSvg`. | —

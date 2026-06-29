@@ -118,6 +118,8 @@ export interface RenderContentProps {
 export interface RenderOverlayProps {
   type?: string;
   annotation?: AnnotationValue;
+  /** True while the user is creating an annotation (drawing or pre-submit editor). */
+  isCreating?: boolean;
 }
 
 export interface DraggingEventHandlers {
@@ -176,6 +178,11 @@ export interface AnnotationBaseProps {
   disableSelector?: boolean;
   disableEditor?: boolean;
   disableOverlay?: boolean;
+  /**
+   * When true, the hover overlay is shown only until the user starts creating
+   * their first annotation, then hidden for the rest of the session.
+   */
+  showOverlayOnce?: boolean;
   allowTouch?: boolean;
   /** When true, the full-size interaction layer does not capture pointer events (use with custom `renderContent` UX). */
   disableHitTesting?: boolean;

@@ -41,6 +41,7 @@ export const defaultProps: Partial<AnnotationProps> = {
   disableSelector: false,
   disableEditor: false,
   disableOverlay: false,
+  showOverlayOnce: false,
   disableContent: false,
   disableHitTesting: false,
   allowTouch: false,

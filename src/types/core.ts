@@ -115,6 +115,8 @@ export interface RenderDeleteProps {
 export interface RenderOverlayProps {
   type?: string;
   annotation?: AnnotationValue;
+  /** True while the user is creating an annotation (drawing or pre-submit editor). */
+  isCreating?: boolean;
 }
 
 // Dragging-related props
@@ -174,6 +176,11 @@ export interface AnnotationBaseProps {
   disableSelector?: boolean;
   disableEditor?: boolean;
   disableOverlay?: boolean;
+  /**
+   * When true, the hover overlay is shown only until the user starts creating
+   * their first annotation, then hidden for the rest of the session.
+   */
+  showOverlayOnce?: boolean;
   /** When true, annotation hover/active content from `renderContent` is not rendered. */
   disableContent?: boolean;
   allowTouch?: boolean;
