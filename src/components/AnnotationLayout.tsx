@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Overlay from './Overlay';
 import { AnnotationContentAnchor } from './AnnotationContentAnchor';
 import { AnnotationDeleteControl } from './AnnotationDeleteControl';
@@ -21,15 +21,20 @@ import type {
 const AnnotationContainer = styled.div<{
   $allowTouch?: boolean;
   $cursor?: string;
+  $overlayHoverEnabled?: boolean;
 }>`
   clear: both;
   position: relative;
   width: 100%;
   overflow: visible;
 
-  &:hover ${Overlay} {
-    opacity: 1;
-  }
+  ${(p) =>
+    p.$overlayHoverEnabled &&
+    css`
+      &:hover ${Overlay} {
+        opacity: 1;
+      }
+    `}
 
   touch-action: ${(p) => (p.$allowTouch ? 'pinch-zoom' : 'auto')};
   ${(p) => (p.$cursor ? `cursor: ${p.$cursor};` : '')}
@@ -165,6 +170,8 @@ export interface AnnotationLayoutOptions {
   touchEnabled?: boolean;
   selectorDisabled: boolean;
   overlayDisabled: boolean;
+  /** When false, hover no longer reveals the overlay (e.g. while drawing). */
+  overlayHoverEnabled?: boolean;
   editorDisabled: boolean;
   contentDisabled?: boolean;
   hitTestingDisabled?: boolean;
@@ -223,6 +230,7 @@ export interface AnnotationLayoutProps {
   annotationState: AnnotationLayoutAnnotationState;
   value: AnnotationValue | undefined;
   isDrawing?: boolean;
+  isCreatingAnnotation?: boolean;
   setTargetRef: React.RefCallback<HTMLDivElement>;
   onInteractionTargetClick: (e: React.MouseEvent<HTMLElement>) => void;
   onInteractionTargetMouseUp: (e: React.MouseEvent<HTMLElement>) => void;
@@ -287,6 +295,7 @@ export function AnnotationLayout({
   annotationState,
   value,
   isDrawing,
+  isCreatingAnnotation,
   setTargetRef,
   onInteractionTargetClick,
   onInteractionTargetMouseUp,
@@ -311,6 +320,7 @@ export function AnnotationLayout({
     touchEnabled,
     selectorDisabled,
     overlayDisabled,
+    overlayHoverEnabled = true,
     editorDisabled,
     contentDisabled,
     hitTestingDisabled,
@@ -354,6 +364,7 @@ export function AnnotationLayout({
       onMouseMove={onContainerMouseMove}
       $allowTouch={touchEnabled}
       $cursor={isDrawing ? drawingCursor : undefined}
+      $overlayHoverEnabled={overlayHoverEnabled}
     >
       <AnnotationImage
         ref={setImageRef}
@@ -464,6 +475,7 @@ export function AnnotationLayout({
         renderOverlay({
           type: effectiveType,
           annotation: value,
+          isCreating: isCreatingAnnotation,
         })}
 
       <AnnotationPointerPassthroughLayer ref={passthroughLayerRef}>

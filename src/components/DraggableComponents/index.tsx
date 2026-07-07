@@ -35,6 +35,7 @@ const Dot = styled.div<{ $position: DraggableDotProps['position'] }>`
   width: 10px;
   height: 10px;
   background-color: white;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   border-radius: 50%;
   z-index: 15;

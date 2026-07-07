@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHoveredAnnotation } from './useHoveredAnnotation';
 import { useInteractionFocus } from './useInteractionFocus';
 import { useSelectorMethods } from './useSelectorMethods';
@@ -50,6 +50,7 @@ export function useAnnotationViewModel(
     disableSelector,
     disableEditor,
     disableOverlay,
+    showOverlayOnce,
     disableContent,
     disableHitTesting,
     allowTouch,
@@ -83,7 +84,18 @@ export function useAnnotationViewModel(
     value?.selection?.mode === 'SELECTING' ||
     value?.selection?.mode === 'COLLECTING_POINTS';
   const isCreationEditorOpen = !!value?.selection?.showEditor;
+  const isCreatingAnnotation = isDrawing || isCreationEditorOpen;
+  const [overlayDismissed, setOverlayDismissed] = useState(false);
   const showContentOnHover = !disableContent && !!renderContent;
+
+  useEffect(() => {
+    if (showOverlayOnce && isCreatingAnnotation) {
+      setOverlayDismissed(true);
+    }
+  }, [showOverlayOnce, isCreatingAnnotation]);
+
+  const overlayHoverEnabled =
+    !isCreatingAnnotation && !(showOverlayOnce && overlayDismissed);
 
   const {
     isDragging,
@@ -461,6 +473,7 @@ export function useAnnotationViewModel(
       touchEnabled: allowTouch,
       selectorDisabled: !!disableSelector || (enableEditing && isDragging),
       overlayDisabled: !!disableOverlay,
+      overlayHoverEnabled,
       editorDisabled: !!disableEditor || (enableEditing && isDragging),
       contentDisabled: !!disableContent,
       hitTestingDisabled:
@@ -496,6 +509,7 @@ export function useAnnotationViewModel(
     },
     value,
     isDrawing,
+    isCreatingAnnotation,
     setTargetRef,
     onInteractionTargetClick: handleInteractionTargetClick,
     onInteractionTargetMouseUp: handleInteractionTargetMouseUp,
