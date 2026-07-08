@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import Annotation, { AnnotationType, AnnotationOwnProps } from '../../../../../src';
+import Annotation from '../../../../../src';
+import type { Annotation as AnnotationType, AnnotationProps } from '../../../../../src/types/core';
 // import { PointSelector, RectangleSelector, OvalSelector } from '../../../../../src/selectors.ts';
 // import Button from '../../Button/index.tsx'; // Button not used for type selection here
 import mocks from '../../../mocks.js';
@@ -124,6 +125,7 @@ function renderEditor(props: RenderEditorProps) {
       <div>Custom Editor</div>
       <input
         value={data?.text || ''} // Controlled input
+        aria-label="Custom Editor"
         onChange={e => onChange({
           ...annotation,
           data: {
@@ -133,7 +135,7 @@ function renderEditor(props: RenderEditorProps) {
           }
         })}
       />
-      <button onClick={onSubmit}>Comment</button>
+      <button onClick={onSubmit} type="button">Comment</button>
     </div>
   );
 }
@@ -181,8 +183,9 @@ const Custom: React.FC = () => {
     }
   }, []);
 
-  const annotationProps: AnnotationOwnProps = {
+  const annotationProps: AnnotationProps = {
     ...defaultProps,
+    selectors: defaultProps.selectors ?? [],
     src: img,
     alt: 'Two pebbles anthropomorphized holding hands',
     annotations,

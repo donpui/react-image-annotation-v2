@@ -48,6 +48,16 @@ export function useInteractionFocus({
   >(null);
   const editingSessionIdRef = useRef<string | number | null>(null);
   const lockExistingAnnotations = isDrawing || isCreationEditorOpen;
+  const [prevLockExistingAnnotations, setPrevLockExistingAnnotations] =
+    useState(lockExistingAnnotations);
+
+  if (lockExistingAnnotations !== prevLockExistingAnnotations) {
+    setPrevLockExistingAnnotations(lockExistingAnnotations);
+    if (lockExistingAnnotations) {
+      editingSessionIdRef.current = null;
+      setEditingSessionId(null);
+    }
+  }
 
   const clearEditingSession = useCallback(() => {
     editingSessionIdRef.current = null;
@@ -65,12 +75,6 @@ export function useInteractionFocus({
       clearEditingSession();
     }
   }, [lockEditSessionOnHover, clearEditingSession]);
-
-  useEffect(() => {
-    if (lockExistingAnnotations) {
-      clearEditingSession();
-    }
-  }, [lockExistingAnnotations, clearEditingSession]);
 
   useEffect(() => {
     if (!enableEditing || lockExistingAnnotations || !lockEditSessionOnHover) {

@@ -143,6 +143,7 @@ function AnnotationContentItem({
           e.stopPropagation();
           onEngageEdit?.(annotationId);
         }}
+        role="button"
       >
         {slot({
           key: annotationId,
@@ -352,6 +353,8 @@ export function AnnotationLayout({
     engageEdit,
   } = annotationState;
 
+  const editModeIdSet = editModeIds ? new Set(editModeIds) : undefined;
+
   const passthroughLayerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -484,8 +487,7 @@ export function AnnotationLayout({
 
           if (!annotationId) return null;
 
-          const isInEditMode =
-            editModeIds?.includes(annotationId) || false;
+          const isInEditMode = editModeIdSet?.has(annotationId) ?? false;
           const isActive = getIsActive(annotation, topAnnotation);
           const isHovered = topAnnotation?.data?.id === annotationId;
           const isDraggingThis =

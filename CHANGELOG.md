@@ -1,3 +1,12 @@
+## 1.2.0
+
+- Removed babel and react-compiler, minimized packages
+
+## 1.1.0
+
+- Added polygon drawing
+- Fixing edit aoi
+
 ## 1.0.0
 
 - Updated packages. Support React 19

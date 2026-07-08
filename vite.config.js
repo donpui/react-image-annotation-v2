@@ -2,17 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
-const ReactCompilerConfig = { /* ... */ };
-
 export default defineConfig({
   publicDir: false,
-  plugins: [react({
-    babel: {
-      plugins: [
-        ["babel-plugin-react-compiler", ReactCompilerConfig],
-      ],
-    },
-  }),],
+  plugins: [react()],
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),

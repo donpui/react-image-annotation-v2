@@ -1,0 +1,3 @@
+[test]
+preload = ["./tests/dom-setup.ts", "./tests/setup.ts"]
+root = "./tests"
