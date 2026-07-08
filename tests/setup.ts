@@ -1,10 +1,10 @@
-// Add React Testing Library custom matchers
+import { afterEach } from 'bun:test';
+import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-// Mock TextEncoder if needed
 if (typeof TextEncoder === 'undefined') {
-  global.TextEncoder = class {
-    encode(str) {
+  globalThis.TextEncoder = class {
+    encode(str: string) {
       const utf8 = unescape(encodeURIComponent(str));
       const arr = new Uint8Array(utf8.length);
       for (let i = 0; i < utf8.length; i++) {
@@ -12,10 +12,8 @@ if (typeof TextEncoder === 'undefined') {
       }
       return arr;
     }
-  };
+  } as typeof TextEncoder;
 }
-
-// Setup any global test environment configurations here 
 
 if (typeof HTMLElement !== 'undefined' && !HTMLElement.prototype.getBoundingClientRect) {
   HTMLElement.prototype.getBoundingClientRect = () => ({
@@ -29,4 +27,8 @@ if (typeof HTMLElement !== 'undefined' && !HTMLElement.prototype.getBoundingClie
     y: 0,
     toJSON: () => ({}),
   });
-} 
+}
+
+afterEach(() => {
+  cleanup();
+});

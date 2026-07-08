@@ -67,7 +67,10 @@ export function useDragging({
     Map<string | number, Geometry>
   >(() => new Map());
   const dragStateRef = useRef<DragState | null>(null);
-  const resetGeometryRef = useRef<Map<string | number, Geometry>>(new Map());
+  const resetGeometryRef = useRef<Map<string | number, Geometry>>(null!);
+  if (!resetGeometryRef.current) {
+    resetGeometryRef.current = new Map();
+  }
 
   const getImageSize = useCallback(() => {
     const img = imageRef.current;

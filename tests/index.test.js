@@ -1,21 +1,3 @@
-// Setup for React Testing Library
-require('@testing-library/jest-dom');
-
-// Polyfill for TextEncoder if needed
-if (typeof TextEncoder === 'undefined') {
-  global.TextEncoder = function TextEncoder() {};
-  global.TextEncoder.prototype.encode = function(str) {
-    var utf8 = unescape(encodeURIComponent(str));
-    var arr = new Uint8Array(utf8.length);
-    for (var i = 0; i < utf8.length; i++) {
-      arr[i] = utf8.charCodeAt(i);
-    }
-    return arr;
-  };
-}
-
-// Import test files
-
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

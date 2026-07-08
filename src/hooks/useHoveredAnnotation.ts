@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { useRelativeMousePosition } from './useRelativeMousePosition';
 import { useAnnotationHitDetection } from './useAnnotationHitDetection';
 import type { Annotation } from '../types/core';
@@ -40,6 +40,16 @@ export function useHoveredAnnotation({
   const [hoveredAnnotation, setHoveredAnnotation] = useState<Annotation | undefined>(undefined);
   const lastHoveredAnnotationRef = useRef<Annotation | undefined>(undefined);
   const lastHoveredIdRef = useRef<string | number | undefined>(undefined);
+  const [prevAnnotations, setPrevAnnotations] = useState(annotations);
+  const [prevSelectors, setPrevSelectors] = useState(selectors);
+
+  if (annotations !== prevAnnotations || selectors !== prevSelectors) {
+    setPrevAnnotations(annotations);
+    setPrevSelectors(selectors);
+    setHoveredAnnotation(undefined);
+    lastHoveredAnnotationRef.current = undefined;
+    lastHoveredIdRef.current = undefined;
+  }
 
   // Memoize hit detection to avoid recreating on every render
   const { getTopAnnotationAt } = useAnnotationHitDetection({
@@ -77,13 +87,6 @@ export function useHoveredAnnotation({
     onPositionChange: handlePositionChange,
     throttleMs,
   });
-
-  // Clear hovered annotation when annotations or selectors change
-  useEffect(() => {
-    setHoveredAnnotation(undefined);
-    lastHoveredAnnotationRef.current = undefined;
-    lastHoveredIdRef.current = undefined;
-  }, [annotations, selectors]);
 
   // Memoize the return value to prevent unnecessary recreations
   const memoizedHandlers = useMemo(() => handlers, [handlers]);

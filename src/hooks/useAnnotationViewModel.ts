@@ -85,14 +85,19 @@ export function useAnnotationViewModel(
     value?.selection?.mode === 'COLLECTING_POINTS';
   const isCreationEditorOpen = !!value?.selection?.showEditor;
   const isCreatingAnnotation = isDrawing || isCreationEditorOpen;
+  const dismissOverlayTrigger = showOverlayOnce && isCreatingAnnotation;
   const [overlayDismissed, setOverlayDismissed] = useState(false);
+  const [prevDismissOverlayTrigger, setPrevDismissOverlayTrigger] = useState(
+    dismissOverlayTrigger
+  );
   const showContentOnHover = !disableContent && !!renderContent;
 
-  useEffect(() => {
-    if (showOverlayOnce && isCreatingAnnotation) {
+  if (dismissOverlayTrigger !== prevDismissOverlayTrigger) {
+    setPrevDismissOverlayTrigger(dismissOverlayTrigger);
+    if (dismissOverlayTrigger) {
       setOverlayDismissed(true);
     }
-  }, [showOverlayOnce, isCreatingAnnotation]);
+  }
 
   const overlayHoverEnabled =
     !isCreatingAnnotation && !(showOverlayOnce && overlayDismissed);
