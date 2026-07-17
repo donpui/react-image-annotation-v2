@@ -16,6 +16,11 @@ interface UseHoveredAnnotationProps {
 
 export interface UseHoveredAnnotationReturn {
   hoveredAnnotation: Annotation | undefined;
+  /** Hit-test at percent coords (same as hover). Use on mousedown so nearby clicks can still draw. */
+  getTopAnnotationAt: (
+    x: number | null,
+    y: number | null
+  ) => Annotation | undefined;
   mouseHandlers: {
     onMouseMove: (e: globalThis.MouseEvent) => void;
     onMouseLeave: (e: globalThis.MouseEvent) => void;
@@ -93,6 +98,7 @@ export function useHoveredAnnotation({
 
   return {
     hoveredAnnotation,
+    getTopAnnotationAt,
     mouseHandlers: memoizedHandlers,
   };
 } 
