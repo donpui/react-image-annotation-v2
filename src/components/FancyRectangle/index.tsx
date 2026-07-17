@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { EMPTY_STYLE } from '../../reactStableDefaults'
+import type { AnnotationValue } from '../../types/core'
 
 const Box = styled.div`
   background: rgba(0, 0, 0, 0.2);
@@ -16,14 +17,7 @@ const Container = styled.div`
 `
 
 interface FancyRectangleProps {
-  annotation: {
-    geometry?: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
-  };
+  annotation: AnnotationValue;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -35,7 +29,15 @@ function FancyRectangle ({
 }: FancyRectangleProps) {
   const { geometry } = annotation
 
-  if (!geometry) return null
+  if (
+    !geometry ||
+    typeof geometry.x !== 'number' ||
+    typeof geometry.y !== 'number' ||
+    typeof geometry.width !== 'number' ||
+    typeof geometry.height !== 'number'
+  ) {
+    return null
+  }
 
   return (
     <Container

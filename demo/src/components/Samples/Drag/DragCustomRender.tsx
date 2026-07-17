@@ -10,6 +10,7 @@ import {
   AnnotationValue,
   RenderContentProps,
   RenderHighlightProps,
+  RenderSelectorProps,
 } from '../../../../../src/types/core';
 import { RectangleSelector } from '../../../../../src/selectors';
 import img from '../../../img.jpeg';
@@ -23,18 +24,41 @@ const ContentCard = styled.div`
   line-height: 1.35;
   max-width: 220px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  pointer-events: auto;
+  pointer-events: none;
 `;
+
+function hasRectangleGeometry(
+  geometry: AnnotationType['geometry'] | AnnotationValue['geometry'] | undefined
+): geometry is {
+  type: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+} {
+  return (
+    !!geometry &&
+    typeof geometry.x === 'number' &&
+    typeof geometry.y === 'number' &&
+    typeof geometry.width === 'number' &&
+    typeof geometry.height === 'number'
+  );
+}
 
 /** Custom passive highlight — strong border when hovered/active. */
 const renderHighlight = ({ key, annotation, active }: RenderHighlightProps) => {
   const { geometry } = annotation;
-  if (!geometry?.type || geometry.type !== RectangleSelector.TYPE) return null;
+  if (
+    !hasRectangleGeometry(geometry) ||
+    geometry.type !== RectangleSelector.TYPE
+  ) {
+    return null;
+  }
 
   return (
     <Rectangle
       key={key}
-      annotation={annotation as { geometry: NonNullable<typeof geometry> }}
+      annotation={{ geometry }}
       active={active}
       style={{
         border: active ? '2px solid #0ea5e9' : '2px dashed rgba(14, 165, 233, 0.45)',
@@ -51,13 +75,7 @@ const renderHighlight = ({ key, annotation, active }: RenderHighlightProps) => {
 /** Custom hover/active overlay — floats under the rectangle (interaction layer stays usable). */
 const renderContent = ({ key, annotation }: RenderContentProps) => {
   const { geometry, data } = annotation;
-  if (
-    !geometry ||
-    typeof geometry.x !== 'number' ||
-    typeof geometry.y !== 'number' ||
-    typeof geometry.width !== 'number' ||
-    typeof geometry.height !== 'number'
-  ) {
+  if (!hasRectangleGeometry(geometry)) {
     return null;
   }
 
@@ -117,7 +135,7 @@ const DragCustomRender: React.FC = () => {
     () => ({
       renderHighlight,
       renderContent,
-      renderSelector: ({ annotation }: { annotation: AnnotationValue }) => (
+      renderSelector: ({ annotation }: RenderSelectorProps) => (
         <FancyRectangle annotation={annotation} />
       ),
       renderEditor: ({
@@ -144,8 +162,9 @@ const DragCustomRender: React.FC = () => {
         Uses <code>renderHighlight</code> for teal borders and{' '}
         <code>renderContent</code> for the dark card when active.{' '}
         <code>enableEditing</code> draws the draggable layer on top (tint + handles + ✓ ✕){' '}
-        without replacing those renderers. Hover for the label card; click the rectangle or
-        card to show move/resize handles (✓/✕). Click empty image area to draw a new one.
+        without replacing those renderers. Hover for the label card; click (no drag) the
+        rectangle to show move/resize handles (✓/✕). Drag anywhere — including over or
+        beside an existing AOI — to draw a new one.
       </p>
       <div className="annotation-container" style={{ position: 'relative' }}>
         <Annotation

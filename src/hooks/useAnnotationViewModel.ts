@@ -4,6 +4,7 @@ import { useInteractionFocus } from './useInteractionFocus';
 import { useSelectorMethods } from './useSelectorMethods';
 import { useDragging } from './useDragging';
 import { usePinnedControlsHover } from './usePinnedControlsHover';
+import { getOffsetCoordPercentage } from '../utils/offsetCoordinates';
 import type {
   AnnotationProps,
   Annotation as AnnotationType,
@@ -21,6 +22,9 @@ function assignRef<T>(ref: React.Ref<T> | undefined, value: T | null) {
 }
 
 type ViewModelArgs = Omit<AnnotationProps, 'children'>;
+
+/** Max pointer travel (px) to treat as click-to-edit instead of a draw. */
+const CLICK_EDIT_MOVE_THRESHOLD_PX = 5;
 
 /**
  * Pointer, touch, refs, and selector wiring for {@link AnnotationLayout}.
@@ -78,6 +82,9 @@ export function useAnnotationViewModel(
 
   const internalImageRef = useRef<HTMLImageElement>(null);
   const targetRef = useRef<HTMLDivElement>(null);
+  /** Geometry hit on pointer down — used to engage edit only on click (not drag). */
+  const pendingEditIdRef = useRef<string | number | null>(null);
+  const pointerDownClientRef = useRef<{ x: number; y: number } | null>(null);
 
   const previewMode = !!(onConfirm && onReset);
   const isDrawing =
@@ -121,16 +128,19 @@ export function useAnnotationViewModel(
     previewMode,
   });
 
-  const { hoveredAnnotation, mouseHandlers: hoveredMouseHandlers } =
-    useHoveredAnnotation({
-      targetRef: targetRef as React.RefObject<HTMLElement>,
-      imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
-      annotations,
-      selectors,
-      enableEditing,
-      suppressHover: isDrawing || isCreationEditorOpen,
-      throttleMs: 50,
-    });
+  const {
+    hoveredAnnotation,
+    getTopAnnotationAt,
+    mouseHandlers: hoveredMouseHandlers,
+  } = useHoveredAnnotation({
+    targetRef: targetRef as React.RefObject<HTMLElement>,
+    imageRef: internalImageRef as React.RefObject<HTMLImageElement>,
+    annotations,
+    selectors,
+    enableEditing,
+    suppressHover: isDrawing || isCreationEditorOpen,
+    throttleMs: 50,
+  });
 
   const {
     effectiveTopAnnotation,
@@ -329,6 +339,27 @@ export function useAnnotationViewModel(
     (e: React.MouseEvent<HTMLElement>) => {
       onImageMouseUp?.(e);
       callSelectorMethod('onMouseUp', e);
+
+      const pendingId = pendingEditIdRef.current;
+      const down = pointerDownClientRef.current;
+      pendingEditIdRef.current = null;
+      pointerDownClientRef.current = null;
+
+      // Click (no meaningful drag) on existing AOI → edit; drag always draws.
+      if (
+        pendingId != null &&
+        down &&
+        enableEditing &&
+        showContentOnHover
+      ) {
+        const dx = Math.abs(e.clientX - down.x);
+        const dy = Math.abs(e.clientY - down.y);
+        if (dx <= CLICK_EDIT_MOVE_THRESHOLD_PX && dy <= CLICK_EDIT_MOVE_THRESHOLD_PX) {
+          engageEdit(pendingId);
+          onChange?.({});
+        }
+      }
+
       if (drawingCursor && !disableAnnotation) {
         clearDrawingCursorFromTarget();
         if (!isDrawing) {
@@ -339,6 +370,10 @@ export function useAnnotationViewModel(
     [
       onImageMouseUp,
       callSelectorMethod,
+      enableEditing,
+      showContentOnHover,
+      engageEdit,
+      onChange,
       drawingCursor,
       disableAnnotation,
       clearDrawingCursorFromTarget,
@@ -357,19 +392,24 @@ export function useAnnotationViewModel(
         value?.selection?.mode === 'SELECTING' ||
         value?.selection?.mode === 'COLLECTING_POINTS' ||
         !!value?.selection?.showEditor;
-      const existingId = effectiveTopAnnotation?.data?.id;
-      const pointerOverExisting =
-        enableEditing &&
-        !isCreatingNew &&
-        !isCreationEditorOpen &&
-        existingId != null;
 
-      if (pointerOverExisting) {
-        if (showContentOnHover) {
-          engageEdit(existingId);
+      pendingEditIdRef.current = null;
+      pointerDownClientRef.current = { x: e.clientX, y: e.clientY };
+
+      // Remember geometry hits for click-to-edit, but always allow a draw to start
+      // so new AOIs can be created next to / overlapping existing ones.
+      if (
+        enableEditing &&
+        showContentOnHover &&
+        !isCreatingNew &&
+        !isCreationEditorOpen
+      ) {
+        const target = targetRef.current;
+        if (target) {
+          const { x, y } = getOffsetCoordPercentage(e.nativeEvent, target);
+          pendingEditIdRef.current =
+            getTopAnnotationAt(x, y)?.data?.id ?? null;
         }
-        onImageMouseDown?.(e);
-        return;
       }
 
       onImageMouseDown?.(e);
@@ -381,11 +421,10 @@ export function useAnnotationViewModel(
       applyDrawingCursorToTarget,
       enableEditing,
       showContentOnHover,
-      effectiveTopAnnotation?.data?.id,
+      getTopAnnotationAt,
       isCreationEditorOpen,
       value?.selection?.mode,
       value?.selection?.showEditor,
-      engageEdit,
       onImageMouseDown,
       callSelectorMethod,
     ]

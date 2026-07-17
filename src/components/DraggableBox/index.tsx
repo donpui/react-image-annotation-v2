@@ -12,13 +12,13 @@ import type { RenderDraggableHighlightProps } from '../../types/core';
 /** Padding around box bounds so moving to handles / ✓ ✕ does not count as "outside". */
 const EDIT_CHROME_HIT_PAD_PX = 36;
 
-/** Tint + handles only; passive `renderHighlight` draws outline so custom borders stay intact. */
+/** Tint only; handles/buttons set their own pointer-events so draws can start through the fill. */
 const BoxContainer = styled.div`
   position: absolute;
   border: none;
   background: rgba(151, 151, 151, 0.3);
   border-radius: 3px;
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 10;
   box-sizing: border-box;
 `;

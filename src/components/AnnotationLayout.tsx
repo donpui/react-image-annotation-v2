@@ -121,15 +121,23 @@ interface AnnotationContentItemProps {
   annotation: AnnotationType;
   slot: (props: RenderContentProps) => React.ReactNode;
   containerRef: React.RefObject<HTMLElement | null>;
-  onEngageEdit?: (annotationId: string | number) => void;
 }
+
+/** Hover labels must not capture pointers — drawing starts through them. Edit engages via geometry hit. */
+const ContentPassThrough = styled.div`
+  display: inline-block;
+  pointer-events: none;
+
+  & * {
+    pointer-events: none !important;
+  }
+`;
 
 function AnnotationContentItem({
   annotationId,
   annotation,
   slot,
   containerRef,
-  onEngageEdit,
 }: AnnotationContentItemProps) {
   return (
     <AnnotationContentAnchor
@@ -137,19 +145,12 @@ function AnnotationContentItem({
       containerRef={containerRef}
       placement="auto"
     >
-      <div
-        style={{ pointerEvents: 'auto', display: 'inline-block' }}
-        onMouseDown={(e) => {
-          e.stopPropagation();
-          onEngageEdit?.(annotationId);
-        }}
-        role="button"
-      >
+      <ContentPassThrough>
         {slot({
           key: annotationId,
           annotation,
         })}
-      </div>
+      </ContentPassThrough>
     </AnnotationContentAnchor>
   );
 }
@@ -350,7 +351,6 @@ export function AnnotationLayout({
     onDeleteControlMouseLeave,
     focusAnnotationId,
     showContentOnHover = false,
-    engageEdit,
   } = annotationState;
 
   const editModeIdSet = editModeIds ? new Set(editModeIds) : undefined;
@@ -527,7 +527,6 @@ export function AnnotationLayout({
                   annotationId={annotationId}
                   annotation={annotation}
                   containerRef={passthroughLayerRef}
-                  onEngageEdit={engageEdit}
                   slot={contentSlot!}
                 />
               ) : null}
