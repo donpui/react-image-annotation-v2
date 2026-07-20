@@ -444,19 +444,23 @@ export function useAnnotationViewModel(
     }
   }, [onSubmit, value]);
 
+  const clearCreationDraft = useCallback(() => {
+    onChange?.({
+      selection: undefined,
+      geometry: undefined,
+      data: undefined,
+    });
+  }, [onChange]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onChange) {
+      if (e.key === 'Escape') {
         if (value?.selection?.showEditor || value?.geometry) {
-          onChange({
-            selection: undefined,
-            geometry: undefined,
-            data: undefined,
-          });
+          clearCreationDraft();
         }
       }
     },
-    [value, onChange]
+    [value?.selection?.showEditor, value?.geometry, clearCreationDraft]
   );
 
   useEffect(() => {
@@ -468,6 +472,29 @@ export function useAnnotationViewModel(
       return () => window.removeEventListener('keydown', handleKeyDown);
     }
   }, [value?.selection?.showEditor, value?.selection?.mode, handleKeyDown]);
+
+  // Dismiss creation editor when clicking outside it (same as Escape).
+  useEffect(() => {
+    if (!value?.selection?.showEditor || !onChange) {
+      return;
+    }
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+      if (target.closest('[data-annotation-editor]')) {
+        return;
+      }
+      clearCreationDraft();
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown, true);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown, true);
+    };
+  }, [value?.selection?.showEditor, onChange, clearCreationDraft]);
 
   const topAnnotationAtMouse = effectiveTopAnnotation;
 

@@ -553,11 +553,13 @@ export function AnnotationLayout({
               placement="auto"
               offsetPx={16}
             >
-              {renderEditor({
-                annotation: value,
-                onChange,
-                onSubmit: onEditorSubmit,
-              })}
+              <div data-annotation-editor style={{ pointerEvents: 'auto' }}>
+                {renderEditor({
+                  annotation: value,
+                  onChange,
+                  onSubmit: onEditorSubmit,
+                })}
+              </div>
             </AnnotationContentAnchor>
           )}
       </AnnotationPointerPassthroughLayer>
